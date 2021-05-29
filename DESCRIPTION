@@ -1,0 +1,26 @@
+Package: HDTSA
+Type: Package
+Title: High Dimensional Time Series Analysis Tools
+Version: 1.0.0
+Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"), 
+    email = "linchen@smail.swufe.edu.cn"),
+    person("Guanghui", "Cheng", role = "aut", email = "chenggh845@nenu.edu.cn"),
+    person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
+    person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
+Date: 2021-03-23
+Author: Chen Lin [aut, cre],
+   Guanghui Cheng [aut],
+   Jinyuan Chang [aut], 
+   Qiwei Yao [aut]
+Maintainer: Chen Lin <linchen@smail.swufe.edu.cn>
+Description: Several implementation of high-dimensional time series analysis including Unit root test, white noise test, martingale difference test, factor inference and principal component analysis.
+License: GPL-3
+Depends: R (>= 3.5.0)
+Imports: stats, Rcpp (>= 1.0.6), RcppEigen, tseries, clime, sandwich
+LinkingTo: Rcpp, RcppEigen
+Suggests: knitr, rmarkdown
+NeedsCompilation: yes
+RoxygenNote: 7.1.1
+Encoding: UTF-8
+URL: https://github.com/Linc2021/HDTSA
+BugReports: https://github.com/Linc2021/HDTSA/issues
