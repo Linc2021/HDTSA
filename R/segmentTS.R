@@ -1,32 +1,3 @@
-#' Segment Multivariate Time Series
-#'
-#' Calculate linear transformation of the \eqn{p}-variate time series \eqn{y_t} such that the transformed series \eqn{x_t=By_t} is segmented into several
-#' lower-dimensional subseries, and those subseries are uncorrelated with
-#' each other both contemporaneously and serially.
-#'
-#' When \eqn{p} is small, thresholding is not required. However, when \eqn{p} is large, it is necessary to use the thresholding method, see more information in Chang et al. (2014).
-#'
-#' @param Y   A data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
-#' @param lag.k  A positive integer specified to calculate Wy. See (2.5) in Chang et al. (2018).
-#' @param thresh   Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-#'                 thresholding method will be applied first to estimate Wy, see (3.4) and (3.5) in Chang et al. (2018).
-#' @param tuning.vec  The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
-#'                  \deqn{ u = \lambda {(log p/n)^(1/2)}.}
-#'                    Default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
-#'                    to choose the best tuning parameter.
-#' @param isvol Logical. If \code{FALSE} (the default), it means that the process is stationary, otherwise it is Volatility process.
-#' @param K   The number of folders used in the cross validation, the default is 5. It is required when \code{thresh} is \code{TRUE}.
-#' @return An object of class "segmentTS" is a list containing the following components:
-#' \item{B}{the \eqn{p} by \eqn{p} transformation matrix such that \eqn{x_t=By_t}}
-#' \item{X}{the transformed series with \eqn{n} rows and \eqn{p} columns}
-#' @note This is the first step to transform the time series. The second step is grouping the transformed time series, see \code{\link{permutationMax}}, \code{\link{permutationFDR}}.
-#'
-#'
-#' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094–2124.
-#'
-#'             Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association 106: 672-684.
-## @family aggregate functions
-#' @seealso \code{\link{permutationMax}}, \code{\link{permutationFDR}}.
 #' @importFrom stats var
 #' @importFrom clime clime cv.clime
 #' @useDynLib HDTSA
@@ -34,11 +5,6 @@
 #' @importFrom Rcpp evalCpp
 #' @import Rcpp 
 #' @import RcppEigen
-#' @export
-
-
-
-
 
 
 segmentTS <- function(Y, lag.k, isvol = FALSE, 
@@ -106,7 +72,7 @@ segmentTS <- function(Y, lag.k, isvol = FALSE,
   
   Wy=diag(rep(1,p))
   
-  if(!isvol){
+  if(isvol){
     Wy=vol_wy(Y,drop(mean_y),lag.k,n,p)
   }
   else{

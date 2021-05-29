@@ -37,6 +37,3 @@ ur.test(Z,alpha=0.05)
 \references{
 Chang, J., Cheng, G. & Yao, Q. (2019).  \emph{A power one test for unit roots based on sample autocovariances}. Available at \url{https://arxiv.org/abs/2006.07551}
 }
-\author{
-Jinyuan Chang, Guanghui Cheng, Qiwei Yao
-}

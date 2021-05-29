@@ -1,28 +1,3 @@
-#' Permutation Using the FDR Method
-#' 
-#' The permutation is determined by grouping the components of a multivariate series X into \eqn{q} groups, where \eqn{q} and the cardinal numbers of those groups are also unknown. This function use FDR Method
-#'
-#' See Chang et al. (2018) for the permutation step and more information.
-#'
-#' @param X A data matrix used to find the grouping mechanism with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
-#' @param isvol Logical. If \code{FALSE} (the default), then prewhiten each series by fitting a univariate AR model with
-#'          the order between 0 and 5 determined by AIC. If \code{TRUE}, then prewhiten each volatility process using GARCH(1,1) model.
-#' @param m A positive constant used to calculate the maximum cross correlation over the lags between \eqn{-m} and \eqn{m}. If \eqn{m} is not specified, the default constant \eqn{10*log10(n/p)}
-#'          will be used.
-#' @param Beta A positive constant
-
-#' @return An object of class "permutationFDR" is a list containing the following components:
-#'
-#' \item{NoGroups}{Number of groups with at least two components series}
-#' \item{Nos_of_Members}{Number of members in each of groups with at least two members}
-#' \item{Groups}{Indices of components in each of groups with at least two members}
-#' \item{maxcorr}{Maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order}
-#' \item{corrRatio}{Ratios of successive values from maxcorr}
-#' \item{NoConnectedPairs}{Number of connected pairs}
-#' \item{Xpre}{The prewhitened data with \eqn{n-R} rows and \eqn{p} columns}
-#' @note This is the second step for segmentation by grouping the transformed time series. The first step is to seek for a contemporaneous linear transformation of the original series, see \code{\link{segmentTS}}.
-#' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094–2124.
-#' @seealso \code{\link{segmentTS}}, \code{\link{permutationMax}}
 #' @importFrom stats acf ar pnorm var
 #' @importFrom tseries garch 
 #' @useDynLib HDTSA
@@ -30,16 +5,16 @@
 #' @importFrom Rcpp evalCpp
 #' @import Rcpp 
 #' @import RcppEigen
-#' @export
-permutationFDR <- function(X,isvol=FALSE, Beta=NULL, m=NULL) {
+#' 
+permutationFDR <- function(X,isvol=FALSE, Beta, m=NULL) {
   # X: nxp data matrix
   # m: maximum lag used in multipe test for each pair components
   # Beta: the error rate in FDR
   # R: upper bound of AR-order in prewhitenning
 
   ## Step 0: prewhiten each columns of X
-  if(missing(m)) m <- 10*log10(n/p)
-  if(missing(Beta)) Beta <- 10^(-200)
+  if(is.null(m)) m <- 10*log10(n/p)
+  #if(is.null(Beta)) Beta <- 10^(-8)
   p=ncol(X)
   n=nrow(X)
 

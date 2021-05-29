@@ -7,7 +7,7 @@
 #' @param Y A data matrix used for regression and factor inference with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
 #' @param Z A data matrix with \eqn{n} rows and \eqn{m} columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of the time series. it represents some observed regressors.
 #' @param D A \eqn{p\times m} data matrix means the regression coefficient matrix \eqn{D}. Default is \code{NULL}, if \code{D} is not given, then the program will estimate it.
-#' @param lag.k A time lag which is a positive integer specified to calculate Wy.
+#' @param lag.k A time lag which is a positive integer specified to calculate \eqn{ \hat{\mathbf{M}}}.
 #' @param twostep Logical. If \code{FALSE} (the default), then standard procedures for factor number inference (see \code{\link{factors}}) will be implemented. If \code{TRUE}, then a two step estimation procedure will be implemented 
 #' for estimation of weak factors.
 #' @seealso \code{\link{factors}}.

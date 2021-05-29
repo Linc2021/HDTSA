@@ -9,7 +9,7 @@ WN_test(
   lag.k = 2,
   B = 2000,
   kernel.type = "QS",
-  pre = TRUE,
+  pre = FALSE,
   alpha = 0.05,
   k0 = 5,
   thresh = FALSE,
@@ -26,16 +26,16 @@ WN_test(
 \item{kernel.type}{An option for choosing an optimal symmetric kernel type, for example \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is \code{kernel.type='QS'}.}
 
 \item{pre}{\code{Logic} which determines whether performs preprocessing procedure on data. When it 
-is set to true, only \code{segmentTS()} will performs to data with \code{just4pre} set to true. The 
+is set to true, only segment procedure will performs to data with \code{just4pre} set to true. The 
 three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
-those in \code{PCA4TS()} and \code{segmentTS()}.}
+those in \code{PCA4_TS()}.}
 
 \item{alpha}{Significance level used for testing. Default is 0.05.}
 
-\item{k0}{A positive integer specified to calculate Wy in \code{segmentTS()}. See (2.5) in Chang et al. (2018).}
+\item{k0}{A positive integer specified to calculate \eqn{\hat{\bf W}_y} in \code{PCA4_TS()}. See (2.5) in Chang et al. (2018).}
 
 \item{thresh}{Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-thresholding method will be applied first to estimate Wy, see (3.4) and (3.5) in Chang et al. (2018).}
+thresholding method will be applied first to estimate \eqn{{\bf W}_y}, see (3.4) and (3.5) in Chang et al. (2018).}
 
 \item{tuning.vec}{The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
 \deqn{ u = \lambda {(log p/n)^{1/2}.}}
@@ -58,7 +58,7 @@ value of the test can be evaluated by bootstrapping from a multivariate normal d
 n <- 200
 p <- 150
 X <- matrix(rnorm(n*p),n,p)
-res <- MartG_test(X)
+res <- WN_test(X)
 Pvalue <- res$p.value
 rej <- res$reject
 }
@@ -70,5 +70,5 @@ Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for high-dimensional white n
             Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association 106: 672-684.
 }
 \seealso{
-\code{\link{PCA4_TS}}, \code{\link{segmentTS}}
+\code{\link{PCA4_TS}}
 }

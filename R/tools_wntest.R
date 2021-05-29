@@ -9,19 +9,19 @@
 #' @param lag.k A time lag which is a positive integer. Default is \code{lag.k} \eqn{=2}.
 #' @param B Bootstrap times for generate vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}
 #' @param pre \code{Logic} which determines whether performs preprocessing procedure on data. When it 
-#' is set to true, only \code{segmentTS()} will performs to data with \code{just4pre} set to true. The 
+#' is set to true, only segment procedure will performs to data with \code{just4pre} set to true. The 
 #' three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
-#' those in \code{PCA4TS()} and \code{segmentTS()}.
+#' those in \code{PCA4_TS()}.
 #' @param alpha Significance level used for testing. Default is 0.05.
 #' @param kernel.type An option for choosing an optimal symmetric kernel type, for example \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is \code{kernel.type='QS'}.          
-#' @param k0 A positive integer specified to calculate Wy in \code{segmentTS()}. See (2.5) in Chang et al. (2018).
+#' @param k0 A positive integer specified to calculate \eqn{\hat{\bf W}_y} in \code{PCA4_TS()}. See (2.5) in Chang et al. (2018).
 #' @param thresh Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-#'                 thresholding method will be applied first to estimate Wy, see (3.4) and (3.5) in Chang et al. (2018).
+#'                 thresholding method will be applied first to estimate \eqn{{\bf W}_y}, see (3.4) and (3.5) in Chang et al. (2018).
 #' @param tuning.vec The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
 #'                  \deqn{ u = \lambda {(log p/n)^{1/2}.}}
 #'                    Default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
 #'                    to choose the best tuning parameter.    
-#' @seealso \code{\link{PCA4_TS}}, \code{\link{segmentTS}}
+#' @seealso \code{\link{PCA4_TS}}
 #' 
 #' @return An object of class "WN_test" is a list containing the following components:
 #'
@@ -37,7 +37,7 @@
 #' n <- 200
 #' p <- 150
 #' X <- matrix(rnorm(n*p),n,p)
-#' res <- MartG_test(X)
+#' res <- WN_test(X)
 #' Pvalue <- res$p.value
 #' rej <- res$reject
 #' @useDynLib HDTSA

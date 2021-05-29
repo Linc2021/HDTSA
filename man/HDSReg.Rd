@@ -13,7 +13,7 @@ HDSReg(Y, Z, D = NULL, lag.k = 1, twostep = FALSE)
 
 \item{D}{A \eqn{p\times m} data matrix means the regression coefficient matrix \eqn{D}. Default is \code{NULL}, if \code{D} is not given, then the program will estimate it.}
 
-\item{lag.k}{A time lag which is a positive integer specified to calculate Wy.}
+\item{lag.k}{A time lag which is a positive integer specified to calculate \eqn{ \hat{\mathbf{M}}}.}
 
 \item{twostep}{Logical. If \code{FALSE} (the default), then standard procedures for factor number inference (see \code{\link{factors}}) will be implemented. If \code{TRUE}, then a two step estimation procedure will be implemented 
 for estimation of weak factors.}

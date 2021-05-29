@@ -17,9 +17,9 @@
 #'
 #'
 #' @param Y  A data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
-#' @param lag.k  A positive integer specified to calculate Wy. See (2.5) in Chang et al. (2014).
+#' @param lag.k  A positive integer specified to calculate \eqn{\hat{\bf W}_y}. See (2.5) in Chang et al. (2018).
 #' @param thresh   Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-#'                 thresholding method will be applied first to estimate Wy, see (3.4) and (3.5) in Chang et al. (2018).
+#'                 thresholding method will be applied first to estimate \eqn{{\bf W}_y}, see (3.4) and (3.5) in Chang et al. (2018).
 #' @param tuning.vec  The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
 #'                  \deqn{ u = \lambda {(log p/n)}^{1/2}.}
 #'                    Default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
@@ -41,16 +41,15 @@
 #' \item{NoGroups}{Number of groups with at least two components series}
 #' \item{Nos_of_Members}{Number of members in each of groups with at least two members}
 #' \item{Groups}{Indices of components in each of groups with at least two members}
-#' \item{maxcorr}{Maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order if \code{permutation} is \code{max}}
-#' \item{corrRatio}{Ratios of successive values from maxcorr if \code{permutation} is \code{max}}
-#' \item{Pvalues}{Pvalue for multiple test H_0 for each of \eqn{p(p-1)/2} pairs in ascending order if \code{permutation} is \code{fdr}}
-#' \item{NoConnectedPairs}{Number of connected pairs}
+#' \item{maxcorr}{Maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order if \code{permutation = 'max'}}
+#' \item{corrRatio}{Ratios of successive values from maxcorr if \code{permutation= 'max'}}
+#' \item{Pvalues}{Pvalue for multiple test H_0 for each of \eqn{p(p-1)/2} pairs in ascending order if \code{permutation = 'fdr'}}
+#' \item{NoConnectPairs}{Number of connected pairs}
 #' \item{Xpre}{The prewhitened data with \eqn{n-R} rows and \eqn{p} columns}
 #'
-#' @seealso \code{\link{segmentTS}}, \code{\link{permutationMax}}, \code{\link{permutationFDR}}.
 #' @note The first step is transform the time series. It calculate linear transformation of the \eqn{p}-variate time series (or volatility processes) \eqn{y_t} such that the transformed series \eqn{x_t=By_t} is segmented into several
 #' lower-dimensional subseries, and those subseries are uncorrelated with each other both contemporaneously and serially.
-#' The second step is grouping the transformed time series, The permutation is determined by grouping the components of a multivariate series X into \eqn{q} groups, where \eqn{q} and the cardinal numbers of those groups are also unknown. See also \code{\link{permutationFDR}} and \code{\link{permutationMax}}
+#' The second step is grouping the transformed time series, The permutation is determined by grouping the components of a multivariate series X into \eqn{q} groups, where \eqn{q} and the cardinal numbers of those groups are also unknown.
 #'
 #'
 #' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094–2124.
@@ -61,7 +60,7 @@
 ## @family aggregate functions
 #'
 
-## Perform Step 2 (i.e. permutation) of Chang, Guo and Yao (2014)
+## Perform Step 2 (i.e. permutation) of Chang, Guo and Yao (2018)
 ## using the maximum cross correlation method
 ##
 ## Output1: $NoGroups -- No. of groups with at least two components series
@@ -78,10 +77,81 @@
 #' @import Rcpp 
 #' @import RcppEigen
 #' @export
-#
+#' @examples 
+#' ## Example 1 (Example 5 of Chang et al.(2018)). 
+#' ## p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.    
+#'
+#' p=6;n=1500
+#' # Generate x_t
+#' X=mat.or.vec(p,n)
+#' x=arima.sim(model=list(ar=c(0.5, 0.3), ma=c(-0.9, 0.3, 1.2,1.3)),n=n+2,sd=1)
+#' for(i in 1:3) X[i,]=x[i:(n+i-1)]  
+#' x=arima.sim(model=list(ar=c(0.8,-0.5),ma=c(1,0.8,1.8) ),n=n+1,sd=1)
+#' for(i in 4:5) X[i,]=x[(i-3):(n+i-4)]   
+#' x=arima.sim(model=list(ar=c(-0.7, -0.5), ma=c(-1, -0.8)),n=n,sd=1)
+#' X[6,]=x
+#' # Generate y_t 
+#' A=matrix(runif(p*p, -3, 3), ncol=p)
+#' Y=A%*%X  
+#' Y=t(Y)
+#' res=PCA4_TS(Y, lag.k=5,permutation = "max")
+#' # The transformed series z_t 
+#' Z=res$X 
+#' # Plot the cross correlogram of z_t and y_t
+#' Y=data.frame(Y);Z=data.frame(Z)
+#' names(Y)=c("Y1","Y2","Y3","Y4","Y5","Y6")
+#' names(Z)=c("Z1","Z2","Z3","Z4","Z5","Z6")
+#' # The cross correlogram of y_t shows no block pattern 
+#' acfY=acf(Y) 
+#' # The cross correlogram of z_t shows 3-2-1 block pattern  
+#' acfZ=acf(Z)
+#'       
+#' ## Example 2 (Example 6 of Chang et al.(2014)).
+#' ## p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.    
+#'
+#' p=20;n=3000
+#' # Generate x_t
+#' X=mat.or.vec(p,n)
+#' x=arima.sim(model=list(ar=c(0.5, 0.3), ma=c(-0.9, 0.3, 1.2,1.3)),n.start=500,n=n+5,sd=1)
+#' for(i in 1:6) X[i,]=x[i:(n+i-1)]
+#' x=arima.sim(model=list(ar=c(-0.4,0.5),ma=c(1,0.8,1.5,1.8)),n.start=500,n=n+4,sd=1)
+#' for(i in 7:11) X[i,]=x[(i-6):(n+i-7)]
+#' x=arima.sim(model=list(ar=c(0.85,-0.3),ma=c(1,0.5,1.2)), n.start=500,n=n+3,sd=1)
+#' for(i in 12:15) X[i,]=x[(i-11):(n+i-12)]
+#' x=arima.sim(model=list(ar=c(0.8,-0.5),ma=c(1,0.8,1.8)),n.start=500,n=n+2,sd=1)
+#' for(i in 16:18) X[i,]=x[(i-15):(n+i-16)]
+#' x=arima.sim(model=list(ar=c(-0.7, -0.5), ma=c(-1, -0.8)),n.start=500,n=n+1,sd=1)
+#' for(i in 19:20) X[i,]=x[(i-18):(n+i-19)]
+#' # Generate y_t 
+#' A=matrix(runif(p*p, -3, 3), ncol=p)
+#' Y=A%*%X  
+#' Y=t(Y)
+#' res=PCA4_TS(Y, lag.k=5,permutation = "max")
+#' # The transformed series z_t 
+#' Z=res$X 
+#' # Plot the cross correlogram of x_t and y_t
+#' Y=data.frame(Y);Z=data.frame(Z)
+#' namesY=NULL;namesZ=NULL
+#' for(i in 1:p)
+#' {
+#'    namesY=c(namesY,paste0("Y",i))
+#'    namesZ=c(namesZ,paste0("Z",i))
+#' }  
+#' names(Y)=namesY;names(Z)=namesZ
+#' # The cross correlogram of y_t shows no block pattern 
+#' acfY=acf(Y, plot=FALSE)
+#' plot(acfY, max.mfrow=6, xlab='', ylab='',  mar=c(1.8,1.3,1.6,0.5), 
+#'      oma=c(1,1.2,1.2,1), mgp=c(0.8,0.4,0),cex.main=1)    
+#' # The cross correlogram of z_t shows 6-5-4-3-2 block pattern  
+#' acfZ=acf(Z, plot=FALSE)
+#' plot(acfZ, max.mfrow=6, xlab='', ylab='',  mar=c(1.8,1.3,1.6,0.5),
+#'      oma=c(1,1.2,1.2,1), mgp=c(0.8,0.4,0),cex.main=1)
+#' # Identify the permutation mechanism
+#' permutation=res
+#' permutation$Groups  
 
 PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5, 
-                    isvol=FALSE, permutation=c('max',"fdr"), m=NULL, Beta=NULL, 
+                    isvol=FALSE, permutation=c('max',"fdr"), m=NULL, Beta, 
                     just4pre=FALSE)
 {
   #for timeseries
@@ -101,7 +171,7 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
   if(permutation == 'max')
   {
   	out=permutationMax(X, isvol, m)
-	  output=list(NoGroups=out$NoGroups, Nos_of_Members=out$Nos_of_Members, Groups=out$Groups, maxcorr=out$maxcorr,
+	  output=list(B=B, X=X,NoGroups=out$NoGroups, Nos_of_Members=out$Nos_of_Members, Groups=out$Groups, maxcorr=out$maxcorr,
 	              corrRatio=out$corrRatio,NoConnectedPairs=out$r,Xpre=out$Xpre,B=seglist$B)
 	return(output)
   }
@@ -109,8 +179,8 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
 	else if(permutation=='fdr')
 	  {
       out=permutationFDR(X,isvol, Beta, m)
-      output=list(NoGroups=out$NoGroups, Nos_of_Members=out$Nos_of_Members, Groups=out$Groups, Pvalues=out$Pvalues,
-                  NoConnectedPairs=out$r,Xpre=out$Xpre,B=seglist$B)
+      output=list(B=B, X=X,NoGroups=out$NoGroups, Nos_of_Members=out$Nos_of_Members, Groups=out$Groups, Pvalues=out$Pvalues,
+                  NoConnectPairs=out$r,Xpre=out$Xpre,B=seglist$B)
 		return(output)
       }
 }
