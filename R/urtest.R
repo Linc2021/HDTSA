@@ -13,7 +13,6 @@
 #' 
 #' \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'} means we do not reject the null hypothesis.}
 #' 
-#' @author Jinyuan Chang, Guanghui Cheng, Qiwei Yao
 #' @references Chang, J., Cheng, G. & Yao, Q. (2019).  \emph{A power one test for unit roots based on sample autocovariances}. Available at \url{https://arxiv.org/abs/2006.07551}
 #' @export
 #' @importFrom sandwich lrvar
