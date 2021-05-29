@@ -47,11 +47,11 @@
 #' @import RcppEigen
 #' @export
 
-WN_test = function(X, lag.k=2, B=2000, kernel.type='QS', pre=TRUE,alpha=0.05,k0=5,thresh=FALSE,
+WN_test = function(X, lag.k=2, B=2000, kernel.type='QS', pre=FALSE,alpha=0.05,k0=5,thresh=FALSE,
                    tuning.vec=NULL){
   
   if (pre==T){
-    X_pre = PCA4_TS(X, lag.k=k0, thresh=thresh, just4pre = TRUE, tuning.vec = tuning.vec)
+    X_pre = PCA4_TS(X, lag.k=k0, thresh=thresh, just4pre = pre, tuning.vec = tuning.vec)
     #X_pre = SgmentTS(X, k0); #PCA4_TS(X, k0, thresh, just4pre = TRUE, tuning.vec = tuningvec)
     X = X_pre$X
     Bx = X_pre$B
