@@ -46,10 +46,6 @@ segmentTS <- function(Y, lag.k, isvol = FALSE,
                       tuning.vec = NULL, 
                       K = 5)
 {
-  if(is.logical(c(thresh,isvol))){
-    print("Wrong parameter type (thresh, isvol)")
-    quit("yes")
-  }
   n=nrow(Y)
   p=ncol(Y)
   storage.mode(p)<-"integer"

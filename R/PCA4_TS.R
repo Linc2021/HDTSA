@@ -85,11 +85,6 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
                     just4pre=FALSE)
 {
   #for timeseries
-  if(is.logical(just4pre)){
-    print("Wrong parameter type (just4pre)")
-    print("Set default option just4pre=FALSE")
-    just4pre=FALSE
-  }
   permutation <- match.arg(permutation)
   
   seglist=segmentTS(Y=Y,lag.k = lag.k,isvol = isvol, 
