@@ -11,7 +11,7 @@ HDSReg(Y, Z, D = NULL, lag.k = 1, twostep = FALSE)
 
 \item{Z}{\eqn{{\bf Z} = \{{\bf z}_1, \dots , {\bf z}_n \}'}, a data matrix representing some observed regressors with \eqn{n} rows and \eqn{m} columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of the time series.}
 
-\item{D}{A \eqn{p\times m} data matrix means the regression coefficient matrix \eqn{{\bf D}}. Default is \code{NULL}, if \code{D} is not given, then the function will estimate it.}
+\item{D}{A \eqn{p\times m} data matrix means the regression coefficient matrix \eqn{{\bf D}}. Default is \code{NULL}, if \code{D} is not given, then the program will estimate it.}
 
 \item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)', }
 where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ {\bf y}_t} at lag \eqn{k}.}
@@ -23,14 +23,16 @@ for estimation of weak factors.}
 An object of class "HDSReg" is a list containing the following components:
 
 \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
-\item{reg.coff.mat}{The estimated \eqn{p \times m} regression coefficient matrix \eqn{{\bf \hat{D}}} if \code{D} is not given.}
-\item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix \eqn{{\bf \hat{A}}}.}
+\item{reg.coff.mat}{The estimated \eqn{p \times m} regression coefficient matrix \eqn{{\bf \hat{D}}}if \code{D} is not given.}
+\item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix \eqn{{\bf \hat{D}}}.}
 }
 \description{
-\code{HDSReg()} consider a multivariate time series model which represents a high dimensional vector process as a sum of three terms: a linear 
-regression of some observed regressors, a linear combination of some latent and serially correlated factors, and a vector white noise:\deqn{{\bf y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf y}_t} and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1}
- and \eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent factor process, \eqn{{\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and \eqn{{\boldsymbol{\epsilon}}_t}
-  is uncorrelated with \eqn{({\bf z}_t, {\bf x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and \eqn{{\bf A}} is an unknown factor loading matrix.This function aims to estimate the unknown regression coefficient matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading matrix \eqn{{\bf A}}.
+\code{HDSReg()} consider a multivariate time series model which represents a high dimensional vector process as a sum of three terms: a linear regression of some observed regressors, 
+a linear combination of some latent and serially correlated factors, and a vector white noise:\deqn{{\bf y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf y}_t} 
+and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and \eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent factor process,
+ \eqn{{\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and \eqn{{\boldsymbol{\epsilon}}_t} 
+ is uncorrelated with \eqn{({\bf z}_t, {\bf x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and \eqn{{\bf A}} is an unknown factor loading matrix.This function aims to estimate the unknown 
+ regression coefficient matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading matrix \eqn{{\bf A}}.
 }
 \examples{
 n <- 400

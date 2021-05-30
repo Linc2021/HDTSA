@@ -2,7 +2,7 @@
 #' @title Testing for white noise hypothesis in high dimension
 #' @description
 #' \code{WN_test()} is a new omnibus test for vector white noise using the maximum 
-#' absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS.} }
+#' absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 #' Based on an approximation by the \eqn{L_\infty} norm of a normal random vector, the critical 
 #' value of the test can be evaluated by bootstrapping from a multivariate normal distribution.
 #' @param X \eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, a \eqn{n\times p} data matrix used testing whether the data are white noise process.

@@ -3,9 +3,10 @@
 #' @description
 #' \code{factors()} deals with factor modeling for high-dimensional time series based on a dimension-reduction 
 #' viewpoint proposed in Lam and Yao (2012):\deqn{{\bf y}_t = {\bf Ax}_t + {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf x}_t} is an \eqn{r \times 1} latent process with (unknow) \eqn{r \leq p},
-#' \eqn{{\bf A}} is a \eqn{p \times r} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{\mu}}_{\epsilon}, {\bf \Sigma}_{\epsilon})} is a vector white-noise process. Under stationary settings, the inference is simple in the sense that both the number of factors \eqn{r} 
-#' and the factor loadings \eqn{{\bf A}} can be estimated in terms of an eigenanalysis for a nonnegative definite matrix, and is 
+#' \eqn{{\bf A}} is a \eqn{p \times r} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{\mu}}_{\epsilon}, {\bf \Sigma}_{\epsilon})} is a vector white-noise process. 
+#' Under stationary settings, the inference is simple in the sense that both the number of factors \eqn{r} and the factor loadings \eqn{{\bf A}} can be estimated in terms of an eigenanalysis for a nonnegative definite matrix, and is 
 #' therefore applicable when the dimension of time series is on the order of a few thousands.
+#' 
 #' @param Y \eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix used for factor inference with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
 #' @param lag.k Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)', }
 #'              where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ {\bf y}_t} at lag \eqn{k}.

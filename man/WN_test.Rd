@@ -45,7 +45,7 @@ An object of class "WN_test" is a list containing the following components:
 }
 \description{
 \code{WN_test()} is a new omnibus test for vector white noise using the maximum 
-absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS.} }
+absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 Based on an approximation by the \eqn{L_\infty} norm of a normal random vector, the critical 
 value of the test can be evaluated by bootstrapping from a multivariate normal distribution.
 }

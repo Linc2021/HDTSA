@@ -23,8 +23,8 @@ An object of class "factors" is a list containing the following components:
 \description{
 \code{factors()} deals with factor modeling for high-dimensional time series based on a dimension-reduction 
 viewpoint proposed in Lam and Yao (2012):\deqn{{\bf y}_t = {\bf Ax}_t + {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf x}_t} is an \eqn{r \times 1} latent process with (unknow) \eqn{r \leq p},
-\eqn{{\bf A}} is a \eqn{p \times r} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{\mu}}_{\epsilon}, {\bf \Sigma}_{\epsilon})} is a vector white-noise process. Under stationary settings, the inference is simple in the sense that both the number of factors \eqn{r} 
-and the factor loadings \eqn{{\bf A}} can be estimated in terms of an eigenanalysis for a nonnegative definite matrix, and is 
+\eqn{{\bf A}} is a \eqn{p \times r} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{\mu}}_{\epsilon}, {\bf \Sigma}_{\epsilon})} is a vector white-noise process. 
+Under stationary settings, the inference is simple in the sense that both the number of factors \eqn{r} and the factor loadings \eqn{{\bf A}} can be estimated in terms of an eigenanalysis for a nonnegative definite matrix, and is 
 therefore applicable when the dimension of time series is on the order of a few thousands.
 }
 \examples{
