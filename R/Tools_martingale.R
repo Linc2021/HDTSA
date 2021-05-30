@@ -1,10 +1,10 @@
 #' @name MartG_test
 #' @title Testing for martingale difference hypothesis in high dimension
-#' @description \code{MartG_test()} implements a new test for the martingale
-#' difference hypothesis for high-dimensional time series. \deqn{H_0:\{{\bf x}_t
+#' @description \code{MartG_test()} implements a new test for the following martingale
+#' difference hypothesis for high-dimensional time series: \deqn{H_0:\{{\bf x}_t
 #' \}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t
-#' \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS.} } where MDS means martingale difference
-#' sequence. The test is built on the sup-norm of a matrix-valued sample
+#' \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS,} } where MDS is the abbreviation of "martingale difference
+#' sequence". The test (Chang, Jiang and Shao, 2021) is built on the sup-norm of a matrix-valued sample
 #' nonlinear dependencemetric at a finite and possibly growing number of lags.
 #' To the best of knowledge, this is the first valid test for the martingale
 #' difference hypothesis that allows for large dimension and captures nonlinear
@@ -12,24 +12,23 @@
 #' unknown forms and panel dependence of unknown magnitude.
 #' 
 #' @param X \eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, an \eqn{n\times
-#'   p} sample matrix used in testing whether the series \eqn{{\bf x}_t} are
-#'   martingale difference process.
+#'   p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the dimension of \eqn{{\bf x}_t}.
 #' @param lag.k Time lag \eqn{K}, a positive integer, used to calculate test
 #'   statistic. Default is \code{lag.k} \eqn{=2}.
 #' @param B Bootstrap times for generating vector from a multivariate normal
 #'   distribution. Default is \code{B} \eqn{=2000}.
 #' @param type String, a map is chosen by the \proglang{R} users, such as the
-#'   default option is \code{'Linear'} means linear identity map. Also including
-#'   \code{'Quad'} and \code{'ln'}
+#'   default option is \code{'Linear'} means linear identity map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including
+#'   another option \code{'Quad'} (Both linear and quadratic terms \eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}).
 #' @param alpha The significance level used for testing. Default is 0.05.
 #' @param kernel.type String, an option for choosing an optimal symmetric kernel
-#'   type, for example, \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is
-#'   \code{kernel.type ='QS'}.
+#'   type, for example, \code{'QS'} (Quadratic Spectral), \code{'Par'} (Parzen), \code{'Bart'} (Bartlett), see Andrews (1991) for more information. Default option is
+#'   \code{kernel.type = 'QS'}.
 
 #' @return An object of class "MartG_test" is a list containing the following components:
 #'
-#' \item{reject}{Logical value which represents whether the process are martingale difference process. }
-#' \item{p.value}{Numerical value which represents the \eqn{p}-value obtained in the bootstrap sampling process}
+#' \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null hypothesis, otherwise it means not rejecting the null hypothesis }
+#' \item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}}
 #' @references Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the martingale difference hypothesis in high dimension}.
 #' @examples 
 #' n <- 200

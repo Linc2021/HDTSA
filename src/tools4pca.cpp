@@ -37,33 +37,7 @@ Eigen::MatrixXd thresh_C(Eigen::MatrixXd sigmaY, Eigen::MatrixXd Y, Eigen::Matri
   }
   return sigmaY;
 }
-// [[Rcpp::export]]
-Eigen::MatrixXd vol_wy(Eigen::MatrixXd Y, Eigen::VectorXd Y_mean, int k0 ,int n, int p){
-  Eigen::MatrixXd wy_hat=Eigen::MatrixXd::Zero(p, p);
-  Eigen::VectorXd yl,yt,yt_k;
-  int s;
-  double yt_k_norm, yl_norm;
-  for (int l=0; l<n; l++){
-    yl = Y.col(l).array() - Y_mean.array();
-    for (int k=1; k<=k0; k++){
-      Eigen::MatrixXd sigmaY=Eigen::MatrixXd::Zero(p, p);
-      for (int t=k; t<n; t++){
-        s = t-k;
-        yt_k = Y.col(s).array() - Y_mean.array();
-        yt_k_norm = yt_k.array().square().sum();
-        yl_norm = yl.array().square().sum();
-        if (yt_k_norm<yl_norm){
-          yt = Y.col(t).array() - Y_mean.array();
-          sigmaY = sigmaY + yt * yt.transpose();
-        }
-      }
-      sigmaY = sigmaY/double(n-k);
-      sigmaY = sigmaY * sigmaY;
-      wy_hat = wy_hat + sigmaY;
-    }
-  }
-  return wy_hat;
-}
+
 
 // [[Rcpp::export]]
 SEXP MatMult(Eigen::MatrixXd A, Eigen::MatrixXd B){

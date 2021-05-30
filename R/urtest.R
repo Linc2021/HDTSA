@@ -1,12 +1,12 @@
 #' Testing for unit roots based on sample autocovariances
 #' 
-#' The new test is based on the fact that the sample autocovariance function (ACF) converges to the finite population
+#' The new test (Chang Chen and Yao, 2019) is based on the fact that the sample autocovariance function (ACF) converges to the finite population
 #' ACF for an I(0) process while it diverges to infinity with probability approaching one for
 #' a process with unit-roots. Therefore the new test is defined as: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2,} 
 #' then we rejects the null hypothesis for the large
 #' values of the sample ACF.
 #' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, one dimensional time series used for testing.
-#' @param lagk.vec Lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).
+#' @param lagk.vec Time lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).
 #' @param con_vec Constant vector for \eqn{c_\kappa}, if missing, the default value we use 0.55.
 #' @param alpha Significance level. Default is 0.05.
 

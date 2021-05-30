@@ -29,10 +29,6 @@ thresh_C <- function(sigmaY, Y, Y_mean, k, n, p, deltafinal) {
     .Call('_HDTSA_thresh_C', PACKAGE = 'HDTSA', sigmaY, Y, Y_mean, k, n, p, deltafinal)
 }
 
-vol_wy <- function(Y, Y_mean, k0, n, p) {
-    .Call('_HDTSA_vol_wy', PACKAGE = 'HDTSA', Y, Y_mean, k0, n, p)
-}
-
 MatMult <- function(A, B) {
     .Call('_HDTSA_MatMult', PACKAGE = 'HDTSA', A, B)
 }

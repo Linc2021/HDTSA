@@ -1,32 +1,35 @@
 #' @name WN_test
 #' @title Testing for white noise hypothesis in high dimension
 #' @description
-#' \code{WN_test()} is a new omnibus test for vector white noise using the maximum 
+#' \code{WN_test()} is a new omnibus test (Chang Yao and Zhou, 2017) for vector white noise using the maximum 
 #' absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 #' Based on an approximation by the \eqn{L_\infty} norm of a normal random vector, the critical 
 #' value of the test can be evaluated by bootstrapping from a multivariate normal distribution.
-#' @param X \eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, a \eqn{n\times p} data matrix used testing whether the data are white noise process.
-#' @param lag.k Time lag \eqn{K}, a positive integer, used to calculate test statistic. Default is \code{lag.k} \eqn{=2}.
-#' @param B Bootstrap times for generate vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}
-#' @param pre Logical which determines whether performs preprocessing procedure on data matrix \eqn{{\bf X}}. The segment procedure will performs to data when parameter \code{just4pre} in \code{\link{PCA4_TS}} set to true. The 
+#' @param X \eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, an \eqn{n\times p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the dimension of \eqn{{\bf x}_t}.
+#' @param lag.k Time lag \eqn{K}, a positive integer, used to calculate test
+#'   statistic. Default is \code{lag.k} \eqn{=2}.
+#' @param B Bootstrap times for generate vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}.
+#' @param pre Logical value which determines whether performs preprocessing procedure on data matrix \code{X}. If \code{TRUE}, then segment procedure will performs to data \code{X}. The 
 #' three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
-#' those in \code{\link{PCA4_TS}}. This makes the maximum correlation greater, and therefore the test is more powerful when \eqn{p} is large or moderately large.
+#' those in \code{\link{PCA4_TS}}.
 #' @param alpha Significance level used for testing. Default is 0.05.
-#' @param kernel.type An option for choosing an optimal symmetric kernel type, for example \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is \code{kernel.type='QS'}.          
+#' @param kernel.type String, an option for choosing an optimal symmetric kernel
+#'   type, for example, \code{'QS'} (Quadratic Spectral), \code{'Par'} (Parzen), \code{'Bart'} (Bartlett), see Andrews (1991) for more information. Default option is
+#'   \code{kernel.type = 'QS'}.         
 #' @param k0 A positive integer specified to calculate \eqn{\widehat{{\bf W}}_y}. See parameter \code{lag.k} in \code{\link{PCA4_TS}} for more information.
 #' @param thresh Logical. It determines whether to perform the threshold method to estimate \eqn{\widehat{{\bf W}}_y}. See parameter \code{thresh} in \code{\link{PCA4_TS}} for more information.
-#' @param tuning.vec The value of thresholding parameter \eqn{\lambda}. See parameter \code{tuning.vec} in \code{\link{PCA4_TS}} for more information.
+#' @param tuning.vec The value of thresholding tuning parameter \eqn{\lambda}. See parameter \code{tuning.vec} in \code{\link{PCA4_TS}} for more information.
 #' @seealso \code{\link{PCA4_TS}}
 #' 
 #' @return An object of class "WN_test" is a list containing the following components:
 #'
 #' \item{reject}{Logical value which represents whether the data are white noise process.}
-#' \item{p.value}{Numerical value which represents the \eqn{p}-value obtained in the bootstrap sampling process}
+#' \item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}.}
 #' @references Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for high-dimensional white noise using maximum cross-correlations}. Biometrika, Vol. 104, pp. 111–127.
 #' 
 #'             Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094–2124.
 #'
-#'             Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association 106: 672-684.
+#'             Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association Vol. 106, pp. 672--684.
 #'            
 #' @examples 
 #' n <- 200

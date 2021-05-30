@@ -9,7 +9,7 @@ ur.test(Y, lagk.vec = lagk.vec, con_vec = con_vec, alpha = alpha)
 \arguments{
 \item{Y}{\eqn{Y = \{y_1, \dots , y_n \}}, one dimensional time series used for testing.}
 
-\item{lagk.vec}{Lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).}
+\item{lagk.vec}{Time lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).}
 
 \item{con_vec}{Constant vector for \eqn{c_\kappa}, if missing, the default value we use 0.55.}
 
@@ -21,7 +21,7 @@ A dataframe containing the following components:
 \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'} means we do not reject the null hypothesis.}
 }
 \description{
-The new test is based on the fact that the sample autocovariance function (ACF) converges to the finite population
+The new test (Chang Chen and Yao, 2019) is based on the fact that the sample autocovariance function (ACF) converges to the finite population
 ACF for an I(0) process while it diverges to infinity with probability approaching one for
 a process with unit-roots. Therefore the new test is defined as: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2,} 
 then we rejects the null hypothesis for the large

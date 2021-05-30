@@ -116,21 +116,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// vol_wy
-Eigen::MatrixXd vol_wy(Eigen::MatrixXd Y, Eigen::VectorXd Y_mean, int k0, int n, int p);
-RcppExport SEXP _HDTSA_vol_wy(SEXP YSEXP, SEXP Y_meanSEXP, SEXP k0SEXP, SEXP nSEXP, SEXP pSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type Y_mean(Y_meanSEXP);
-    Rcpp::traits::input_parameter< int >::type k0(k0SEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(vol_wy(Y, Y_mean, k0, n, p));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MatMult
 SEXP MatMult(Eigen::MatrixXd A, Eigen::MatrixXd B);
 RcppExport SEXP _HDTSA_MatMult(SEXP ASEXP, SEXP BSEXP) {
@@ -230,7 +215,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_HDTSA_MartG_bootc", (DL_FUNC) &_HDTSA_MartG_bootc, 8},
     {"_HDTSA_sigmak", (DL_FUNC) &_HDTSA_sigmak, 4},
     {"_HDTSA_thresh_C", (DL_FUNC) &_HDTSA_thresh_C, 7},
-    {"_HDTSA_vol_wy", (DL_FUNC) &_HDTSA_vol_wy, 5},
     {"_HDTSA_MatMult", (DL_FUNC) &_HDTSA_MatMult, 2},
     {"_HDTSA_WN_teststatC", (DL_FUNC) &_HDTSA_WN_teststatC, 4},
     {"_HDTSA_WN_ftC", (DL_FUNC) &_HDTSA_WN_ftC, 5},

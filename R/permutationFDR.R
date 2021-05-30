@@ -6,10 +6,10 @@
 #' @import Rcpp 
 #' @import RcppEigen
 #' 
-permutationFDR <- function(X,isvol=FALSE, Beta, m=NULL) {
+permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   # X: nxp data matrix
   # m: maximum lag used in multipe test for each pair components
-  # Beta: the error rate in FDR
+  # beta: the error rate in FDR
   # R: upper bound of AR-order in prewhitenning
 
   ## Step 0: prewhiten each columns of X
@@ -18,27 +18,17 @@ permutationFDR <- function(X,isvol=FALSE, Beta, m=NULL) {
   p=ncol(X)
   n=nrow(X)
 
-  if(!isvol)
+  if(prewhiten)
   {
-  R=5
-  arOrder=rep(0, p)
-  for(j in 1:p) { t=ar(X[,j], order.max=R); X[,j]=t$resid; arOrder[j]=t$order }
-  j=max(arOrder)
-  X=X[(j+1):n,]; n=n-j
-  }
-  if(isvol)
-  {
-    ## Step 0: prewhiten each columns of X
-    nanum=rep(0,p)
-    for(j in 1:p) { options( warn = -1 )
-                    t=tseries::garch(X[,j], order = c(1,1),trace=FALSE)
-                    X[,j]=t$residuals
-                    a=X[,j]
-                    nanum[j]=length(a[is.na(X[,j])])
-
-    }
-
-    X=X[(max(nanum)+1):n,]
+    R <- 5
+    arOrder=rep(0, p)
+    for(j in 1:p) { 
+      t=ar(X[,j], order.max=R)
+      X[,j]=t$resid
+      arOrder[j]=t$order }
+    j=max(arOrder)
+    X=X[(j+1):n,]
+    n=n-j
   }
   ## Step 1: for each 1\le j < i \le p, calculate P-value for the multiple test for H_0
   sqn=sqrt(n); m2=2*m+1
@@ -63,7 +53,7 @@ permutationFDR <- function(X,isvol=FALSE, Beta, m=NULL) {
   Ms=sort.int(M, index.return=T)
       # Ms$x are sorted P-values in ascending order, Ms$ix are the corresponding indices in M
   # cat(Ms$x, "\n\n")
-  M=(Ms$x)*p0/Beta
+  M=(Ms$x)*p0/beta
   # cat(M, "\n\n")
   Nn=1:p0
   r=Nn[M<=Nn]; j=length(r); if(j==0) stop("All component series are linearly independent")
@@ -125,7 +115,7 @@ permutationFDR <- function(X,isvol=FALSE, Beta, m=NULL) {
   cat("No of connected pairs:", r, "\n")
   #cat("Prewhited data are saved in the file Xpre.dat","\n\n")
   #write.table(X, "Xpre.dat", row.names=F, col.names=F)
-  output=list(NoGroups=K, Nos_of_Members=N[N>0], Groups=Group[,1:K], Pvalues=Ms$x, NoConnectedPairs=r,Xpre=X)
+  output=list(NoGroups=K, No_of_Members=N[N>0], Groups=Group[,1:K], Pvalues=Ms$x, NoConnectedPairs=r,Xpre=X)
   }
 }
 

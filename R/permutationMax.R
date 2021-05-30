@@ -7,17 +7,8 @@
 #' @import RcppEigen
 
 
-## Output1: $NoGroups -- No. of groups with at least two components series
-## Output2: $Nos_of_Members -- number of members in each of groups
-## 				     with at least two members
-## Output3: $Groups -- indices of components in each of groups with at least two members
-## Output4: $maxcorr -- maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order
-## Output5: $corrRatio -- ratios of succesive values from $maxCorr
-## Output6: $NoConnectedPairs -- No. connected Pairs
-#
-#
 
-permutationMax <- function(X, isvol=FALSE, m=NULL) {
+permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
   #
   # X: nxp data matrix
   # m: maximum lag used in calculating cross correlation coefficients
@@ -27,7 +18,7 @@ permutationMax <- function(X, isvol=FALSE, m=NULL) {
   
   p=ncol(X) 
   n=nrow(X)
-  if(!isvol)
+  if(prewhiten)
   {
     R <- 5
     arOrder <- rep(0, p)
@@ -37,20 +28,7 @@ permutationMax <- function(X, isvol=FALSE, m=NULL) {
       }
     j <- max(arOrder)
     X <- X[(j+1):n, ]
-  }
-  if(isvol)
-  {
-    ## Step 0: prewhiten each columns of X
-    nanum=rep(0,p)
-    for(j in 1:p) {options( warn = -1 )
-                   t=tseries::garch(X[,j], order = c(1,1),trace=FALSE)
-                    X[,j]=t$residuals
-                    a=X[,j]
-                    nanum[j]=length(a[is.na(X[,j])])
-
-    }
-
-    X=X[(max(nanum)+1):n,]
+    n=n-j
   }
   ## Step 1: calculate max_k |\rho(k)| for each pair components
 
@@ -130,7 +108,7 @@ permutationMax <- function(X, isvol=FALSE, m=NULL) {
   cat("No of connected pairs:", r, "\n")
   #cat("Prewhited data are saved in the file Xpre.dat","\n\n")
   #write.table(X, "Xpre.dat", row.names=F, col.names=F)
-  output=list(NoGroups=K, Nos_of_Members=N[N>0], Groups=Group[,1:K], maxcorr=Ms$x, corrRatio=ratio,NoConnectedPairs=r,Xpre=X)
+  output=list(NoGroups=K, No_of_Members=N[N>0], Groups=Group[,1:K], maxcorr=Ms$x, corrRatio=ratio,NoConnectedPairs=r,Xpre=X)
   return(output)
 }
 
