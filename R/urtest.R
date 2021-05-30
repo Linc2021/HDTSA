@@ -1,12 +1,13 @@
-#' A Test for Unit Roots Based on Sample Autocovariances
+#' Testing for unit roots based on sample autocovariances
 #' 
 #' The new test is based on the fact that the sample autocovariance function (ACF) converges to the finite population
 #' ACF for an I(0) process while it diverges to infinity with probability approaching one for
-#' a process with unit-roots. Therefore the new test rejects the null hypothesis for the large
+#' a process with unit-roots. Therefore the new test is defined as: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2,} 
+#' then we rejects the null hypothesis for the large
 #' values of the sample ACF.
-#' @param Z Input one dimensional time series
+#' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, one dimensional time series used for testing.
 #' @param lagk.vec Lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).
-#' @param con_vec Constant vector for ck, if missing, the default value we use 0.55.
+#' @param con_vec Constant vector for \eqn{c_\kappa}, if missing, the default value we use 0.55.
 #' @param alpha Significance level. Default is 0.05.
 
 #' @return A dataframe containing the following components:
@@ -25,14 +26,14 @@
 #' @import RcppEigen
 #' @examples
 #' N=100
-#' Z=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
+#' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
 #' con_vec=c(0.45,0.55,0.65)
 #' lagk.vec=c(0,1,2)
-#' ur.test(Z,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
-#' ur.test(Z,alpha=0.05)
+#' ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
+#' ur.test(Y,alpha=0.05)
 
 
-ur.test <- function(Z, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
+ur.test <- function(Y, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
   
   args = as.list(match.call())
   if(is.null(args$lagk.vec)){
@@ -53,7 +54,7 @@ ur.test <- function(Z, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
     K0=lagk.vec[kk]+1                       #eg. K0=1, gamma(0)
     nm=c(nm,paste("K0=", K0-1, sep=""))
     
-    n=length(Z)                           ## sample size
+    n=length(Y)                           ## sample size
     N=floor(n/2)
     N1=2*N-K0
     
@@ -64,7 +65,7 @@ ur.test <- function(Z, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
       }
     }
     
-    Y=Z;  DY=diff(Y) ## diffential Z
+    Y=Y;  DY=diff(Y) ## diffential Y
     
     au_Y =drop(acf(Y,lag.max =K0+1, type = c("covariance"),plot = FALSE)$acf)   ## gamma(Y)
     au_DY=drop(acf(DY,lag.max=K0+1, type = c("covariance"),plot = FALSE)$acf)   ## gamma(X)
@@ -75,7 +76,7 @@ ur.test <- function(Z, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
     
     
     ## esttimate rho
-    Z2=Z[1:(n-1)];  Z1=Z[2:n]
+    Z2=Y[1:(n-1)];  Z1=Y[2:n]
     DZ2=diff(Z2);   DZ1=diff(Z1)
     rho_hat=lm(DZ2~DZ1)$coefficients[2]; bb=1+rho_hat         ## rho_hat
     

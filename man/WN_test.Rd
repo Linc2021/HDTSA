@@ -17,40 +17,35 @@ WN_test(
 )
 }
 \arguments{
-\item{X}{A \eqn{n\times p} data matrix used testing whether the data are white noise process.}
+\item{X}{\eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, a \eqn{n\times p} data matrix used testing whether the data are white noise process.}
 
-\item{lag.k}{A time lag which is a positive integer. Default is \code{lag.k} \eqn{=2}.}
+\item{lag.k}{Time lag \eqn{K}, a positive integer, used to calculate test statistic. Default is \code{lag.k} \eqn{=2}.}
 
 \item{B}{Bootstrap times for generate vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}}
 
 \item{kernel.type}{An option for choosing an optimal symmetric kernel type, for example \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is \code{kernel.type='QS'}.}
 
-\item{pre}{\code{Logic} which determines whether performs preprocessing procedure on data. When it 
-is set to true, only segment procedure will performs to data with \code{just4pre} set to true. The 
+\item{pre}{Logical which determines whether performs preprocessing procedure on data matrix \eqn{{\bf X}}. The segment procedure will performs to data when parameter \code{just4pre} in \code{\link{PCA4_TS}} set to true. The 
 three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
-those in \code{PCA4_TS()}.}
+those in \code{\link{PCA4_TS}}. This makes the maximum correlation greater, and therefore the test is more powerful when \eqn{p} is large or moderately large.}
 
 \item{alpha}{Significance level used for testing. Default is 0.05.}
 
-\item{k0}{A positive integer specified to calculate \eqn{\hat{\bf W}_y} in \code{PCA4_TS()}. See (2.5) in Chang et al. (2018).}
+\item{k0}{A positive integer specified to calculate \eqn{\widehat{{\bf W}}_y}. See parameter \code{lag.k} in \code{\link{PCA4_TS}} for more information.}
 
-\item{thresh}{Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-thresholding method will be applied first to estimate \eqn{{\bf W}_y}, see (3.4) and (3.5) in Chang et al. (2018).}
+\item{thresh}{Logical. It determines whether to perform the threshold method to estimate \eqn{\widehat{{\bf W}}_y}. See parameter \code{thresh} in \code{\link{PCA4_TS}} for more information.}
 
-\item{tuning.vec}{The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
-\deqn{ u = \lambda {(log p/n)^{1/2}.}}
-  Default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
-  to choose the best tuning parameter.}
+\item{tuning.vec}{The value of thresholding parameter \eqn{\lambda}. See parameter \code{tuning.vec} in \code{\link{PCA4_TS}} for more information.}
 }
 \value{
 An object of class "WN_test" is a list containing the following components:
 
-\item{reject}{\code{Logic} value which represents whether the data are white noise process.}
-\item{p.value}{It represents the \eqn{p} value obtained in the bootstrap sampling process}
+\item{reject}{Logical value which represents whether the data are white noise process.}
+\item{p.value}{Numerical value which represents the \eqn{p}-value obtained in the bootstrap sampling process}
 }
 \description{
 \code{WN_test()} is a new omnibus test for vector white noise using the maximum 
-absolute auto-correlations and cross-correlations of the component series. 
+absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS.} }
 Based on an approximation by the \eqn{L_\infty} norm of a normal random vector, the critical 
 value of the test can be evaluated by bootstrapping from a multivariate normal distribution.
 }

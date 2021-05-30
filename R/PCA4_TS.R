@@ -3,52 +3,52 @@
 #' @description
 #' \code{PCA4_TS()} seek for a contemporaneous linear transformation for
 #' a multivariate time series such that the transformed series is segmented
-#' into several lower-dimensional subseries, and those subseries are
-#' uncorrelated with each other both contemporaneously and serially, then permutation step can
-#' grouping the components of a multivariate series X into \eqn{q} groups.
+#' into several lower-dimensional subseries: \deqn{{\bf y}_t={\bf Ax}_t,} where \eqn{{\bf x}_t} is an unobservable \eqn{p \times 1} weakly stationary time series consisting of \eqn{q\ (\geq 1)} both contemporaneously and serially
+#'  uncorrelated subseries. then permutation step can grouping the components of a multivariate series \eqn{{\bf x}_t} into \eqn{q} groups.
 #'
 #'
 #'
 #' @details
-#'  Before segment step, the time series need to be normalized then the variance of \eqn{Y}_{t} will be \eqn{I}_{p}. 
-#'  When \eqn{p} is large (\eqn{>n}),it is necessary to use the package \code{clime}. When \eqn{p} is large (\eqn{p=O(n^{1/2}})), it is necessary to use the thresholding method, see more information in Chang et al. (2018).
+#'  Before segment step, the time series \eqn{{\bf y}_t} need to be normalized then the variance of \eqn{{\bf y}_t} will be \eqn{{\bf I}_p}. 
+#'  When \eqn{p} is large (\eqn{>n}), it is necessary to use the package \pkg{clime} to estimate the precision matrix \eqn{\widehat{{\bf V}}^{-1}} where \eqn{\widehat{{\bf V}}} is a consistent estimator for \eqn{\mathrm{Var}({\bf y}_t)}. In segment step, when \eqn{p} is large (\eqn{p=O(n^{1/2}})), it is recommended to use the thresholding method to calculate \eqn{\widehat{{\bf W}}_y}, see more information in Chang et al. (2018).
 #'
 #'
 #'
 #'
-#' @param Y  A data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
-#' @param lag.k  A positive integer specified to calculate \eqn{\hat{\bf W}_y}. See (2.5) in Chang et al. (2018).
+#' @param Y  \eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of the time series.
+#' @param lag.k  Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{\widehat{{\bf W}}_y}: \deqn{\widehat{\mathbf{W}}_y\ =\ \sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'=\mathbf{I}_p+\sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)', }
+#'               where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ {\bf y}_t} at lag \eqn{k}. See (2.5) in Chang et al. (2018).
 #' @param thresh   Logical. If \code{FALSE} (the default), no thresholding will be applied. If \code{TRUE}, a
-#'                 thresholding method will be applied first to estimate \eqn{{\bf W}_y}, see (3.4) and (3.5) in Chang et al. (2018).
+#'                 thresholding method will be applied first to estimate \eqn{\widehat{{\bf W}}_y}, see (3.3) and (3.5) in Chang et al. (2018).
 #' @param tuning.vec  The value of thresholding parameter \eqn{\lambda}. The thresholding level is specified by
-#'                  \deqn{ u = \lambda {(log p/n)}^{1/2}.}
-#'                    Default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
-#'                    to choose the best tuning parameter.
+#'                  \deqn{ u = \lambda {(log p/n)}^{1/2},}
+#'                    where default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
+#'                    to choose the best tuning parameter \eqn{\lambda}.
 #'
 #' @param K   The number of folders used in the cross validation, the default is 5. It is required when \code{thresh} is \code{TRUE}.
 #' @param isvol Logical. If \code{FALSE} (the default), then prewhiten each series by fitting a univariate AR model with
 #'          the order between 0 and 5 determined by AIC. If \code{TRUE}, then prewhiten each volatility process using GARCH(1,1) model.
-#' @param permutation The method of permutation procdure,the option is \code{'max'} or \code{'fdr'},default option is \code{'max'}
-#' @param m A positive constant used to calculate the maximum cross correlation over the lags between \eqn{-m} and \eqn{m}. If \eqn{m} is not specified, the default constant \eqn{10*log10(n/p)}
+#' @param permutation The method of permutation procdure, where option is \code{'max'} or \code{'fdr'}, default is \code{permutation='max'}
+#' @param m A positive constant used to calculate the maximum cross correlation over the lags between \eqn{-m} and \eqn{m}. If \eqn{m} is not specified, then default constant \eqn{10*log10(n/p)}
 #'          will be used.
 #' @param Beta The error rate in FDR.
-#' @param just4pre Logical. If \code{TRUE}, then only segment procdure will be used, If \code{FALSE} (the default), the nomal procdure will be used.
+#' @param just4pre Logical. If \code{TRUE}, then only segment procdure will be used, if \code{FALSE} (the default), then the nomal procdure (including permutation step) will be used. See \code{\link{WN_test}} for more application
 #' @export
-#' @return The first step of segment containing the following components:
-#' \item{B}{The \eqn{p*p} transformation matrix such that \eqn{x_t = By_t}}
+#' @return The first step output of segment containing the following components:
+#' \item{B}{The \eqn{p\times p} transformation matrix such that \eqn{{\bf x}_t = {\bf By}_t}}
 #' \item{X}{The transformed series with \eqn{n} rows and \eqn{p} columns}
-#' @return  Output of the second step is a list containing the following components:
+#' @return  The second step output is a list containing the following components:
 #' \item{NoGroups}{Number of groups with at least two components series}
 #' \item{Nos_of_Members}{Number of members in each of groups with at least two members}
 #' \item{Groups}{Indices of components in each of groups with at least two members}
 #' \item{maxcorr}{Maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order if \code{permutation = 'max'}}
 #' \item{corrRatio}{Ratios of successive values from maxcorr if \code{permutation= 'max'}}
-#' \item{Pvalues}{Pvalue for multiple test H_0 for each of \eqn{p(p-1)/2} pairs in ascending order if \code{permutation = 'fdr'}}
+#' \item{Pvalues}{Pvalue for multiple test: \deqn{H_0:\rho_{i,j}(h)=0\ \mathrm{\ for\ any}\ h\ =\ 0,\pm 1 ,\pm2,\dots,\pm m} for each of \eqn{p(p-1)/2} pairs in ascending order if \code{permutation = 'fdr'}, see more information in Chang et al. (2018).}
 #' \item{NoConnectPairs}{Number of connected pairs}
 #' \item{Xpre}{The prewhitened data with \eqn{n-R} rows and \eqn{p} columns}
 #'
 #' @note The first step is transform the time series. It calculate linear transformation of the \eqn{p}-variate time series (or volatility processes) \eqn{y_t} such that the transformed series \eqn{x_t=By_t} is segmented into several
-#' lower-dimensional subseries, and those subseries are uncorrelated with each other both contemporaneously and serially.
+#' lower-dimensional subseries.
 #' The second step is grouping the transformed time series, The permutation is determined by grouping the components of a multivariate series X into \eqn{q} groups, where \eqn{q} and the cardinal numbers of those groups are also unknown.
 #'
 #'
@@ -106,7 +106,7 @@
 #' # The cross correlogram of z_t shows 3-2-1 block pattern  
 #' acfZ=acf(Z)
 #'       
-#' ## Example 2 (Example 6 of Chang et al.(2014)).
+#' ## Example 2 (Example 6 of Chang et al.(2018)).
 #' ## p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.    
 #'
 #' p=20;n=3000

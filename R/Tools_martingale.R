@@ -1,22 +1,22 @@
 #' @name MartG_test
 #' @title Testing for martingale difference hypothesis in high dimension
 #' @description
-#' \code{MartG_test()} implements a new test for the martingale difference hypothesis for high-dimensional time series. 
+#' \code{MartG_test()} implements a new test for the martingale difference hypothesis for high-dimensional time series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ a\ MDS.} }
 #' The test is built on the sup-norm of a matrix-valued sample nonlinear dependencemetric at a finite and possibly growing number of lags. 
 #' To the best of knowledge, this is the first valid test for the martingale difference hypothesis that allows for large dimension 
 #' and captures nonlinear serial dependence. Besides, the test is robust to conditional moments of unknown forms and panel dependence of 
 #' unknown magnitude.
-#' @param X An \eqn{n\times p} data matrix used in testing whether the series are martingale difference process.
-#' @param lag.k A time lag which is a positive integer. Default is \code{lag.k} \eqn{=2}.
-#' @param B Bootstrap times for generating vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}
-#' @param type String, a map is chosen by the \proglang{R} users, such as the default option is \code{'Linear'} means linear identity map. Also including \code{Quad} and \code{ln}
+#' @param X \eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, an \eqn{n\times p} sample matrix used in testing whether the series \eqn{{\bf x}_t} are martingale difference process.
+#' @param lag.k Time lag \eqn{K}, a positive integer, used to calculate test statistic. Default is \code{lag.k} \eqn{=2}.
+#' @param B Bootstrap times for generating vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}.
+#' @param type String, a map is chosen by the \proglang{R} users, such as the default option is \code{'Linear'} means linear identity map. Also including \code{'Quad'} and \code{'ln'}
 #' @param alpha The significance level used for testing. Default is 0.05.
-#' @param kernel.type String, an option for choosing an optimal symmetric kernel type, for example, \code{QS}, \code{Par}, \code{Bart}. Default is \code{kernel.type ='QS'}.    
+#' @param kernel.type String, an option for choosing an optimal symmetric kernel type, for example, \code{'QS'}, \code{'Par'}, \code{'Bart'}. Default is \code{kernel.type ='QS'}.    
 
 #' @return An object of class "MartG_test" is a list containing the following components:
 #'
-#' \item{reject}{\code{Logic} value which represents whether the process are martingale difference process. }
-#' \item{p.value}{Numerical type which represents the \eqn{p}-value obtained in the bootstrap sampling process}
+#' \item{reject}{Logical value which represents whether the process are martingale difference process. }
+#' \item{p.value}{Numerical value which represents the \eqn{p}-value obtained in the bootstrap sampling process}
 #' @references Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the martingale difference hypothesis in high dimension}.
 #' @examples 
 #' n <- 200
@@ -34,14 +34,14 @@
 
 
 MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad','In'), 
-                      alpha=0.05, kernel.type=c('QS','BR','BT')) {
+                      alpha=0.05, kernel.type=c('QS','Par','Bart')) {
   
   type <- match.arg(type)
   kernel.type <- match.arg(kernel.type)
   ken_type <- switch(kernel.type,
                         "QS" = 1,
-                        "BR" = 2,
-                        "BT" = 3)
+                        "Par" = 2,
+                        "Bart" = 3)
   
   n <- nrow(X)
   p <- ncol(X)

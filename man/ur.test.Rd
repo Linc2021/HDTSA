@@ -2,16 +2,16 @@
 % Please edit documentation in R/urtest.R
 \name{ur.test}
 \alias{ur.test}
-\title{A Test for Unit Roots Based on Sample Autocovariances}
+\title{Testing for unit roots based on sample autocovariances}
 \usage{
-ur.test(Z, lagk.vec = lagk.vec, con_vec = con_vec, alpha = alpha)
+ur.test(Y, lagk.vec = lagk.vec, con_vec = con_vec, alpha = alpha)
 }
 \arguments{
-\item{Z}{Input one dimensional time series}
+\item{Y}{\eqn{Y = \{y_1, \dots , y_n \}}, one dimensional time series used for testing.}
 
 \item{lagk.vec}{Lag K vector, if missing, the default value we choose lagk.vec=c(0,1,2,3,4).}
 
-\item{con_vec}{Constant vector for ck, if missing, the default value we use 0.55.}
+\item{con_vec}{Constant vector for \eqn{c_\kappa}, if missing, the default value we use 0.55.}
 
 \item{alpha}{Significance level. Default is 0.05.}
 }
@@ -23,16 +23,17 @@ A dataframe containing the following components:
 \description{
 The new test is based on the fact that the sample autocovariance function (ACF) converges to the finite population
 ACF for an I(0) process while it diverges to infinity with probability approaching one for
-a process with unit-roots. Therefore the new test rejects the null hypothesis for the large
+a process with unit-roots. Therefore the new test is defined as: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2,} 
+then we rejects the null hypothesis for the large
 values of the sample ACF.
 }
 \examples{
 N=100
-Z=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
+Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
 con_vec=c(0.45,0.55,0.65)
 lagk.vec=c(0,1,2)
-ur.test(Z,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
-ur.test(Z,alpha=0.05)
+ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
+ur.test(Y,alpha=0.05)
 }
 \references{
 Chang, J., Cheng, G. & Yao, Q. (2019).  \emph{A power one test for unit roots based on sample autocovariances}. Available at \url{https://arxiv.org/abs/2006.07551}
