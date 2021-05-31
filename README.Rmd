@@ -1,0 +1,61 @@
+---
+title: "An introduction to `HDTSA`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An introduction to BeSS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{HCmodelSets}
+---
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  warning = F,
+  message = F
+)
+```
+
+# HDTSA
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of HDTSA is to ...
+
+## Installation
+
+You can install the released version of HDTSA from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("HDTSA")
+```
+
+Or try the development version on GitHub:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("Linc2021/HDTSA")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(HDTSA)
+N=100
+Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
+con_vec=c(0.45,0.55,0.65)
+lagk.vec=c(0,1,2)
+ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
+ur.test(Y,alpha=0.05)
+```
+
+## Bug report
+
+Please send an email to Chen Lin(linchen@smail.swufe.edu.cn).

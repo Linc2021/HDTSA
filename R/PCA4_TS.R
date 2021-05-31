@@ -79,7 +79,7 @@
 #' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
 #' res1=PCA4_TS(Y, lag.k=5,permutation = "fdr", beta=10^(-8))
 #' # The transformed series z_t 
-#' Z <- res$X 
+#' Z <- res$Z
 #' # Plot the cross correlogram of z_t and y_t
 #' Y <- data.frame(Y);Z=data.frame(Z)
 #' names(Y) <- c("Y1","Y2","Y3","Y4","Y5","Y6")
@@ -111,7 +111,7 @@
 #' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
 #' res1 <- PCA4_TS(Y, lag.k=5,permutation = "fdr",beta=10^(-200))
 #' # The transformed series z_t 
-#' Z <- res$X 
+#' Z <- res$Z
 #' # Plot the cross correlogram of x_t and y_t
 #' Y <- data.frame(Y);Z <- data.frame(Z)
 #' namesY=NULL;namesZ=NULL
