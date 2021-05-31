@@ -11,10 +11,10 @@ HDSReg(Y, Z, D = NULL, lag.k = 1, twostep = FALSE)
 
 \item{Z}{\eqn{{\bf Z} = \{{\bf z}_1, \dots , {\bf z}_n \}'}, a data matrix representing some observed regressors with \eqn{n} rows and \eqn{m} columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of \eqn{{\bf z}_t}.}
 
-\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{{\bf D}}. If \code{D = NULL} (the default), the program will estimate \eqn{{\bf D}}.}
+\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\widetilde{\bf D}}. If \code{D = NULL} (the default), \eqn{\widetilde{\bf D}} is selected as the estimation of \eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then \eqn{\widetilde{\bf D}={\bf D}}.}
 
-\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_{\boldsymbol {\eta}}(k)\widehat{\mathbf{\Sigma}}_{\boldsymbol {\eta}}(k)', }
-where \eqn{\widehat{\bf \Sigma}_{\boldsymbol {\eta}}(k)} is the sample autocovariance of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - {\bf Dz}_t} at lag \eqn{k}.}
+\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_{\eta}(k)\widehat{\mathbf{\Sigma}}_{\eta}(k)', }
+where \eqn{\widehat{\bf \Sigma}_{\eta}(k)} is the sample autocovariance of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - {\bf Dz}_t} at lag \eqn{k}.}
 
 \item{twostep}{Logical. If \code{FALSE} (the default), then standard procedures (see \code{\link{factors}}) will be implemented to estimate \eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation procedure (see \code{\link{factors}}) will be implemented to estimate \eqn{r} and \eqn{{\bf A}}.}
 }
@@ -30,7 +30,7 @@ An object of class "HDSReg" is a list containing the following components:
 a linear combination of some latent and serially correlated factors, and a vector white noise:\deqn{{\bf y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf y}_t} 
 and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and \eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent factor process,
  \eqn{{\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and \eqn{{\boldsymbol{\epsilon}}_t} 
- is uncorrelated with \eqn{({\bf z}_t, {\bf x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and \eqn{{\bf A}} is an unknown factor loading matrix. This function aims to estimate the unknown 
+ is uncorrelated with \eqn{({\bf z}_t, {\bf x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and \eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in Chang, Guo and Yao (2015) aims to estimate the unknown 
  regression coefficient matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading matrix \eqn{{\bf A}}.
 }
 \examples{

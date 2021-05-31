@@ -13,8 +13,8 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   # R: upper bound of AR-order in prewhitenning
 
   ## Step 0: prewhiten each columns of X
-  if(is.null(m)) m <- 10*log10(n/p)
-  #if(is.null(Beta)) Beta <- 10^(-8)
+  if(is.null(m)) m <- 10
+  #if(is.null(beta)) beta <- 10^(-8)
   p=ncol(X)
   n=nrow(X)
 
@@ -107,14 +107,20 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   if(K==0)
   output=list(NoGroups=0)
   else {
-  Group=mat.or.vec(p,K+1)
-  k=1
-  for(j in 1:(p-1)) { if(Index[j]==1) { Group[,k]=G[,j]; k=k+1} }
-  cat("\n"); cat("No of groups with more than one members:", K, "\n")
-  cat("Nos of members in those groups:", N[N>0], "\n")
-  cat("No of connected pairs:", r, "\n")
-  #cat("Prewhited data are saved in the file Xpre.dat","\n\n")
-  #write.table(X, "Xpre.dat", row.names=F, col.names=F)
+    Group=matrix(0,p,K)
+    k=1
+    for(j in 1:(p-1)) { if(Index[j]==1) { Group[,k]=G[,j]; k=k+1} }
+    one_mem = which(!(c(1:p) %in%  Group))
+    N2 = length(one_mem)
+    if(N2>0)Group = cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:sum(Group[,1]>0),]
+    else Group = as.matrix(Group[1:sum(Group[,1]>0),])
+    q_block = K+N2
+    Nosmem = c(N[N>0],rep(1,N2))
+    cat("\n"); cat("Number of groups", q_block, "\n")
+    cat("Number of members in those groups:", Nosmem, "\n")
+    for(i in c(1:q_block)){
+      cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
+    }
   output=list(NoGroups=K, No_of_Members=N[N>0], Groups=Group[,1:K], Pvalues=Ms$x, NoConnectedPairs=r,Xpre=X)
   }
 }

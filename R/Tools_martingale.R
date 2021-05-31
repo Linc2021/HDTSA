@@ -19,16 +19,16 @@
 #'   distribution. Default is \code{B} \eqn{=2000}.
 #' @param type String, a map is chosen by the \proglang{R} users, such as the
 #'   default option is \code{'Linear'} means linear identity map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including
-#'   another option \code{'Quad'} (Both linear and quadratic terms \eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}).
+#'   another option \code{'Quad'} (Both linear and quadratic terms \eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}). See Section 2.1 in Chang, Jiang and Shao (2021) for more information.
 #' @param alpha The significance level used for testing. Default is 0.05.
 #' @param kernel.type String, an option for choosing an optimal symmetric kernel
-#'   type, for example, \code{'QS'} (Quadratic Spectral), \code{'Par'} (Parzen), \code{'Bart'} (Bartlett), see Andrews (1991) for more information. Default option is
+#'   type, for example, \code{'QS'} (Quadratic Spectral kernel), \code{'Par'} (Parzen kernel) and \code{'Bart'} (Bartlett kernel), see Andrews (1991) for more information. Default option is
 #'   \code{kernel.type = 'QS'}.
 
 #' @return An object of class "MartG_test" is a list containing the following components:
 #'
-#' \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null hypothesis, otherwise it means not rejecting the null hypothesis }
-#' \item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}}
+#' \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null hypothesis, otherwise it means not rejecting the null hypothesis. }
+#' \item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}.}
 #' @references Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the martingale difference hypothesis in high dimension}.
 #' @examples 
 #' n <- 200
@@ -45,7 +45,7 @@
 #' @export
 
 
-MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad','In'), 
+MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad'), 
                       alpha=0.05, kernel.type=c('QS','Par','Bart')) {
   
   type <- match.arg(type)
@@ -69,18 +69,18 @@ MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad','In'),
     Xj <- cbind(X,X^2)
     d <- ncol(Xj)
   }
-  if (type == 'In'){
-    InX <- matrix(NA,nrow = n, ncol = p*(p-1)/2)
-    flag <- 1
-    for (i  in c(1:(p-1))) {
-      for (j in c((i+1):p)) {
-        InX[,flag] <- X[,i] * X[,j]
-        flag <- flag + 1
-      }
-    }
-    Xj <- cbind(X, X^2, InX)
-    d <- ncol(Xj)
-  }
+  # if (type == 'In'){
+  #   InX <- matrix(NA,nrow = n, ncol = p*(p-1)/2)
+  #   flag <- 1
+  #   for (i  in c(1:(p-1))) {
+  #     for (j in c((i+1):p)) {
+  #       InX[,flag] <- X[,i] * X[,j]
+  #       flag <- flag + 1
+  #     }
+  #   }
+  #   Xj <- cbind(X, X^2, InX)
+  #   d <- ncol(Xj)
+  # }
   storage.mode(d) <- "integer"
   
   # ---------- step 2: compute test statistic ----------

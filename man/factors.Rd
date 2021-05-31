@@ -12,7 +12,7 @@ factors(Y, lag.k = 5, twostep = FALSE)
 \item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)', }
 where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ {\bf y}_t} at lag \eqn{k}.}
 
-\item{twostep}{logical. If \code{FALSE} (the default), then standard procedures for estimating \eqn{r} and \eqn{{\bf A}} will be implemented. If \code{TRUE}, then a two step estimation procedure will be implemented 
+\item{twostep}{logical. If \code{FALSE} (the default), then standard procedures (See Section 2.2 in Lam and Yao, 2012) for estimating \eqn{r} and \eqn{{\bf A}} will be implemented. If \code{TRUE}, then a two step estimation procedure (See Section 4 in Lam and Yao, 2012) will be implemented 
 for estimating \eqn{r} and \eqn{{\bf A}}.}
 }
 \value{

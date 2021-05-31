@@ -8,7 +8,7 @@ WN_test(
   X,
   lag.k = 2,
   B = 2000,
-  kernel.type = "QS",
+  kernel.type = c("QS", "Par", "Bart"),
   pre = FALSE,
   alpha = 0.05,
   k0 = 5,
@@ -25,11 +25,11 @@ statistic. Default is \code{lag.k} \eqn{=2}.}
 \item{B}{Bootstrap times for generate vector from a multivariate normal distribution. Default is \code{B} \eqn{=2000}.}
 
 \item{kernel.type}{String, an option for choosing an optimal symmetric kernel
-type, for example, \code{'QS'} (Quadratic Spectral), \code{'Par'} (Parzen), \code{'Bart'} (Bartlett), see Andrews (1991) for more information. Default option is
+type, for example, \code{'QS'} (Quadratic Spectral kernel), \code{'Par'} (Parzen kernel) and \code{'Bart'} (Bartlett kernel), see Andrews (1991) for more information. Default option is
 \code{kernel.type = 'QS'}.}
 
-\item{pre}{Logical value which determines whether performs preprocessing procedure on data matrix \code{X}. If \code{TRUE}, then segment procedure will performs to data \code{X}. The 
-three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
+\item{pre}{Logical value which determines whether performs preprocessing procedure on data matrix \code{X}, see Remark 1 in Chang, Yao and Zhou (2017) for more information. If \code{TRUE}, 
+then segment procedure will performs to data \code{X}. The three additional options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are the same as 
 those in \code{\link{PCA4_TS}}.}
 
 \item{alpha}{Significance level used for testing. Default is 0.05.}
@@ -43,14 +43,12 @@ those in \code{\link{PCA4_TS}}.}
 \value{
 An object of class "WN_test" is a list containing the following components:
 
-\item{reject}{Logical value which represents whether the data are white noise process.}
+\item{reject}{Logical value. If \code{TRUE}, it means rejecting the null hypothesis, otherwise it means not rejecting the null hypothesis.}
 \item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}.}
 }
 \description{
-\code{WN_test()} is a new omnibus test (Chang Yao and Zhou, 2017) for vector white noise using the maximum 
-absolute auto-correlations and cross-correlations of the component series. \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
-Based on an approximation by the \eqn{L_\infty} norm of a normal random vector, the critical 
-value of the test can be evaluated by bootstrapping from a multivariate normal distribution.
+\code{WN_test()} is a test proposed in Chang, Yao and Zhou (2017) for the following hypothesis testing problems:
+ \deqn{H_0:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 }
 \examples{
 n <- 200
@@ -61,11 +59,11 @@ Pvalue <- res$p.value
 rej <- res$reject
 }
 \references{
-Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for high-dimensional white noise using maximum cross-correlations}. Biometrika, Vol. 104, pp. 111–127.
+Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for high-dimensional white noise using maximum cross-correlations}, Biometrika, Vol. 104, pp. 111–127.
 
-            Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094–2124.
+            Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}, The Annals of Statistics, Vol. 46, pp. 2094–2124.
 
-            Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association Vol. 106, pp. 672--684.
+            Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation},  Journal of the American Statistical Association, Vol. 106, pp. 672--684.
 }
 \seealso{
 \code{\link{PCA4_TS}}

@@ -9,76 +9,49 @@
 #'
 #'
 #' @details
-#'  Before segment procedure, the time series \eqn{{\bf y}_t} need to be normalized, then \eqn{{\bf y}_t} will be replaced by 
-#'  \eqn{{{\bf V}}^{-1/2}{\bf y}_t} where \eqn{{\bf V}} denotes the variance of \eqn{{\bf y}_t}. When \eqn{p>n}, it is necessary to use the package \pkg{clime} to estimate the precision matrix \eqn{\widehat{{\bf V}}^{-1}} 
-#'  where \eqn{\widehat{{\bf V}}} is a consistent estimator for \eqn{\mathrm{Var}({\bf y}_t)}. In segment procedure, when \eqn{p=o(n^{1/2})}, 
+#'  Before segment procedure,when \eqn{p>n}, it is necessary to use the package \pkg{clime} to estimate the precision matrix \eqn{\widehat{{\bf V}}^{-1}}.
+#'  In segment procedure, when \eqn{p>n^{1/2}}, 
 #'  it is recommended to use the thresholding method to calculate \eqn{\widehat{{\bf W}}_y}, see more information in Chang, Guo and Yao (2018).
 #'
 #'
 #'
 #'
 #' @param Y  \eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and 
-#'           \eqn{p} is the dimension of \eqn{{\bf y}_t}.
+#'           \eqn{p} is the dimension of \eqn{{\bf y}_t}. Before the segment procedure, we will first replace \eqn{{\bf y}_t} by its normalized version \eqn{\widehat{{\bf V}}^{-1/2}{\bf y}_t}, where \eqn{\widehat{{\bf V}}} is an estimator for covariance of \eqn{{\bf y}_t}.
 #' @param lag.k  Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{\widehat{{\bf W}}_y}:
 #'           \deqn{\widehat{\mathbf{W}}_y\ =\ \sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'=\mathbf{I}_p+\sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)', }
-#'               where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ {\bf y}_t} at lag \eqn{k}. See (2.5) in Chang, Guo and Yao (2018).
+#'               where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of \eqn{ \widehat{{\bf V}}^{-1/2}{\bf y}_t} at lag \eqn{k}. See (2.5) in Chang, Guo and Yao (2018).
 #' @param thresh   Logical. If \code{FALSE} (the default), no thresholding will be applied to estimate \eqn{\widehat{{\bf W}}_y}. If \code{TRUE}, a
-#'                 thresholding method will be applied first to estimate \eqn{\widehat{{\bf W}}_y}, see (3.3) and (3.5) in Chang, Guo and Yao (2018).
+#'                 thresholding method will be applied first to estimate \eqn{\widehat{{\bf W}}_y}, see (3.5) in Chang, Guo and Yao (2018).
 #' @param tuning.vec  The value of the tuning parameter \eqn{\lambda} in the thresholding level
-#'                  \eqn{ u = \lambda {(n^{-1}\log p)}^{1/2}},
+#'                  \eqn{ u = \lambda \sqrt{(n^{-1}\log p)}},
 #'                    where default value is 2. If \code{tuning.vec} is a vector, then a cross validation method proposed in Cai and Liu (2011) will be used
 #'                    to choose the best tuning parameter \eqn{\lambda}.
 #'
 #' @param K   The number of folders used in the cross validation, the default is 5. It is required when \code{thresh = TRUE}.
-#' @param prewhiten Logical. If \code{TRUE} (the default), then prewhiten each component series of \eqn{{\bf y}_t} by fitting a univariate AR model with
-#'          the order between 0 and 5 determined by AIC. If \code{FALSE}, then prewhiten procedure will not perform to transformed series \eqn{{\bf z}_t}.
-#' @param permutation The method of permutation procedure, where option is \code{'max'} (Maximum cross correlation method) or \code{'fdr'} (False discovery rate procedure based on multiple tests), 
-#'          default is \code{permutation = 'max'}. See section 2.2.2 and section 2.2.3 in Chang ,Guo and Yao (2018) for more information.
-#' @param m A positive constant used to calculate the maximum cross correlation over the lags between \eqn{-m} and \eqn{m}. If \eqn{m} is not
-#'          specified, then default option is \code{m = }\eqn{10\log_{10} {(n/p)}}.
-#' @param beta The error rate used in permutation procedure, It is required when \code{permutation = 'fdr'}.
-#' @param just4pre Logical. If \code{TRUE}, then only segment procedure will be implemented to calculate the transformed series \eqn{{\bf z}_t} where \eqn{{\bf z}_t = (z_{1,t},\dots,z_{p,t})'}, if \code{FALSE} (the default), then the normal procedure 
-#'         (including permutation procedure) will be implemented to data \eqn{{\bf y}_t}. See \code{\link{WN_test}} for more applications.
+#' @param prewhiten Logical. If \code{TRUE} (the default), we prewhiten each transformed component series of \eqn{\hat{\bf z}_t} by fitting a univariate AR model with
+#'          the order between 0 and 5 determined by AIC, where \eqn{\hat{\bf z}_t = (\hat{z}_{1,t},\dots,\hat{z}_{p,t})'}. If \code{FALSE}, then prewhiten procedure will not perform to \eqn{\hat{\bf z}_t}.
+#' @param permutation The method of permutation procedure (See section 2.2.1 in Chang, Guo and Yao (2018) for the definition), where option is \code{'max'} (Maximum cross correlation method) or \code{'fdr'} (False discovery rate procedure based on multiple tests), 
+#'          default is \code{permutation = 'max'}. See Sections 2.2.2 and 2.2.3 in Chang, Guo and Yao (2018) for more information.
+#' @param m A positive constant used in permutation procedure (See (2.10) in Chang, Guo and Yao (2018) for more information). If \eqn{m} is not
+#'          specified, then default option is \code{m = }10. 
+#' @param beta The error rate used in permutation procedure which uses \code{'fdr'} method, It is required when \code{permutation = 'fdr'}.
+#' @param just4pre Logical. If \code{TRUE}, only \eqn{\hat{\bf z}_t} is output, otherwise \eqn{\hat{\bf x}_t} is output. See \code{\link{WN_test}} for more applications.
 #' @export
 #' @return The output of segment procedure is a list containing the following components:
-#' \item{B}{The \eqn{p\times p} transformation matrix such that \eqn{\hat{\bf z}_t = \widehat{\bf B}{\bf y}_t}.}
-#' \item{Z}{The transformed series with \eqn{n} rows and \eqn{p} columns.}
+#' \item{B}{The \eqn{p\times p} transformation matrix such that \eqn{\hat{\bf z}_t = \widehat{\bf B}{\bf y}_t}, where \eqn{\widehat{\bf B}=\widehat{\bf \Gamma}_y\widehat{{\bf V}}^{-1}}.}
+#' \item{Z}{\eqn{{\bf Z}=\{{\bf z}_1,\dots,{\bf z}_n\}'}, the transformed series with \eqn{n} rows and \eqn{p} columns.}
 #' @return  The output of permutation procedure is a list containing the following components:
-#' \item{NoGroups}{The number of the groups with at least two components series.}
-#' \item{No_of_Members}{The number of members in each of the groups with at least two members.}
-#' \item{Groups}{The indices of components in each of groups with at least two members.}
-#' \item{maxcorr}{The maximum correlation (over lags) of \eqn{p(p-1)/2} pairs in descending order if \code{permutation = 'max'}.}
-#' \item{corrRatio}{The ratios of successive values from \code{maxcorr} if \code{permutation= 'max'}.}
-#' \item{Pvalues}{The p-value for multiple test: \deqn{H_0:\rho_{i,j}(h)=0\ \mathrm{\ for\ any}\ h\ =\ 0,\ \pm 1,\ \pm2,\dots,\ \pm m} 
-#'               for each of \eqn{p(p-1)/2} pairs in ascending order if \code{permutation = 'fdr'} where \eqn{\rho_{i,j}(h)} denotes the cross correlation between the two 
-#'               components series \eqn{\hat{z}_{i,t}} and \eqn{\hat{z}_{j,t}}, see more information in section 2.2.3 in Chang Guo and Yao (2018).}
-#' \item{NoConnectedPairs}{The number of connected pairs.}
-#' \item{Xpre}{The prewhitened data with \eqn{n-R} rows and \eqn{p} columns}
-#'
-#' @note The first step is transform the time series. It calculate linear transformation of the \eqn{p}-variate time series
-#'       \eqn{{\bf y}_t} such that the transformed series \eqn{{\bf z}_t={\bf By}_t} is segmented into several lower-dimensional subseries, and the columns of \eqn{{\bf A}} that need to be
-#'        estimated are a permutation of the columns of \eqn{{\bf B}}. The second step is grouping 
-#'       the transformed time series \eqn{{\bf z}_t} into \eqn{q} groups, where \eqn{q} and the cardinal numbers of those groups are also unknown.
+#' \item{NoGroups}{The number of the groups.}
+#' \item{No_of_Members}{The number of members in each of the groups.}
+#' \item{Groups}{The indices of the components in \eqn{\hat{\bf z}_t} that belongs to a group.}
 #'
 #'
-#' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}. The Annals of Statistics, Vol. 46, pp. 2094--2124.
+#' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for second-order stationary vector time series}, The Annals of Statistics, Vol. 46, pp. 2094--2124.
 #'
-#'             Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation}.  Journal of the American Statistical Association Vol. 106, pp. 672--684.
+#'             Cai, T. & Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance matrix estimation},  Journal of the American Statistical Association, Vol. 106, pp. 672--684.
 #'
-#'             Cai, T.T., Liu, W., and Luo, X. (2011). \emph{A constrained l1 minimization approach for sparse precision matrix estimation}. Journal of the American Statistical Association Vol. 106(494), pp. 594--607.
-## @family aggregate functions
-#'
-
-## Perform Step 2 (i.e. permutation) of Chang, Guo and Yao (2018)
-## using the maximum cross correlation method
-##
-## Output1: $NoGroups -- No. of groups with at least two components series
-## Output2: $NosOfMembersInGroups -- number of members in each of groups
-## 				     with at least two members
-## Output3: $Groups -- indices of components in each of groups with at least two members
-## Output4: $Pvalues -- Pvalue for multiple test H_0 for each of p(p-1)/2 pairs
-##          in ascending order
-## Output5: $NoConnectedPairs -- No of connected pairs by FDR at rate Beta
+#'             Cai, T., Liu, W., & Luo, X. (2011). \emph{A constrained l1 minimization approach for sparse precision matrix estimation}, Journal of the American Statistical Association, Vol. 106(494), pp. 594--607.
 #' @importFrom stats acf ar pnorm var 
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
@@ -104,6 +77,7 @@
 #' Y <- A%*%X  
 #' Y <- t(Y)
 #' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
+#' res1=PCA4_TS(Y, lag.k=5,permutation = "fdr", beta=10^(-8))
 #' # The transformed series z_t 
 #' Z <- res$X 
 #' # Plot the cross correlogram of z_t and y_t
@@ -135,6 +109,7 @@
 #' Y <- A%*%X  
 #' Y <- t(Y)
 #' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
+#' res1 <- PCA4_TS(Y, lag.k=5,permutation = "fdr",beta=10^(-200))
 #' # The transformed series z_t 
 #' Z <- res$X 
 #' # Plot the cross correlogram of x_t and y_t
@@ -179,16 +154,14 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
   if(permutation == 'max')
   {
   	out=permutationMax(Z, prewhiten, m)
-	  output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members, Groups=out$Groups, maxcorr=out$maxcorr,
-	              corrRatio=out$corrRatio,NoConnectedPairs=out$NoConnectedPairs,Xpre=out$Xpre,B=seglist$B)
+	  output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members, Groups=out$Groups)
 	return(output)
   }
   	#permutation of FDR
 	else if(permutation=='fdr')
 	  {
       out=permutationFDR(Z,prewhiten, beta, m)
-      output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members, Groups=out$Groups, Pvalues=out$Pvalues,
-                  NoConnectedPairs=out$NoConnectedPairs,Xpre=out$Xpre,B=seglist$B)
+      output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members, Groups=out$Groups)
 		return(output)
       }
 }

@@ -14,7 +14,7 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
   # m: maximum lag used in calculating cross correlation coefficients
 
   ## Step 0: prewhiten each columns of X
-  if(is.null(m)) m <- 10*log10(n/p)
+  if(is.null(m)) m <- 10
   
   p=ncol(X) 
   n=nrow(X)
@@ -87,8 +87,8 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
                   if(d>0) {  # there are duplicated elements in a & b
                              a=unique(c) # picking up different elements from G[,i] & G[,j]
                              G[,i]=0; G[1:length(a),i]=sort(a); Index[j]=0
-  			   N[i]=length(a); N[j]=0;
-  			   check=1;
+                             N[i]=length(a); N[j]=0;
+                             check=1;
   		}
           }
   }
@@ -100,15 +100,21 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
   ## Step 6: Output
   K=length(Index[Index==1])
   if(K==0) stop("All component series are linearly independent")
-  Group=mat.or.vec(p,K+1)
+  Group=matrix(0,p,K)
   k=1
   for(j in 1:(p-1)) { if(Index[j]==1) { Group[,k]=G[,j]; k=k+1} }
-  cat("\n"); cat("No of groups with more than one members:", K, "\n")
-  cat("Nos of members in those groups:", N[N>0], "\n")
-  cat("No of connected pairs:", r, "\n")
-  #cat("Prewhited data are saved in the file Xpre.dat","\n\n")
-  #write.table(X, "Xpre.dat", row.names=F, col.names=F)
-  output=list(NoGroups=K, No_of_Members=N[N>0], Groups=Group[,1:K], maxcorr=Ms$x, corrRatio=ratio,NoConnectedPairs=r,Xpre=X)
+  one_mem = which(!(c(1:p) %in%  Group))
+  N2 = length(one_mem)
+  if(N2>0)Group = cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:sum(Group[,1]>0),]
+  else Group = as.matrix(Group[1:sum(Group[,1]>0),])
+  q_block = K+N2
+  Nosmem = c(N[N>0],rep(1,N2))
+  cat("\n"); cat("Number of groups", q_block, "\n")
+  cat("Number of members in those groups:", Nosmem, "\n")
+  for(i in c(1:q_block)){
+    cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
+  }
+  output=list(NoGroups=q_block, No_of_Members=Nosmem, Groups=Group)
   return(output)
 }
 
