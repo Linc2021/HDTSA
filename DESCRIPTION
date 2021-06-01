@@ -18,7 +18,7 @@ License: GPL-3
 Depends: R (>= 3.5.0)
 Imports: stats, Rcpp, RcppEigen, clime, sandwich
 LinkingTo: Rcpp, RcppEigen
-Suggests: knitr, rmarkdown
+Suggests: knitr
 NeedsCompilation: yes
 RoxygenNote: 7.1.1
 Encoding: UTF-8
