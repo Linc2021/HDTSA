@@ -16,7 +16,6 @@
 #' @export
 #' @importFrom sandwich lrvar
 #' @importFrom stats lm
-#' @import tseries
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp

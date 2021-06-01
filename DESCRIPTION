@@ -13,12 +13,12 @@ Author: Chen Lin [aut, cre],
    Jinyuan Chang [aut], 
    Qiwei Yao [aut]
 Maintainer: Chen Lin <linchen@smail.swufe.edu.cn>
-Description: Several implementation of high-dimensional time series analysis including Unit root test, white noise test, martingale difference test, factor inference and principal component analysis.
+Description: Procedures for high-dimensional time series analysis including factor analysis, martingale difference test, principal component analysis, unit root test and white noise test.
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: stats, Rcpp (>= 1.0.5), RcppEigen, tseries, clime, sandwich
+Imports: stats, Rcpp, RcppEigen, clime, sandwich
 LinkingTo: Rcpp, RcppEigen
-Suggests: knitr, HCmodelSets, rmarkdown
+Suggests: knitr, rmarkdown
 NeedsCompilation: yes
 RoxygenNote: 7.1.1
 Encoding: UTF-8

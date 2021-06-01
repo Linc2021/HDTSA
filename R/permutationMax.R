@@ -1,5 +1,4 @@
 #' @importFrom stats acf ar 
-#' @importFrom tseries garch
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
