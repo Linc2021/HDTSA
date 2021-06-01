@@ -1,26 +1,35 @@
 #' Testing for unit roots based on sample autocovariances
-#' 
-#' The test proposed in Chang, Cheng and Yao (2021) for such hypothesis testing problems: 
-#' \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.} 
-#' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, a univariate time series data used for testing.
-#' @param lagk.vec Time lag K used to calculate the test statistic, see Chang, Cheng and Yao (2021) for the definition. It can be a vector containing more than one time lag. 
-#'          If it is a vector, we will output all the test results calculated with the value in the vector \code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose lagk.vec=c(0,1,2,3,4).
-#' @param con_vec Constant \eqn{c_\kappa}, see (18) in Chang, Cheng and Yao (2021). It aslo can be a vector. If missing, the default value we use 0.55.
-#' @param alpha Significance level for the test. Default is 0.05.
+#'
+#' The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis
+#' testing problems: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
+#' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
+#' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, the observations of a univariate
+#'   time series used for the test.
+#' @param lagk.vec Time lag \eqn{K_0} used to calculate the test statistic, see
+#'   Section 2.1 in Chang, Cheng and Yao (2021). It can be a vector containing
+#'   more than one time lag. If it is a vector, the procedure will output all
+#'   the test results based on the different \eqn{K_0} in the vector
+#'   \code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose
+#'   lagk.vec=c(0,1,2,3,4).
+#' @param con_vec Constant \eqn{c_\kappa}, see (5) in Chang, Cheng and Yao
+#'   (2021). It also can be a vector. If missing, the default value we use 0.55.
+#' @param alpha The prescribed significance level. Default is 0.05.
 
 #' @return A dataframe containing the following components:
-#' 
-#' \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'} means we do not reject the null hypothesis.}
-#' 
-#' @references Chang, J., Cheng, G. & Yao, Q. (2019).  \emph{A power one test for unit roots based on sample autocovariances}. Available at \url{https://arxiv.org/abs/2006.07551}
+#'
+#'   \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'}
+#'   means we do not reject the null hypothesis.}
+#'
+#' @references Chang, J., Cheng, G. & Yao, Q. (2021).  \emph{Testing for unit
+#'   roots based on sample autocovariances}. Available at
+#'   \url{https://arxiv.org/abs/2006.07551}
 #' @export
 #' @importFrom sandwich lrvar
 #' @importFrom stats lm
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp 
-#' @import RcppEigen
+#' @import Rcpp
 #' @examples
 #' N=100
 #' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
@@ -40,11 +49,6 @@ ur.test <- function(Y, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
   if(is.null(args$con_vec)){
     con_vec=0.55;
   }
-  ## long-run variance package
-  
-  #  if(con_vec[1]!=0){
-  #  	print("Untruncated needs constant equals to 0");  break ;             ## untruncated needs con_vec equals to 0
-  #  }
   Tnvec=NULL; nm=NULL;
   for(kk in 1:length(lagk.vec)){
     

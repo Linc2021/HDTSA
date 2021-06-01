@@ -7,23 +7,31 @@
 ur.test(Y, lagk.vec = lagk.vec, con_vec = con_vec, alpha = alpha)
 }
 \arguments{
-\item{Y}{\eqn{Y = \{y_1, \dots , y_n \}}, a univariate time series data used for testing.}
+\item{Y}{\eqn{Y = \{y_1, \dots , y_n \}}, the observations of a univariate
+time series used for the test.}
 
-\item{lagk.vec}{Time lag K used to calculate the test statistic, see Chang, Cheng and Yao (2021) for the definition. It can be a vector containing more than one time lag. 
-If it is a vector, we will output all the test results calculated with the value in the vector \code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose lagk.vec=c(0,1,2,3,4).}
+\item{lagk.vec}{Time lag \eqn{K_0} used to calculate the test statistic, see
+Section 2.1 in Chang, Cheng and Yao (2021). It can be a vector containing
+more than one time lag. If it is a vector, the procedure will output all
+the test results based on the different \eqn{K_0} in the vector
+\code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose
+lagk.vec=c(0,1,2,3,4).}
 
-\item{con_vec}{Constant \eqn{c_\kappa}, see (18) in Chang, Cheng and Yao (2021). It aslo can be a vector. If missing, the default value we use 0.55.}
+\item{con_vec}{Constant \eqn{c_\kappa}, see (5) in Chang, Cheng and Yao
+(2021). It also can be a vector. If missing, the default value we use 0.55.}
 
-\item{alpha}{Significance level for the test. Default is 0.05.}
+\item{alpha}{The prescribed significance level. Default is 0.05.}
 }
 \value{
 A dataframe containing the following components:
 
-\item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'} means we do not reject the null hypothesis.}
+  \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'}
+  means we do not reject the null hypothesis.}
 }
 \description{
-The test proposed in Chang, Cheng and Yao (2021) for such hypothesis testing problems: 
-\deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
+The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis
+testing problems: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
+I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
 }
 \examples{
 N=100
@@ -34,5 +42,7 @@ ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
 ur.test(Y,alpha=0.05)
 }
 \references{
-Chang, J., Cheng, G. & Yao, Q. (2019).  \emph{A power one test for unit roots based on sample autocovariances}. Available at \url{https://arxiv.org/abs/2006.07551}
+Chang, J., Cheng, G. & Yao, Q. (2021).  \emph{Testing for unit
+  roots based on sample autocovariances}. Available at
+  \url{https://arxiv.org/abs/2006.07551}
 }

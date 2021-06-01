@@ -4,7 +4,6 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @import Rcpp 
-#' @import RcppEigen
 
 
 segmentTS <- function(Y, lag.k, 

@@ -3,7 +3,6 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @import Rcpp 
-#' @import RcppEigen
 #' 
 permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   # X: nxp data matrix
@@ -29,12 +28,14 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
     X=X[(j+1):n,]
     n=n-j
   }
-  ## Step 1: for each 1\le j < i \le p, calculate P-value for the multiple test for H_0
+  ## Step 1: for each 1\le j < i \le p, calculate P-value for the multiple test
+  ## for H_0
   sqn=sqrt(n); m2=2*m+1
   rho=acf(X,lag.max=m, plot=F) # rho$acf is an (m+1)xpxp array
   p0=p*(p-1)/2 # total number of pairs of component series
   Pv=vector(mode="numeric",length=m2)
-  M=vector(mode="numeric",length=p0) # P-value for testing H_0 for i-th and j-th components
+  M=vector(mode="numeric",length=p0) 
+  # P-value for testing H_0 for i-th and j-th components
   for(i in 2:p) 
     for(j in 1:(i-1)) { 
       Pv[m2]=2*pnorm(-sqn*abs(rho$acf[1,i,j]))
@@ -42,7 +43,8 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   			Pv[m+k]=2*pnorm(-sqn*abs(rho$acf[k+1,j,i]))
   	}
   	Pv=sort(Pv); k=1:m2; Pv=(Pv/k)*m2
-  	M[(i-2)*(i-1)/2+j]=min(Pv) # P-value for multiple test for H_0 for (i,j) pairs
+  	M[(i-2)*(i-1)/2+j]=min(Pv) 
+  	# P-value for multiple test for H_0 for (i,j) pairs
   }
       # For a pxp matrix,  stack rows below the main diagoal together,
       # the (i,j)-th element, for i>j, is in the position (i-2)*(i-1)/2+j
@@ -63,7 +65,12 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
   h=mat.or.vec(p,1)
   for(i in 2:p) h[i]=(i-2)*(i-1)/2
   Inx=mat.or.vec(p,p); I=2:p
-  for(k in 1:r) { q=I[(Ms$ix[k]-h[I])>0]; s=length(q); i=q[s]; j=Ms$ix[k]-h[i]; Inx[i,j]=1}
+  for(k in 1:r) { 
+    q=I[(Ms$ix[k]-h[I])>0]
+    s=length(q)
+    i=q[s]
+    j=Ms$ix[k]-h[i]
+    Inx[i,j]=1}
   # Now the entrices of Inx equal 1 are the positions with (i,j) connected,
   # and all other entrices are 0
   # cat("STEP3","\n")
@@ -120,7 +127,8 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL) {
     for(i in c(1:q_block)){
       cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
     }
-  output=list(NoGroups=K, No_of_Members=N[N>0], Groups=Group[,1:K], Pvalues=Ms$x, NoConnectedPairs=r,Xpre=X)
+  output=list(NoGroups=q_block, No_of_Members=Nosmem, 
+              Groups=Group)
   }
 }
 

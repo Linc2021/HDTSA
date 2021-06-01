@@ -15,41 +15,46 @@ MartG_test(
 }
 \arguments{
 \item{X}{\eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, an \eqn{n\times
-p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the dimension of \eqn{{\bf x}_t}.}
+p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
+dimension of \eqn{{\bf x}_t}.}
 
-\item{lag.k}{Time lag \eqn{K}, a positive integer, used to calculate test
+\item{lag.k}{Time lag \eqn{K}, a positive integer, used to calculate the test
 statistic. Default is \code{lag.k} \eqn{=2}.}
 
-\item{B}{Bootstrap times for generating vector from a multivariate normal
-distribution. Default is \code{B} \eqn{=2000}.}
+\item{B}{Bootstrap times for generating multivariate normal distributed 
+random vectors in calculating the critical value. 
+Default is \code{B} \eqn{=2000}.}
 
 \item{type}{String, a map is chosen by the \proglang{R} users, such as the
-default option is \code{'Linear'} means linear identity map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including
-another option \code{'Quad'} (Both linear and quadratic terms \eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}). See Section 2.1 in Chang, Jiang and Shao (2021) for more information.}
+default option is \code{'Linear'} means linear identity 
+map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including another 
+option \code{'Quad'} (Both linear and quadratic terms 
+\eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}). 
+See Section 2.1 in Chang, Jiang and Shao (2021) for more information.}
 
-\item{alpha}{The significance level used for testing. Default is 0.05.}
+\item{alpha}{The prescribed significance level. Default is 0.05.}
 
-\item{kernel.type}{String, an option for choosing an optimal symmetric kernel
-type, for example, \code{'QS'} (Quadratic Spectral kernel), \code{'Par'} (Parzen kernel) and \code{'Bart'} (Bartlett kernel), see Andrews (1991) for more information. Default option is
-\code{kernel.type = 'QS'}.}
+\item{kernel.type}{String, an option for choosing the symmetric kernel 
+used in the estimation of long-run covariance matrix, 
+for example, \code{'QS'} (Quadratic spectral kernel), 
+\code{'Par'} (Parzen kernel) and \code{'Bart'} 
+(Bartlett kernel), see Andrews (1991) for more 
+information. Default option is \code{kernel.type = 'QS'}.}
 }
 \value{
-An object of class "MartG_test" is a list containing the following components:
+An object of class "MartG_test" is a list containing the following
+  components:
 
-\item{reject}{Logical value. If \code{TRUE}, it means rejecting the null hypothesis, otherwise it means not rejecting the null hypothesis. }
-\item{p.value}{Numerical value which represents the p-value of the test based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}.}
+  \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null
+  hypothesis, otherwise it means not rejecting the null hypothesis. }
+  \item{p.value}{Numerical value which represents the p-value of the test.}
 }
 \description{
-\code{MartG_test()} implements a new test for the following martingale
-difference hypothesis for high-dimensional time series: \deqn{H_0:\{{\bf x}_t
-\}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:\{{\bf x}_t
-\}_{t=1}^n\mathrm{\ is\ not\ a\ MDS,} } where MDS is the abbreviation of "martingale difference
-sequence". The test (Chang, Jiang and Shao, 2021) is built on the sup-norm of a matrix-valued sample
-nonlinear dependencemetric at a finite and possibly growing number of lags.
-To the best of knowledge, this is the first valid test for the martingale
-difference hypothesis that allows for large dimension and captures nonlinear
-serial dependence. Besides, the test is robust to conditional moments of
-unknown forms and panel dependence of unknown magnitude.
+\code{MartG_test()} implements a new test proposed in
+ Chang, Jiang and Shao (2021) for the following hypothesis testing problem: 
+\deqn{H_0:\{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:
+\{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ not\ a\ MDS,} } where 
+MDS is the abbreviation of "martingale difference sequence".
 }
 \examples{
 n <- 200
@@ -60,5 +65,6 @@ Pvalue <- res$p.value
 rej <- res$reject
 }
 \references{
-Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the martingale difference hypothesis in high dimension}.
+Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the
+  martingale difference hypothesis in high dimension}.
 }

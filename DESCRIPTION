@@ -7,16 +7,16 @@ Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"),
     person("Guanghui", "Cheng", role = "aut", email = "chenggh845@nenu.edu.cn"),
     person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2021-03-23
+Date: 2021-06-01
 Author: Chen Lin [aut, cre],
    Guanghui Cheng [aut],
    Jinyuan Chang [aut], 
    Qiwei Yao [aut]
 Maintainer: Chen Lin <linchen@smail.swufe.edu.cn>
-Description: Procedures for high-dimensional time series analysis including factor analysis, martingale difference test, principal component analysis, unit root test and white noise test.
+Description: Procedures for high-dimensional time series analysis including factor analysis proposed by Lam and Yao (2012) <doi:10.1214/12-AOS970> and Chang, Guo and Yao (2015) <doi:10.1016/j.jeconom.2015.03.024>, martingale difference test proposed by Chang, Jiang and Shao (2021) preprint, principal component analysis proposed by Chang, Guo and Yao (2018) <doi:10.1214/17-AOS1613>, unit root test proposed by Chang, Cheng and Yao (2021) <arXiv:2006.07551> and white noise test proposed by Chang, Yao and Zhou (2017) <doi:10.1093/biomet/asw066>.
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: stats, Rcpp, RcppEigen, clime, sandwich
+Imports: stats, Rcpp, clime, sandwich
 LinkingTo: Rcpp, RcppEigen
 Suggests: knitr
 NeedsCompilation: yes
@@ -24,3 +24,4 @@ RoxygenNote: 7.1.1
 Encoding: UTF-8
 URL: https://github.com/Linc2021/HDTSA
 BugReports: https://github.com/Linc2021/HDTSA/issues
+Repository: CRAN

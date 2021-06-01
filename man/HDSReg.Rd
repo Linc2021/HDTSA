@@ -7,31 +7,61 @@
 HDSReg(Y, Z, D = NULL, lag.k = 1, twostep = FALSE)
 }
 \arguments{
-\item{Y}{\eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and \eqn{p} is the dimension of \eqn{{\bf y}_t}.}
+\item{Y}{\eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix
+with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and
+\eqn{p} is the dimension of \eqn{{\bf y}_t}.}
 
-\item{Z}{\eqn{{\bf Z} = \{{\bf z}_1, \dots , {\bf z}_n \}'}, a data matrix representing some observed regressors with \eqn{n} rows and \eqn{m} columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of \eqn{{\bf z}_t}.}
+\item{Z}{\eqn{{\bf Z} = \{{\bf z}_1, \dots , {\bf z}_n \}'}, a data matrix
+representing some observed regressors with \eqn{n} rows and \eqn{m}
+columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of
+\eqn{{\bf z}_t}.}
 
-\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\widetilde{\bf D}}. If \code{D = NULL} (the default), \eqn{\widetilde{\bf D}} is selected as the estimation of \eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then \eqn{\widetilde{\bf D}={\bf D}}.}
+\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\widetilde{\bf
+D}}. If \code{D = NULL} (the default), our procedure will estimate
+\eqn{{\bf D}} first and let \eqn{\widetilde{\bf D}} be the estimate of
+\eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then
+\eqn{\widetilde{\bf D}={\bf D}}.}
 
-\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\ \sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_{\eta}(k)\widehat{\mathbf{\Sigma}}_{\eta}(k)', }
-where \eqn{\widehat{\bf \Sigma}_{\eta}(k)} is the sample autocovariance of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - {\bf Dz}_t} at lag \eqn{k}.}
+\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte
+matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\
+\sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_{\eta}(k)\widehat{\mathbf{\Sigma}}_{\eta}(k)',
+} where \eqn{\widehat{\bf \Sigma}_{\eta}(k)} is the sample autocovariance
+of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - \widetilde{\bf D}{\bf z}_t}
+at lag \eqn{k}.}
 
-\item{twostep}{Logical. If \code{FALSE} (the default), then standard procedures (see \code{\link{factors}}) will be implemented to estimate \eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation procedure (see \code{\link{factors}}) will be implemented to estimate \eqn{r} and \eqn{{\bf A}}.}
+\item{twostep}{Logical. If \code{FALSE} (the default), then standard
+procedures (see \code{\link{factors}}) will be implemented to estimate
+\eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation
+procedure (see \code{\link{factors}}) will be implemented to estimate
+\eqn{r} and \eqn{{\bf A}}.}
 }
 \value{
-An object of class "HDSReg" is a list containing the following components:
+An object of class "HDSReg" is a list containing the following
+  components:
 
-\item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
-\item{reg.coff.mat}{The estimated \eqn{p \times m} regression coefficient matrix \eqn{{\bf \widehat{D}}} if \code{D} is not given.}
-\item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix \eqn{{\bf \widehat{A}}}.}
+  \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
+  \item{reg.coff.mat}{The estimated \eqn{p \times m} regression coefficient
+  matrix \eqn{\widetilde{\bf D}} if \code{D} is not given.}
+  \item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix
+  \eqn{{\bf \widehat{A}}}.}
 }
 \description{
-\code{HDSReg()} considers a multivariate time series model which represents a high dimensional vector process as a sum of three terms: a linear regression of some observed regressors, 
-a linear combination of some latent and serially correlated factors, and a vector white noise:\deqn{{\bf y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf y}_t} 
-and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and \eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent factor process,
- \eqn{{\boldsymbol{\epsilon}}_t \sim \mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and \eqn{{\boldsymbol{\epsilon}}_t} 
- is uncorrelated with \eqn{({\bf z}_t, {\bf x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and \eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in Chang, Guo and Yao (2015) aims to estimate the unknown 
- regression coefficient matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading matrix \eqn{{\bf A}}.
+\code{HDSReg()} considers a multivariate time series model which
+represents a high dimensional vector process as a sum of three terms: a
+linear regression of some observed regressors, a linear combination of some
+latent and serially correlated factors, and a vector white noise:\deqn{{\bf
+y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf
+y}_t} and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and
+\eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent
+factor process, \eqn{{\boldsymbol{\epsilon}}_t \sim
+\mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with
+zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and
+\eqn{{\boldsymbol{\epsilon}}_t} is uncorrelated with \eqn{({\bf z}_t, {\bf
+x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and
+\eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in
+Chang, Guo and Yao (2015) aims to estimate the unknown regression coefficient
+matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading
+matrix \eqn{{\bf A}}.
 }
 \examples{
 n <- 400
@@ -62,7 +92,9 @@ res1 <- HDSReg(Y,Z,D,lag.k=2)
 res2 <- HDSReg(Y,Z,lag.k=2)
 }
 \references{
-Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional stochastic regression with latent factors, endogeneity and nonlinearity}, Journal of Econometrics, Vol. 189, pp. 297–312.
+Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional
+  stochastic regression with latent factors, endogeneity and nonlinearity},
+  Journal of Econometrics, Vol. 189, pp. 297–312.
 }
 \seealso{
 \code{\link{factors}}.
