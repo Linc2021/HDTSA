@@ -6,7 +6,7 @@
 
 
 
-permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
+permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   #
   # X: nxp data matrix
   # m: maximum lag used in calculating cross correlation coefficients
@@ -117,10 +117,12 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
   else Group = as.matrix(Group[1:sum(Group[,1]>0),])
   q_block = K+N2
   Nosmem = c(N[N>0],rep(1,N2))
-  cat("\n"); cat("Number of groups", q_block, "\n")
-  cat("Number of members in those groups:", Nosmem, "\n")
-  for(i in c(1:q_block)){
-  cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
+  if(verbose){
+    cat("\n"); cat("Number of groups", q_block, "\n")
+    cat("Number of members in those groups:", Nosmem, "\n")
+    for(i in c(1:q_block)){
+      cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
+    }
   }
   output=list(NoGroups=q_block, No_of_Members=Nosmem, Groups=Group)
   return(output)

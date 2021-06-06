@@ -14,7 +14,8 @@ PCA4_TS(
   permutation = c("max", "fdr"),
   m = NULL,
   beta,
-  just4pre = FALSE
+  just4pre = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -70,6 +71,10 @@ option is \code{m = }10.}
 \item{just4pre}{Logical. If \code{TRUE}, the procedure outputs \eqn{\hat{\bf
 z}_t}, otherwise outputs \eqn{\hat{\bf x}_t} (the permutated version of
 \eqn{\hat{\bf z}_t}).}
+
+\item{verbose}{Logical. If \code{TRUE}, the main results of the permutation 
+procedure will be output on the console. Otherwise, the result will not be 
+output.}
 }
 \value{
 The output of the segment procedure is a list containing the

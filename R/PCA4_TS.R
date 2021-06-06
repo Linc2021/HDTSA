@@ -64,6 +64,9 @@
 #' @param just4pre Logical. If \code{TRUE}, the procedure outputs \eqn{\hat{\bf
 #'   z}_t}, otherwise outputs \eqn{\hat{\bf x}_t} (the permutated version of
 #'   \eqn{\hat{\bf z}_t}).
+#' @param verbose Logical. If \code{TRUE}, the main results of the permutation 
+#'   procedure will be output on the console. Otherwise, the result will not be 
+#'   output.
 #' @export
 #' @return The output of the segment procedure is a list containing the
 #'   following components: \item{B}{The \eqn{p\times p} transformation matrix
@@ -173,7 +176,7 @@
 
 PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5, 
                     prewhiten=TRUE, permutation=c('max',"fdr"), m=NULL, beta, 
-                    just4pre=FALSE)
+                    just4pre=FALSE,verbose = FALSE)
 {
   #for timeseries
   permutation <- match.arg(permutation)
@@ -191,14 +194,14 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
   #permutation of MAX
   if(permutation == 'max')
   {
-  	out=permutationMax(Z, prewhiten, m)
+  	out=permutationMax(Z, prewhiten, m,verbose)
 	  output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members,
 	              Groups=out$Groups)
 	return(output)
   }
   	#permutation of FDR
 	else if(permutation=='fdr'){
-	  out=permutationFDR(Z,prewhiten, beta, m)
+	  out=permutationFDR(Z,prewhiten, beta, m,verbose)
     output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members,
                 Groups=out$Groups)
 		return(output)
