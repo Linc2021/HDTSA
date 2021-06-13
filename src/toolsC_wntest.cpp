@@ -55,7 +55,7 @@ Eigen::MatrixXd WN_XiC(int n, int k,int p, int B, double bn, int ken_sign){
       for(int j=0; j<n-k; j++){
         if(i!=j){
           double temp =double(i-j)/bn;
-          kenel(i,j) = 25/(12*PI*PI*temp*temp) * (sin(6*PI*temp/5)/(6*PI*temp/5) - cos(6*PI*temp/5));
+          kenel(i,j) = 25/(12*M_PI*M_PI*temp*temp) * (sin(6*M_PI*temp/5)/(6*M_PI*temp/5) - cos(6*M_PI*temp/5));
         }
       }
     }
