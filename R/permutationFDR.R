@@ -1,4 +1,4 @@
-#' @importFrom stats acf ar pnorm var
+ #' @importFrom stats acf ar pnorm var
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp

@@ -112,5 +112,4 @@ HDSReg <- function (Y,Z,D=NULL,lag.k=1,twostep=FALSE) {
   outlist <- list(reg.coff.mat=D, factor_num=r, loading.mat=loading.mat)
   class(outlist) <- c("HDSReg")
   return(outlist)
-  
 }

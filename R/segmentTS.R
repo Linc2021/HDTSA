@@ -37,7 +37,7 @@ segmentTS <- function(Y, lag.k,
   else{
     #print('now use clime to calculate')
     M <- clime(Y, nlambda=10, standardize = FALSE, linsolver = "simplex")
-    M <- cv.clime(M, loss = "tracel2")
+    M <- clime::cv.clime(M, loss = "tracel2")
     #print(M$lambda)
     #print(M$lambdaopt)
     M <- clime(Y, lambda = M$lambdaopt)

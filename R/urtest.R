@@ -49,11 +49,15 @@ ur.test <- function(Y, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
   if(is.null(args$con_vec)){
     con_vec=0.55;
   }
-  Tnvec=NULL; nm=NULL;
+  Tnvec=NULL; nm=NULL; colnm=NULL;
+  
+  for (i in con_vec)colnm = c(colnm, paste("con=", i, sep=""))
+  
   for(kk in 1:length(lagk.vec)){
     
     K0=lagk.vec[kk]+1                       #eg. K0=1, gamma(0)
     nm=c(nm,paste("K0=", K0-1, sep=""))
+    
     
     n=length(Y)                           ## sample size
     N=floor(n/2)
@@ -125,6 +129,7 @@ ur.test <- function(Y, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
   }
   res.table=matrix(as.numeric(Tnvec), length(lagk.vec), byrow=T)
   rownames(res.table)=nm        #rownames ("K0=1", "K0=2")
+  colnames(res.table) = colnm
   return(list(result=res.table))
   
 }
