@@ -122,7 +122,7 @@ ur.test <- function(Y, lagk.vec=lagk.vec, con_vec=con_vec, alpha=alpha) {
           th_d=10^5                                  ## truncated belongs to H0
         }  else{th_d=0.1*log(N)}                     ## truncated belongs to H1
         
-        cv=min(1.645*sqrt(lr_Qt)+T1, th_d)
+        cv=min(qnorm(1-alpha)*sqrt(lr_Qt)+T1, th_d)
         Tnvec=c(Tnvec, T2>cv)
       }
     }
