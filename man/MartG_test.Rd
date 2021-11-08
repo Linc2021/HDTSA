@@ -58,7 +58,7 @@ MDS is the abbreviation of "martingale difference sequence".
 }
 \examples{
 n <- 200
-p <- 150
+p <- 10
 X <- matrix(rnorm(n*p),n,p)
 res <- MartG_test(X)
 Pvalue <- res$p.value

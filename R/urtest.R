@@ -28,6 +28,7 @@
 #' @importFrom stats lm
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
+#' @importFrom stats qnorm
 #' @importFrom Rcpp evalCpp
 #' @import Rcpp
 #' @examples

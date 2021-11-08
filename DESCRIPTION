@@ -1,13 +1,13 @@
 Package: HDTSA
 Type: Package
 Title: High Dimensional Time Series Analysis Tools
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"), 
     email = "linchen@smail.swufe.edu.cn"),
     person("Guanghui", "Cheng", role = "aut", email = "chenggh845@nenu.edu.cn"),
     person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2021-06-01
+Date: 2021-11-08
 Author: Chen Lin [aut, cre],
    Guanghui Cheng [aut],
    Jinyuan Chang [aut], 

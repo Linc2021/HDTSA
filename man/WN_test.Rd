@@ -73,7 +73,7 @@ An object of class "WN_test" is a list containing the following
 }
 \examples{
 n <- 200
-p <- 150
+p <- 10
 X <- matrix(rnorm(n*p),n,p)
 res <- WN_test(X)
 Pvalue <- res$p.value

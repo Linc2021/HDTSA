@@ -38,7 +38,7 @@
 #'   martingale difference hypothesis in high dimension}.
 #' @examples
 #' n <- 200
-#' p <- 150
+#' p <- 10
 #' X <- matrix(rnorm(n*p),n,p)
 #' res <- MartG_test(X)
 #' Pvalue <- res$p.value
