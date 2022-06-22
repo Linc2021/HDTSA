@@ -2,7 +2,7 @@
 title: "An introduction to `HDTSA`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{An introduction to BeSS}
+  %\VignetteIndexEntry{An introduction to HDTSA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{HCmodelSets}
