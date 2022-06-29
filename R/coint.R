@@ -8,11 +8,11 @@
 #' @param Y \eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix
 #'   with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and
 #'   \eqn{p} is the dimension of \eqn{{\bf y}_t}.
-#' @param lagk.k Time lag \eqn{k_0} used to calculate the nonnegative definte
+#' @param lag.k Time lag \eqn{k_0} used to calculate the nonnegative definte
 #'   matrix \eqn{\widehat{{\bf W}}_y}: \deqn{\widehat{\mathbf{W}}_y\ =\
-#'   \sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'
-#'    } where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of
-#'   \eqn{ \widehat{{\bf y}_t} at lag \eqn{k}.
+#'   \sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'}
+#'    where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of
+#'   \eqn{ \widehat{{\bf y}_t}} at lag \eqn{k}.
 #' @param type The method of identifying cointegration rank after segment 
 #'   procedure. Option is \code{'acf'}, \code{'all'}, \code{'chang'} or \code{'pptest'}
 #'   , the latter two methods use the unit-root test method to identify the 
@@ -39,14 +39,23 @@
 #' Cointegration by Eigenanalysis}.  Journal of the American Statistical 
 #' Association, Vol. 114, pp. 916--927
 #' @export
+#' @importFrom stats PP.test cor
 #' @useDynLib HDTSA
 #' @examples
-#' N=100
-#' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
-#' con_vec=c(0.45,0.55,0.65)
-#' lagk.vec=c(0,1,2)
-#' ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
-#' ur.test(Y,alpha=0.05)
+#' p <- 10
+#' n <- 1000
+#' r <- 3
+#' d <- 1
+#' X <- mat.or.vec(p, n)
+#' X[1,] <- arima.sim(n-d, model = list(order=c(0, d, 0)))
+#' for(i in 2:3)X[i,] <- rnorm(n)
+#' for(i in 4:(r+1)) X[i, ] <- arima.sim(model = list(ar = 0.5), n)
+#' for(i in (r+2):p) X[i, ] <- arima.sim(n = (n-d), model = list(order=c(1, d, 1), ar=0.6, ma=0.8))
+#' M1 <- matrix(c(1, 1, 0, 1/2, 0, 1, 0, 1, 0), ncol = 3, byrow = TRUE)
+#' A <- matrix(runif(p*p, -3, 3), ncol = p)
+#' A[1:3,1:3] <- M1
+#' Y <- t(A%*%X)
+#' coint(Y, type = "all")
 coint <- function(Y, lag.k=5, type=c("acf","pptest","chang","all"),
                   c0 = 0.3, m = 20, alpha = 0.01){
   # Y the observed time series with length n and dimension p
@@ -114,7 +123,7 @@ coint <- function(Y, lag.k=5, type=c("acf","pptest","chang","all"),
   }
   # (d) Using PP-test with p value 0.01
   if (type == "pptest" || type == "all")
-  {
+  { 
     v=c(rep(0, p))
     
     for (h in 1:p)

@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // MartG_TestStatC
 double MartG_TestStatC(int n, int k, Eigen::MatrixXd X, Eigen::MatrixXd Xj);
 RcppExport SEXP _HDTSA_MartG_TestStatC(SEXP nSEXP, SEXP kSEXP, SEXP XSEXP, SEXP XjSEXP) {
