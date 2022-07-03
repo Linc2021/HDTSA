@@ -60,7 +60,12 @@ MDS is the abbreviation of "martingale difference sequence".
 n <- 200
 p <- 10
 X <- matrix(rnorm(n*p),n,p)
-res <- MartG_test(X)
+res <- MartG_test(X, type="Linear")
+res <- MartG_test(X, type=cbind(X, X^2)) #the same as Linear type
+res <- MartG_test(X, type=quote(cbind(X, X^2))) # expr using quote
+res <- MartG_test(X, type=substitute(cbind(X, X^2))) # expr using substitute
+res <- MartG_test(X, type=expression(cbind(X, X^2))) # expr using expression
+res <- MartG_test(X, type=parse(text="cbind(X, X^2)")) # expr using parse
 Pvalue <- res$p.value
 rej <- res$reject
 }
