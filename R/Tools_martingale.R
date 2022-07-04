@@ -54,6 +54,7 @@
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
+#' @importFrom methods formalArgs
 #' @import Rcpp
 #' @export
 
@@ -89,6 +90,18 @@ MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad'),
       stop("expr is not validate, The variable name is different from the data name.")
     #print(type)
     Xj <- eval(type)
+    d <- ncol(Xj)
+  }
+  else if(is.function(type)){
+    f <- type
+    f_para <- formalArgs(f)
+    varnames_expr <- f_para[1]
+    if (data_name != varnames_expr)
+      stop("function is not validate, The first argument of function is different
+           from the data name.")
+    if(!is.null(args) && length(f_para)>1)
+      Xj <- do.call(f, args=c(list(X),args))
+    else Xj <- f(X)
     d <- ncol(Xj)
   }
   else {
