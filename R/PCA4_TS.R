@@ -75,7 +75,8 @@
 #'   \item{Z}{\eqn{\hat{\bf Z}=\{\hat{\bf z}_1,\dots,\hat{\bf z}_n\}'}, the
 #'   transformed series with \eqn{n} rows and \eqn{p} columns.}
 #' @return  The output of the permutation procedure is a list containing the
-#'   following components: \item{NoGroups}{The number of groups.}
+#'   following components: 
+#'   \item{NoGroups}{number of groups with at least two components series.}
 #'   \item{No_of_Members}{The cardinalities of different groups.}
 #'   \item{Groups}{The indices of the components in \eqn{\hat{\bf z}_t} that
 #'   belongs to a group.}

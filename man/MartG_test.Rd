@@ -69,6 +69,8 @@ res <- MartG_test(X, type=quote(cbind(X, X^2))) # expr using quote
 res <- MartG_test(X, type=substitute(cbind(X, X^2))) # expr using substitute
 res <- MartG_test(X, type=expression(cbind(X, X^2))) # expr using expression
 res <- MartG_test(X, type=parse(text="cbind(X, X^2)")) # expr using parse
+map_fun <- function(X) {X <- cbind(X,X^2); X}
+res <- MartG_test(X, type=map_fun)
 Pvalue <- res$p.value
 rej <- res$reject
 }

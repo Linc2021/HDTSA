@@ -3,6 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+HDTSA.Rproj
 src/*.o
 src/*.so
 src/*.dll

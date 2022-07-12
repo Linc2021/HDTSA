@@ -26,7 +26,6 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
       }
     j <- max(arOrder)
     X <- X[(j+1):n, ]
-    n=n-j
   }
   ## Step 1: calculate max_k |\rho(k)| for each pair components
 
@@ -69,8 +68,8 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   # cat("STEP3","\n")
 
   ## Step 4: picking up the grouping from each columns of Inx, mark column
-  ##with Index=1
-  ##         with a group with at least two members, and Index=0 otherwise
+  ##         with Index=1 with a group with at least two members, and Index=0 
+  ##         otherwise
   G=mat.or.vec(p,p-1);
   Index=rep(0,p-1)
   N=rep(0,p-1)
@@ -110,20 +109,27 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   Group=matrix(0,p,K)
   k=1
   for(j in 1:(p-1)) { if(Index[j]==1) { Group[,k]=G[,j]; k=k+1} }
-  one_mem = which(!(c(1:p) %in%  Group))
-  N2 = length(one_mem)
-  if(N2>0)
-    Group = cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:sum(Group[,1]>0),]
-  else Group = as.matrix(Group[1:sum(Group[,1]>0),])
-  q_block = K+N2
-  Nosmem = c(N[N>0],rep(1,N2))
+  
+  # dev
+  one_mem <- which(!(c(1:p) %in%  Group))
+  N2 <- length(one_mem)
+  if(N2>0) Group <- cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:max(N),] 
+  else Group <- as.matrix(Group[1:max(N),])
+  q_block <- K+N2
+  Nosmem <- c(N[N>0],rep(1,N2))
+  
   if(verbose){
-    cat("\n"); cat("Number of groups", q_block, "\n")
-    cat("Number of members in those groups:", Nosmem, "\n")
-    for(i in c(1:q_block)){
-      cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
+    #cat("\n"); cat("Number of groups", K, "\n") #todo
+    cat("\n"); cat("Number of groups", K, "\n") #q_block
+    # cat("Number of members in those groups:", N[N>0], "\n") #todo
+    cat("\n"); cat("Number of groups", Nosmem, "\n") #q_block
+    for(i in c(1:K)){
+      cat("Group",i,": contains these columns index of the zt:", drop(Group[,i][Group[,i]>0]), "\n")
     }
   }
+  
+  #to do 
+  #result include to many useless output
   output=list(NoGroups=q_block, No_of_Members=Nosmem, Groups=Group)
   return(output)
 }
