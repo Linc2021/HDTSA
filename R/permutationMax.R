@@ -120,7 +120,7 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   
   if(verbose){
     #cat("\n"); cat("Number of groups", K, "\n") #todo
-    cat("\n"); cat("Number of groups", K, "\n") #q_block
+    cat("\n"); cat("Number of groups", q_block, "\n") #q_block
     # cat("Number of members in those groups:", N[N>0], "\n") #todo
     cat("\n"); cat("Number of groups", Nosmem, "\n") #q_block
     for(i in c(1:K)){
