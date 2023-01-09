@@ -60,10 +60,12 @@ information.}
 An object of class "WN_test" is a list containing the following
   components:
 
-  \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null
-  hypothesis, otherwise it means not rejecting the null hypothesis.}
+  \item{statistic}{The value of the test statistic.}
   \item{p.value}{Numerical value which represents the p-value of the test
   based on the observed data \eqn{\{{\bf x}_t\}_{t=1}^n}.}
+  \item{lag.k}{The time lag used in function.}
+  \item{method}{A character string indicating what method was performed.}
+  \item{kernel.type}{A character string indicating what kenel method was performed.}
 }
 \description{
 \code{WN_test()} is the test proposed in Chang, Yao and Zhou

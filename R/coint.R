@@ -1,5 +1,5 @@
 #' @name coint
-#' @title Identifying conintegration rank of given time series
+#' @title Identifying cointegration rank of given time series
 #'
 #' @description \code{coint} seeks for a contemporaneous linear
 #'   transformation for a multivariate time series such that we can identifying 
@@ -30,10 +30,13 @@
 #'   [See (2.3) in Zhang, Robinson and Yao (2019)].
 
 #' @return A list containing the following components:
-#'
-#'   \item{result}{A \eqn{1 \times 1} matrix representing the cointegration rank.
-#'   If \code{'type' = 'all'}, then return a \eqn{1 \times 3} matrix representing
+#'   \item{Z}{The transformed series with \eqn{n} rows and \eqn{p} columns. }
+#'   \item{coint_rank}{A \eqn{1 \times 1} matrix representing the cointegration rank.
+#'   If \code{type = 'all'}, then return a \eqn{1 \times 3} matrix representing
 #'    the cointegration rank of all three methods.}
+#'   \item{lag.k}{a prescribed positive integer which means the time lags used
+#'    to calculate the statistic.}
+#'   \item{method}{a character string indicating which method was performed.}
 #'
 #' @references Zhang, R., Robinson, P. & Yao, Q. (2019).  \emph{Identifying 
 #' Cointegration by Eigenanalysis}.  Journal of the American Statistical 
@@ -56,7 +59,7 @@
 #' A[1:3,1:3] <- M1
 #' Y <- t(A%*%X)
 #' coint(Y, type = "all")
-coint <- function(Y, lag.k=5, type=c("acf","pptest","chang","all"),
+coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
                   c0 = 0.3, m = 20, alpha = 0.01){
   # Y the observed time series with length n and dimension p
   # k0 the lag order  of the covariance in recoverying  cointegration space
@@ -99,7 +102,7 @@ coint <- function(Y, lag.k=5, type=c("acf","pptest","chang","all"),
   
   ##### c2. compute the covariance and determine the cointegration rank####
   
-  Z=t(G)%*%Y
+  Z=MatMult(t(G), Y)
   Z=t(Z)
   
   ### indentify r_hat, two way:
@@ -115,55 +118,88 @@ coint <- function(Y, lag.k=5, type=c("acf","pptest","chang","all"),
     }
     r_hat1 = sum(b< m*c0)
     if (type == "acf"){
-      result <- as.matrix(r_hat1)
-      rownames(result) <- "r_hat"
-      colnames(result) <- "acf"
-      return(list(result = result))
+      # result <- as.matrix(r_hat1)
+      METHOD <- c("Identifying cointegration rank of given time series",
+                  "using acf method")
+      # rownames(result) <- "r_hat"
+      # colnames(result) <- "acf"
+      names(r_hat1) <- "The estimated number of cointegration rank"
+      names(lag.k) <-"Time lag"
+      return(structure(list(Z = Z, coint_rank = r_hat1, lag.k = lag.k,
+                            method = METHOD),
+                       class = "coint"))
     }
   }
   # (d) Using PP-test with p value 0.01
   if (type == "pptest" || type == "all")
   { 
     v=c(rep(0, p))
-    
-    for (h in 1:p)
+    for (h in p:1)
     {
-      v[h]=PP.test(Z[ , h],lshort = FALSE)$p.value
+      v[h] <- PP.test(Z[ , h], lshort = FALSE)$p.value
+      if(v[h] > alpha) break
     }
-    r_hat2 = p-sum(v>0.01)
+    r_hat2 = p-h
+    
+    # older way
+    # v=c(rep(0, p))
+    # for (h in 1:p)
+    # {
+    #   v[h]=PP.test(Z[ , h],lshort = FALSE)$p.value
+    # }
+    # r_hat2 = p-sum(v > 0.01)
+    
+    
     
     if (type == "pptest"){
-      result <- as.matrix(r_hat2)
-      rownames(result) <- "r_hat"
-      colnames(result) <- "pptest"
-      return(list(result = result))
+      METHOD <- c("Identifying cointegration rank of given time series",
+                  "using Phillips-Perron test")
+      names(r_hat2) <- "The estimated number of cointegration rank"
+      names(lag.k) <- "Time lag"
+      return(structure(list(Z = Z, coint_rank = r_hat2, lag.k = lag.k,
+                            method = METHOD),
+                       class = "coint"))
     }
   }
   # (d) Using unit-root test based on sample covariance with p value 0.01
-  if (type == "chang" || type == "all")
+  if (type == "Chang" || type == "all")
   {
+    # older way
+    # v=c(rep(0, p))
+    # for (h in 1:p)
+    # {
+    #   v[h]=ur.test(Z[,h], lagk.vec=2, alpha=0.01)$result[1,1]
+    # }
+    # r_hat3 = p-sum(v==1)
+    # print(v)
+    # print(r_hat3)
+    
     v=c(rep(0, p))
-    
-    for (h in 1:p)
+    for (l in p:1)
     {
-      v[h]=ur.test(Z[,h], lagk.vec=2, alpha=0.01)$result[1,1]
+      v[l] <- ur.test(Z[ , l], lagk.vec = 2, alpha = alpha)$reject[1, 1]
+      if(v[l] == 1) {break}
     }
-    r_hat3 = p-sum(v==1)
-    
-    if (type == "chang"){
-      #print(v)
-      result <- as.matrix(r_hat3)
-      rownames(result) <- "r_hat"
-      colnames(result) <- "chang"
-      return(list(result = result))
+    r_hat3 = p - l
+    if (type == "Chang"){
+      METHOD <- c("Identifying cointegration rank of given time series",
+                  "using Chang's method")
+      names(r_hat3) <- "The estimated number of cointegration rank"
+      names(lag.k) <- "Time lag"
+      return(structure(list(Z = Z, coint_rank = r_hat3, lag.k = lag.k,
+                            method = METHOD),
+                       class = "coint"))
     }
   }
-  
   if(type == "all"){
     result <- t(as.matrix(c(r_hat1,r_hat2,r_hat3)))
     rownames(result) <- "r_hat"
     colnames(result) <- c("acf","pptest","chang")
-    return(list(result = result))
+    METHOD <- c("Identifying cointegration rank of given time series",
+                "using both three methods")
+    names(lag.k) <-"Time lag"
+    return(structure(list(Z = Z, coint_rank = result, lag.k = lag.k,
+                          method = METHOD),
+                     class = "coint"))
   }
-  return(k)
 }

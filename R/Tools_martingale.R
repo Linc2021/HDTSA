@@ -33,12 +33,17 @@
 
 #' @return An object of class "MartG_test" is a list containing the following
 #'   components:
-#'
-#'   \item{reject}{Logical value. If \code{TRUE}, it means rejecting the null
-#'   hypothesis, otherwise it means not rejecting the null hypothesis. }
+#'    
+#'.  \item{statistic}{The value of the test statistic.}
 #'   \item{p.value}{Numerical value which represents the p-value of the test.}
-#' @references Chang, J., Jiang, Q. & Shao, X. (2021). \emph{Testing the
-#'   martingale difference hypothesis in high dimension}.
+#'   \item{lag.k}{The time lag used in function.}
+#'   \item{method}{A character string indicating what method was performed.}
+#'   \item{type}{A character string which map used on data matrix \code{X}.}
+#'   \item{kernel.type}{A character string indicating what kenel method was performed.}
+#'   
+#' @references Chang, J., Jiang, Q. & Shao, X. (2022). \emph{Testing the
+#'   martingale difference hypothesis in high dimension}.  Journal of 
+#'   Econometrics, in press
 #' @examples
 #' n <- 200
 #' p <- 10
@@ -106,6 +111,11 @@ MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad'),
     else Xj <- f(X)
     d <- ncol(Xj)
   }
+  else if(is.matrix(type)){
+    Xj <- type
+    names(type) <- "User define"
+    d <- ncol(Xj)
+  }
   else {
     expr <- substitute(type)
     varnames_expr <- all.vars(expr)
@@ -136,13 +146,18 @@ MartG_test <- function (X, lag.k=2, B=1000, type=c('Linear','Quad'),
   Tn <- MartG_TestStatC(n, lag.k, X, Xj)
   
   ft <- MartG_ftC(n, lag.k, p, d, X, Xj)
-  bn <- MartG_bandwith(ft,lag.k,p,d,ken_type)
+  bn <- bandwith(ft,lag.k,p,d,ken_type)
 	
 	Gnstar <- MartG_bootc(n, lag.k, p, d, B, bn, ken_type, ft)  # critical value
 	p.value <- mean(Gnstar>Tn)
-	Results <- list(reject = (p.value<0.05), p.value = p.value)
-	class(Results) <- c("MartG_test")
-	return(Results)
+	names(Tn) <- "Statistic"
+	names(lag.k) <-"Time lag"
+	names(kernel.type) <- "Symmetric kernel"
+	METHOD <- "Testing for martingale difference hypothesis in high dimension"
+	structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
+	               method = METHOD,
+	               type = type, kernel = kernel.type),
+	          class = "hdtstest")
 }
 
 

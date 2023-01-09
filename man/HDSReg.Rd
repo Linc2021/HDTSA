@@ -44,6 +44,8 @@ An object of class "HDSReg" is a list containing the following
   matrix \eqn{\widetilde{\bf D}} if \code{D} is not given.}
   \item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix
   \eqn{{\bf \widehat{A}}}.}
+  \item{lag.k}{the time lag used in function.}
+  \item{method}{a character string indicating what method was performed.}
 }
 \description{
 \code{HDSReg()} considers a multivariate time series model which

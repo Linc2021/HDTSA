@@ -69,17 +69,21 @@
 #'   output.
 #' @export
 #' @return The output of the segment procedure is a list containing the
-#'   following components: \item{B}{The \eqn{p\times p} transformation matrix
+#'   following components: 
+#'   \item{B}{The \eqn{p\times p} transformation matrix
 #'   such that \eqn{\hat{\bf z}_t = \widehat{\bf B}{\bf y}_t}, where
 #'   \eqn{\widehat{\bf B}=\widehat{\bf \Gamma}_y\widehat{{\bf V}}^{-1/2}}.}
 #'   \item{Z}{\eqn{\hat{\bf Z}=\{\hat{\bf z}_1,\dots,\hat{\bf z}_n\}'}, the
 #'   transformed series with \eqn{n} rows and \eqn{p} columns.}
+#'   
 #' @return  The output of the permutation procedure is a list containing the
 #'   following components: 
 #'   \item{NoGroups}{number of groups with at least two components series.}
 #'   \item{No_of_Members}{The cardinalities of different groups.}
 #'   \item{Groups}{The indices of the components in \eqn{\hat{\bf z}_t} that
 #'   belongs to a group.}
+#'   \item{method}{a character string indicating what method was performed.}
+#'   
 #'
 #'
 #' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component
@@ -188,23 +192,32 @@ PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
                       K = K)
   Z=seglist$Z
   B=seglist$B
+  METHOD = "Principal component analysis for time serise"
   if(just4pre==TRUE){
-    Yt=list(B=B, Z=Z)
+    METHOD = c(METHOD, "Only segment procedure")
+    Yt=structure(list(B=B, Z=Z, method = METHOD),
+                 class = "tspca")
     return(Yt)
   }
   #permutation of MAX
   if(permutation == 'max')
   {
-  	out=permutationMax(Z, prewhiten, m,verbose)
-	  output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members,
-	              Groups=out$Groups)
+    METHOD = c(METHOD, "Maximum cross correlation method")
+  	out=permutationMax(Z, prewhiten, m, verbose)
+	  output=structure(list(B=B, Z=Z, NoGroups=out$NoGroups,
+	                        No_of_Members=out$No_of_Members, Groups=out$Groups,
+	                        method = METHOD),
+	                  class = "tspca")
 	return(output)
   }
   	#permutation of FDR
 	else if(permutation=='fdr'){
-	  out=permutationFDR(Z,prewhiten, beta, m,verbose)
-    output=list(B=B, Z=Z,NoGroups=out$NoGroups, No_of_Members=out$No_of_Members,
-                Groups=out$Groups)
+	  METHOD = c(METHOD, "FDR based on multiple tests")
+	  out=permutationFDR(Z,prewhiten, beta, m, verbose)
+    output=structure(list(B=B, Z=Z, NoGroups=out$NoGroups, 
+                          No_of_Members=out$No_of_Members, Groups=out$Groups,
+                          method = METHOD),
+                     class = "tspca")
 		return(output)
       }
 }

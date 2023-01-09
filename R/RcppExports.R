@@ -9,14 +9,6 @@ MartG_ftC <- function(n, k, p, d, X, Xj) {
     .Call('_HDTSA_MartG_ftC', PACKAGE = 'HDTSA', n, k, p, d, X, Xj)
 }
 
-MartG_XiC <- function(n, k, p, B, bn, ken_sign) {
-    .Call('_HDTSA_MartG_XiC', PACKAGE = 'HDTSA', n, k, p, B, bn, ken_sign)
-}
-
-MartG_bandwith <- function(ft, k, p, d, ken_type) {
-    .Call('_HDTSA_MartG_bandwith', PACKAGE = 'HDTSA', ft, k, p, d, ken_type)
-}
-
 MartG_bootc <- function(n, k, p, d, B, bn, method, ft) {
     .Call('_HDTSA_MartG_bootc', PACKAGE = 'HDTSA', n, k, p, d, B, bn, method, ft)
 }
@@ -41,15 +33,11 @@ WN_ftC <- function(n, k, p, X, X_mean) {
     .Call('_HDTSA_WN_ftC', PACKAGE = 'HDTSA', n, k, p, X, X_mean)
 }
 
-WN_XiC <- function(n, k, p, B, bn, ken_sign) {
-    .Call('_HDTSA_WN_XiC', PACKAGE = 'HDTSA', n, k, p, B, bn, ken_sign)
-}
-
-WN_bandwith <- function(ft, k, p, ken_type) {
-    .Call('_HDTSA_WN_bandwith', PACKAGE = 'HDTSA', ft, k, p, ken_type)
-}
-
 WN_bootc <- function(n, k, p, B, bn, method, ft, X, sigma_zero) {
     .Call('_HDTSA_WN_bootc', PACKAGE = 'HDTSA', n, k, p, B, bn, method, ft, X, sigma_zero)
+}
+
+bandwith <- function(ft, k, p, d, ken_type) {
+    .Call('_HDTSA_bandwith', PACKAGE = 'HDTSA', ft, k, p, d, ken_type)
 }
 

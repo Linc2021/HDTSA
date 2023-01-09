@@ -41,37 +41,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// MartG_XiC
-Eigen::MatrixXd MartG_XiC(int n, int k, int p, int B, double bn, int ken_sign);
-RcppExport SEXP _HDTSA_MartG_XiC(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP ken_signSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type B(BSEXP);
-    Rcpp::traits::input_parameter< double >::type bn(bnSEXP);
-    Rcpp::traits::input_parameter< int >::type ken_sign(ken_signSEXP);
-    rcpp_result_gen = Rcpp::wrap(MartG_XiC(n, k, p, B, bn, ken_sign));
-    return rcpp_result_gen;
-END_RCPP
-}
-// MartG_bandwith
-double MartG_bandwith(Eigen::MatrixXd ft, int k, int p, int d, int ken_type);
-RcppExport SEXP _HDTSA_MartG_bandwith(SEXP ftSEXP, SEXP kSEXP, SEXP pSEXP, SEXP dSEXP, SEXP ken_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type d(dSEXP);
-    Rcpp::traits::input_parameter< int >::type ken_type(ken_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(MartG_bandwith(ft, k, p, d, ken_type));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MartG_bootc
 std::vector<double> MartG_bootc(const int n, const int k, const int p, const int d, const int B, double bn, int method, Eigen::MatrixXd ft);
 RcppExport SEXP _HDTSA_MartG_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP dSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP) {
@@ -162,36 +131,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// WN_XiC
-Eigen::MatrixXd WN_XiC(int n, int k, int p, int B, double bn, int ken_sign);
-RcppExport SEXP _HDTSA_WN_XiC(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP ken_signSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type B(BSEXP);
-    Rcpp::traits::input_parameter< double >::type bn(bnSEXP);
-    Rcpp::traits::input_parameter< int >::type ken_sign(ken_signSEXP);
-    rcpp_result_gen = Rcpp::wrap(WN_XiC(n, k, p, B, bn, ken_sign));
-    return rcpp_result_gen;
-END_RCPP
-}
-// WN_bandwith
-double WN_bandwith(Eigen::MatrixXd ft, int k, int p, int ken_type);
-RcppExport SEXP _HDTSA_WN_bandwith(SEXP ftSEXP, SEXP kSEXP, SEXP pSEXP, SEXP ken_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type ken_type(ken_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(WN_bandwith(ft, k, p, ken_type));
-    return rcpp_result_gen;
-END_RCPP
-}
 // WN_bootc
 std::vector<double> WN_bootc(const int n, const int k, const int p, const int B, double bn, int method, Eigen::MatrixXd ft, Eigen::MatrixXd X, Eigen::VectorXd sigma_zero);
 RcppExport SEXP _HDTSA_WN_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP, SEXP XSEXP, SEXP sigma_zeroSEXP) {
@@ -211,21 +150,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bandwith
+double bandwith(Eigen::MatrixXd ft, int k, int p, int d, int ken_type);
+RcppExport SEXP _HDTSA_bandwith(SEXP ftSEXP, SEXP kSEXP, SEXP pSEXP, SEXP dSEXP, SEXP ken_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    Rcpp::traits::input_parameter< int >::type ken_type(ken_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(bandwith(ft, k, p, d, ken_type));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_HDTSA_MartG_TestStatC", (DL_FUNC) &_HDTSA_MartG_TestStatC, 4},
     {"_HDTSA_MartG_ftC", (DL_FUNC) &_HDTSA_MartG_ftC, 6},
-    {"_HDTSA_MartG_XiC", (DL_FUNC) &_HDTSA_MartG_XiC, 6},
-    {"_HDTSA_MartG_bandwith", (DL_FUNC) &_HDTSA_MartG_bandwith, 5},
     {"_HDTSA_MartG_bootc", (DL_FUNC) &_HDTSA_MartG_bootc, 8},
     {"_HDTSA_sigmak", (DL_FUNC) &_HDTSA_sigmak, 4},
     {"_HDTSA_thresh_C", (DL_FUNC) &_HDTSA_thresh_C, 7},
     {"_HDTSA_MatMult", (DL_FUNC) &_HDTSA_MatMult, 2},
     {"_HDTSA_WN_teststatC", (DL_FUNC) &_HDTSA_WN_teststatC, 4},
     {"_HDTSA_WN_ftC", (DL_FUNC) &_HDTSA_WN_ftC, 5},
-    {"_HDTSA_WN_XiC", (DL_FUNC) &_HDTSA_WN_XiC, 6},
-    {"_HDTSA_WN_bandwith", (DL_FUNC) &_HDTSA_WN_bandwith, 4},
     {"_HDTSA_WN_bootc", (DL_FUNC) &_HDTSA_WN_bootc, 9},
+    {"_HDTSA_bandwith", (DL_FUNC) &_HDTSA_bandwith, 5},
     {NULL, NULL, 0}
 };
 

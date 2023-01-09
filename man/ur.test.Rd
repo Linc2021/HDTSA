@@ -4,7 +4,7 @@
 \alias{ur.test}
 \title{Testing for unit roots based on sample autocovariances}
 \usage{
-ur.test(Y, lagk.vec = lagk.vec, con_vec = con_vec, alpha = alpha)
+ur.test(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05)
 }
 \arguments{
 \item{Y}{\eqn{Y = \{y_1, \dots , y_n \}}, the observations of a univariate
@@ -25,8 +25,16 @@ lagk.vec=c(0,1,2,3,4).}
 \value{
 A dataframe containing the following components:
 
-  \item{result}{\code{'1'} means we reject the null hypothesis and \code{'0'}
-  means we do not reject the null hypothesis.}
+  \item{statistic}{A vector which represents the value of the test statistic,
+   the length of this vector is the same as \code{lag.vec}}
+  \item{reject}{A data matrix containing result with different arguments,
+   each column represents the results of different \eqn{c_\kappa} calculations, and 
+   each column is a vector representing the results of different time lag
+    K0 calculations.\code{'1'} means we reject the null hypothesis and \code{'0'}
+  means we do not reject the null hypothesis}
+  \item{lag.vec}{The time lag used in function.}
+  \item{method}{A character string indicating what method was performed.}
+  \item{type}{A character string which map used on data matrix \code{X}.}
 }
 \description{
 The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis

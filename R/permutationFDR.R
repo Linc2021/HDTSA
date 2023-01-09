@@ -118,8 +118,8 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
     for(j in 1:(p-1)) { if(Index[j]==1) { Group[,k]=G[,j]; k=k+1} }
     one_mem = which(!(c(1:p) %in%  Group))
     N2 = length(one_mem)
-    if(N2>0)Group = cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:sum(Group[,1]>0),]
-    else Group = as.matrix(Group[1:sum(Group[,1]>0),])
+    if(N2>0)Group = cbind(Group,rbind(t(one_mem),matrix(0, p-1, N2)))[1:max(N),]
+    else Group = as.matrix(Group[1:max(N),])
     q_block = K+N2
     Nosmem = c(N[N>0],rep(1,N2))
     if(verbose){
@@ -128,7 +128,9 @@ permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
       for(i in c(1:q_block)){
         cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
       }
+      cat("Omit groups that have only one member\n")
     }
+    colnames(Group) <- paste("Group", c(1:q_block))
     output=list(NoGroups=q_block, No_of_Members=Nosmem, 
               Groups=Group)
   }

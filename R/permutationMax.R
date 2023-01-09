@@ -120,17 +120,18 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   
   if(verbose){
     #cat("\n"); cat("Number of groups", K, "\n") #todo
-    cat("\n"); cat("Number of groups", q_block, "\n") #q_block
+    cat("\n"); cat("Number of groups:", q_block, "\n") #q_block
     # cat("Number of members in those groups:", N[N>0], "\n") #todo
-    cat("\n"); cat("Number of groups", Nosmem, "\n") #q_block
+    cat("\n"); cat("Number of members in those groups:", Nosmem, "\n") #q_block
     for(i in c(1:K)){
       cat("Group",i,": contains these columns index of the zt:", drop(Group[,i][Group[,i]>0]), "\n")
     }
+    cat("Omit groups that have only one member\n")
   }
-  
   #to do 
-  #result include to many useless output
-  output=list(NoGroups=q_block, No_of_Members=Nosmem, Groups=Group)
+  #result include too many useless output
+  colnames(Group) <- paste("Group", c(1:q_block))
+  output=list(NoGroups = q_block, No_of_Members = Nosmem, Groups = Group)
   return(output)
 }
 

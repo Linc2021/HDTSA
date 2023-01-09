@@ -50,6 +50,8 @@
 #'   matrix \eqn{\widetilde{\bf D}} if \code{D} is not given.}
 #'   \item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix
 #'   \eqn{{\bf \widehat{A}}}.}
+#'   \item{lag.k}{the time lag used in function.}
+#'   \item{method}{a character string indicating what method was performed.}
 #' @references Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional
 #'   stochastic regression with latent factors, endogeneity and nonlinearity},
 #'   Journal of Econometrics, Vol. 189, pp. 297–312.
@@ -109,7 +111,11 @@ HDSReg <- function (Y,Z,D=NULL,lag.k=1,twostep=FALSE) {
   factor_list <- factors(eta, lag.k, twostep)
   r <- factor_list$factor_num
   loading.mat <- factor_list$loading.mat
-  outlist <- list(reg.coff.mat=D, factor_num=r, loading.mat=loading.mat)
-  class(outlist) <- c("HDSReg")
-  return(outlist)
+  METHOD <- "High dimensional stochastic regression with latent factors"
+  #outlist <- list(reg.coff.mat=D, factor_num=r, loading.mat=loading.mat)
+  #class(outlist) <- c("HDSReg")
+  structure(list(factor_num = r, reg.coff.mat = D, loading.mat = loading.mat, 
+                 lag.k=factor_list$lag.k, method = METHOD),
+            class = "factors")
+  #return(outlist)
 }

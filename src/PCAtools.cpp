@@ -42,6 +42,5 @@ Eigen::MatrixXd thresh_C(Eigen::MatrixXd sigmaY, Eigen::MatrixXd Y, Eigen::Matri
 // [[Rcpp::export]]
 SEXP MatMult(Eigen::MatrixXd A, Eigen::MatrixXd B){
   Eigen::MatrixXd C = A * B;
-  
   return Rcpp::wrap(C);
 }

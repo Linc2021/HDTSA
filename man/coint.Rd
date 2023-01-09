@@ -2,12 +2,12 @@
 % Please edit documentation in R/coint.R
 \name{coint}
 \alias{coint}
-\title{Identifying conintegration rank of given time series}
+\title{Identifying cointegration rank of given time series}
 \usage{
 coint(
   Y,
   lag.k = 5,
-  type = c("acf", "pptest", "chang", "all"),
+  type = c("acf", "pptest", "Chang", "all"),
   c0 = 0.3,
   m = 20,
   alpha = 0.01
@@ -45,10 +45,13 @@ cointegration rank using \code{"pptest","chang"} method. Default is 0.01.
 }
 \value{
 A list containing the following components:
-
-  \item{result}{A \eqn{1 \times 1} matrix representing the cointegration rank.
-  If \code{'type' = 'all'}, then return a \eqn{1 \times 3} matrix representing
+  \item{Z}{The transformed series with \eqn{n} rows and \eqn{p} columns. }
+  \item{coint_rank}{A \eqn{1 \times 1} matrix representing the cointegration rank.
+  If \code{type = 'all'}, then return a \eqn{1 \times 3} matrix representing
    the cointegration rank of all three methods.}
+  \item{lag.k}{a prescribed positive integer which means the time lags used
+   to calculate the statistic.}
+  \item{method}{a character string indicating which method was performed.}
 }
 \description{
 \code{coint} seeks for a contemporaneous linear

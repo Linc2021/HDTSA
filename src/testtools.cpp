@@ -5,43 +5,14 @@
 #include <math.h>
 #include <random>
 #include <ctime>
+#include "testtools.h"
+
 // [[Rcpp::depends(RcppEigen,Rcpp)]]
 using namespace std;
 using namespace Eigen;
 using namespace Rcpp;
 
-
-// [[Rcpp::export]]
-double MartG_TestStatC(int n, int k,  Eigen::MatrixXd X, Eigen::MatrixXd Xj){
-  
-  
-  Eigen::VectorXd GammaMax = Eigen::VectorXd::Zero(k);
-  for(int j=1; j<k+1; j++){
-    double jj=j;
-    Eigen::MatrixXd GammajHat = (Xj.topRows(n-j)).transpose() * X.bottomRows(n-j) / (n-jj);
-    GammaMax(j-1) = GammajHat.array().square().maxCoeff();
-  }
-  
-  return n * GammaMax.sum();
-  
-}
-
-// [[Rcpp::export]]
-Eigen::MatrixXd MartG_ftC(int n, int k, int p, int d, Eigen::MatrixXd X, Eigen::MatrixXd Xj){
-  
-  int dim = p*d;
-  Eigen::MatrixXd ft = Eigen::MatrixXd::Zero(k*p*d, n-k);
-  for(int i=0; i<k; i++){
-    for(int j=0; j<(n-k); j++){
-      ft.block(i*dim,j,dim,1) = kroneckerProduct(Xj.row(j).transpose(), X.row(j+i+1).transpose());
-    }
-  }
-  ft = ft - (ft.rowwise().sum()/(n-k)).replicate(1,n-k);
-  return ft;
-}
-
-// [[Rcpp::export]]
-Eigen::MatrixXd MartG_XiC(int n, int k,int p, int B, double bn, int ken_sign){
+Eigen::MatrixXd XiC(int n, int k,int p, int B, double bn, int ken_sign){
   Eigen::MatrixXd kenel = Eigen::MatrixXd::Ones(n-k,n-k);
   if(ken_sign==1){
     for(int i=0; i<n-k; i++){
@@ -49,9 +20,9 @@ Eigen::MatrixXd MartG_XiC(int n, int k,int p, int B, double bn, int ken_sign){
         if(i!=j){
           double temp =double(i-j)/bn;
           kenel(i,j) = 25/(12*M_PI*M_PI*temp*temp) * (sin(6*M_PI*temp/5)/(6*M_PI*temp/5) - cos(6*M_PI*temp/5));
-          }
         }
       }
+    }
   }
   if(ken_sign==2){
     for(int i=0; i<n-k; i++){
@@ -98,7 +69,7 @@ Eigen::MatrixXd MartG_XiC(int n, int k,int p, int B, double bn, int ken_sign){
 }
 
 // [[Rcpp::export]]
-double MartG_bandwith(Eigen::MatrixXd ft, int k,int p, int d, int ken_type){
+double bandwith(Eigen::MatrixXd ft, int k,int p, int d, int ken_type){
   int n = ft.cols();
   int kpd = k*p*d;
   double a_hat,bw=0;
@@ -127,27 +98,3 @@ double MartG_bandwith(Eigen::MatrixXd ft, int k,int p, int d, int ken_type){
   }
   return bw;
 }
-
-// [[Rcpp::export]]
-std::vector<double> MartG_bootc(const int n, const int k, const int p, const int d, const int B,
-                  double bn, int method, Eigen::MatrixXd ft){
-  
-  int dim = p*d;
-  // random samples follows a multivariate gaussian distribution N(0, Jn):B*kpd
-  Eigen::MatrixXd Xi= MartG_XiC(n, k, p, B, bn,method);  //Xi(B,n-k)
-  Eigen::MatrixXd samples = Xi * ft.transpose()/sqrt(double(n-k));
-  std::vector<double> GnStar(B);
-  for(int b=0; b<B; b++){
-    Eigen::VectorXd GammaStar = Eigen::VectorXd::Zero(k) ;
-    for(int i=0; i<k; i++){
-      GammaStar(i) = samples.block(b,i*dim,1,dim).array().square().maxCoeff();
-    }
-    
-    GnStar[b] = GammaStar.sum();
-  }
-  sort(GnStar.begin(),GnStar.end());
-  return GnStar;
-}  
-
-
-

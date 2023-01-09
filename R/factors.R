@@ -29,8 +29,14 @@
 
 #' @return An object of class "factors" is a list containing the following
 #'   components: \item{factor_num}{The estimated number of factors
-#'   \eqn{\hat{r}}.} \item{loading.mat}{The estimated \eqn{p \times r} factor
+#'   \eqn{\hat{r}}.} 
+#'   \item{loading.mat}{The estimated \eqn{p \times r} factor
 #'   loading matrix \eqn{\widehat{\bf A}}.}
+#'   \item{lag.k}{the time lag used in function.}
+#'   \item{method}{a character string indicating what method was performed.}
+#'   
+#'  
+
 #' @references Lam, C. & Yao, Q. (2012). \emph{Factor modelling for
 #'   high-dimensional time series: Inference for the number of factors}, The
 #'   Annals of Statistics, Vol. 40, pp. 694--726.
@@ -59,8 +65,8 @@
 
 
 
-factors <- function (Y,lag.k=5,twostep=FALSE) {
-  
+factors <- function (Y, lag.k=5, twostep=FALSE) 
+{
   n <- nrow(Y)
   p <- ncol(Y)
   r <- 0
@@ -108,11 +114,17 @@ factors <- function (Y,lag.k=5,twostep=FALSE) {
       final_vector <- cbind(final_vector, G[, c(1:r)])
     }
   }
-  outlist <- list(factor_num = r, loading.mat = final_vector)
-  class(outlist) <- c("factors")
-  return(outlist)
-    
-    #extension: two step method
+  
+  PARAMETER <- twostep
+  METHOD <- "Inference for the number of factors"
+  names(r) <- "The estimated number of factors"
+  names(lag.k) <-"Time lag"
+  #outlist$call <- match.call(expand.dots = FALSE)
+  #outlist <- list(factor_num = r, loading.mat = final_vector)
+  #class(outlist) <- c("factors")
+  structure(list(factor_num = r, loading.mat = final_vector, lag.k=lag.k,
+                 method = METHOD),
+            class = "factors")
     
 
 }

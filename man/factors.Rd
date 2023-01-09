@@ -26,8 +26,11 @@ implemented for estimating \eqn{r} and \eqn{{\bf A}}.}
 \value{
 An object of class "factors" is a list containing the following
   components: \item{factor_num}{The estimated number of factors
-  \eqn{\hat{r}}.} \item{loading.mat}{The estimated \eqn{p \times r} factor
+  \eqn{\hat{r}}.} 
+  \item{loading.mat}{The estimated \eqn{p \times r} factor
   loading matrix \eqn{\widehat{\bf A}}.}
+  \item{lag.k}{the time lag used in function.}
+  \item{method}{a character string indicating what method was performed.}
 }
 \description{
 \code{factors()} deals with factor modeling for high-dimensional

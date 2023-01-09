@@ -78,7 +78,8 @@ output.}
 }
 \value{
 The output of the segment procedure is a list containing the
-  following components: \item{B}{The \eqn{p\times p} transformation matrix
+  following components: 
+  \item{B}{The \eqn{p\times p} transformation matrix
   such that \eqn{\hat{\bf z}_t = \widehat{\bf B}{\bf y}_t}, where
   \eqn{\widehat{\bf B}=\widehat{\bf \Gamma}_y\widehat{{\bf V}}^{-1/2}}.}
   \item{Z}{\eqn{\hat{\bf Z}=\{\hat{\bf z}_1,\dots,\hat{\bf z}_n\}'}, the
@@ -90,6 +91,7 @@ The output of the permutation procedure is a list containing the
   \item{No_of_Members}{The cardinalities of different groups.}
   \item{Groups}{The indices of the components in \eqn{\hat{\bf z}_t} that
   belongs to a group.}
+  \item{method}{a character string indicating what method was performed.}
 }
 \description{
 \code{PCA4_TS()} seeks for a contemporaneous linear
