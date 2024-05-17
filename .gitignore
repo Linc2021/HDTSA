@@ -7,3 +7,4 @@ HDTSA.Rproj
 src/*.o
 src/*.so
 src/*.dll
+R/.DS_Store
