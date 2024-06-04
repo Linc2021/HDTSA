@@ -1,6 +1,7 @@
-#' Testing for unit roots based on sample autocovariances
+#' @name UR_test
+#' @title Testing for unit roots based on sample autocovariances
 #'
-#' The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis
+#' @description The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis
 #' testing problems: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
 #' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
 #' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, the observations of a univariate
@@ -15,7 +16,8 @@
 #'   (2021). It also can be a vector. If missing, the default value we use 0.55.
 #' @param alpha The prescribed significance level. Default is 0.05.
 
-#' @return A dataframe containing the following components:
+#' @return An object of class "urtest" is a list containing the following
+#'   components:
 #'
 #'   \item{statistic}{A vector which represents the value of the test statistic,
 #'    the length of this vector is the same as \code{lag.vec}}
@@ -45,11 +47,11 @@
 #' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
 #' con_vec=c(0.45,0.55,0.65)
 #' lagk.vec=c(0,1,2)
-#' ur.test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
-#' ur.test(Y,alpha=0.05)
+#' UR_test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
+#' UR_test(Y,alpha=0.05)
 
 
-ur.test <- function(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05) {
+UR_test <- function(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05) {
   
   args <- as.list(match.call())
   if(is.null(args$lagk.vec)){

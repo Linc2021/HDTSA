@@ -24,6 +24,9 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
   if(!is.null(x$statistic))
     out <- c(out, paste(names(x$statistic), "=",
                         format(x$statistic, digits = max(1L, digits - 2L))))
+  if(!is.null(x$MultiTest))
+    out <- c(out, paste("Resuls for multiple test", ":")
+             )
   if(!is.null(x$lag.k))
     out <- c(out, paste(names(x$lag.k), "=",
                         format(x$lag.k, digits = max(1L, digits - 2L))))
@@ -34,6 +37,10 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
     fp <- format.pval(x$p.value, digits = max(1L, digits - 3L))
     out <- c(out, paste("p-value",
                         if(startsWith(fp, "<")) fp else paste("=",fp)))
+  }
+  if(!is.null(x$cri95)) {
+    out <- c(out, paste(names(x$cri95), "=",
+                        format(x$cri95, digits = max(1L, digits - 2L))))
   }
   if(!is.null(x$type)) {
     if(is.character(x$type))
@@ -58,6 +65,8 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
   
   
   cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
+  if(!is.null(x$MultiTest))
+    cat(x$MultiTest)
   invisible(x)
 }
 #'@method print tspca
@@ -86,6 +95,23 @@ print.tspca <- function(x, digits = max(5, getOption("digits") - 5), prefix = "\
     print(x$Groups[,N2])
   }
   if(length(x) <= 4) cat(strwrap(x$method[2]), sep = "\n")
+  invisible(x)
+}
+
+#'@method print mtscp
+#'@export
+print.mtscp <- function(x, digits = max(5, getOption("digits") - 5), prefix = "\t", ...){
+  cat("\n")
+  cat(strwrap(x$method[1], prefix = prefix), sep = "\n")
+  cat("\n")
+  if(!is.null(x$Rank)){
+    cat(strwrap(x$method[2]), sep = "\n")
+    cat(strwrap(paste(names(x$Rank),"=",format(x$Rank, digits = max(1L, digits - 2L)))),
+        sep = "\n")
+        
+  }
+  cat(strwrap(paste("Use ",substitute(res3),"$A or ",substitute(res3),"$B or ",
+                    substitute(res3), "$f to access the corresponding data", sep = "")), sep = "\n")
   invisible(x)
 }
 

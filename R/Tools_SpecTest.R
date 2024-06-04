@@ -6,33 +6,32 @@
 #' \omega \in \mathcal{J}\mathrm{\ \ versus\ \ H_1:H_0\ is\ not\ true.} }
 #' 
 #' 
-#' @param B.monte Bootstrap times for generating multivariate normal distributed 
-#' random vectors in calculating the critical value. 
-#' @param flag_c Bandwidth \eqn{c} of the flat-top kernel for estimating 
-#' \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}.
-#' @param J.set Set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.
-#' @param n Sample size.
-#' @param p Dimension of \eqn{{\bf x}_t}.
-#' @param x \eqn{{\bf x} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{p\times
-#'   n} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
+#' @param X \eqn{{\bf X} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{n\times
+#'   p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
 #'   dimension of \eqn{{\bf x}_t}.
+#' @param B Bootstrap times for generating multivariate normal distributed 
+#' random vectors in calculating the critical value. Default is \code{B} \eqn{=2000}.
+#' @param flag_c Bandwidth \eqn{c} of the flat-top kernel for estimating 
+#' \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. Default is \code{flag_c} \eqn{=0.8}.
+#' @param J.set Set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.
 #' @param cross.indices Set \eqn{\mathcal{I}} for \eqn{(i,j)}, a matrix with 2 columns,
 #' used to calculate the test statistic.
 #' 
-#' @return An object of class "SpecTest" is a list containing the following
+#' @return An object of class "hdtstest" is a list containing the following
 #'   components:
 #'
 #'   \item{Stat}{Numerical value which represents the value of test statistic.}
 #'   \item{pval}{Numerical value which represents the p-value of the test.}
 #'   \item{cri95}{Numerical value which represents the critical value of the test
 #'   at the significance level 0.05.}
+#'   \item{method}{A character string indicating what method was performed.}
 #' @references Chang, J., Jiang, Q., McElroy, T. & Shao, X. (2023). 
 #' \emph{Statistical inference for high-dimensional spectral density matrix}.
 #' @examples
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
-#' B.monte <- 1000
+#' B <- 1000
 #' burn <- 1000
 #' z.sim <- matrix(rnorm((n+burn)*p),p,n+burn)
 #' phi.mat <- 0.4*diag(p)
@@ -40,13 +39,16 @@
 #' x <- x.sim - rowMeans(x.sim)
 #' cross.indices <- matrix(c(1,2), ncol=2)
 #' J.set <- 2*pi*seq(0,3)/4 - pi
-#' res <- SpecTest(B.monte, flag_c, J.set, n, p, x, cross.indices)
+#' res <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 #' Stat <- res$Stat
-#' Pvalue <- res$pval
+#' Pvalue <- res$p.value
 #' CriVal <- res$cri95
 #' @export
-SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
+SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 {
+  p <- ncol(X)
+  n <- nrow(X)
+  X <- t(X)
   K <- length(J.set)
   r <- dim(cross.indices)[1]
   l.band <- max(round(log(r)/10),1)
@@ -54,7 +56,7 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
   ## ------------------------------------
   ##  Part II: compute spectral estimates
   ## ------------------------------------
-  GhatC <- CmpGammaC(x)  # List(n) : p*p
+  GhatC <- CmpGammaC(X)  # List(n) : p*p
   Shat <- matrix(l.band, nrow=p, ncol=p)
   
   ## compute spectral density estimates
@@ -93,7 +95,7 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
   ## ----------------------------------------------
   
   n.tilde <- n - 2*l.band -1
-  C.hatC <- CEst2C(x,GhatC,n.tilde,n,p,r,cross.indices,l.band) # List(n.tilde): r*(2ln+1)
+  C.hatC <- CEst2C(X,GhatC,n.tilde,n,p,r,cross.indices,l.band) # List(n.tilde): r*(2ln+1)
   C.hat <- array(unlist(C.hatC), c(r,(2*l.band+1), n.tilde))
   
   # ===================================================================
@@ -101,10 +103,10 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
   # ===================================================================
   bn <- BandEstC(matrix(unlist(C.hatC), c(r*(2*l.band+1), n.tilde)), 
                  n.tilde, r, l.band, type=1)
-  eta <- etaC(n,p,B.monte,n.tilde,bn,type=1) # n.tilde*B
+  eta <- etaC(n,p,B,n.tilde,bn,type=1) # n.tilde*B
   
-  xi <- matrix(NA, nrow = 2*K*r, ncol = B.monte)    # 2Kr*B
-  mag <- matrix(NA, nrow = K*r, ncol = B.monte)
+  xi <- matrix(NA, nrow = 2*K*r, ncol = B)    # 2Kr*B
+  mag <- matrix(NA, nrow = K*r, ncol = B)
   
   for(j in 1:r)
   {
@@ -125,9 +127,14 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
   
   
   T2.stars <- colMax(mag)
-  
-  temp <- list(Stat=T2, pval=sum(T2.stars>T2)/B.monte, 
-               cri95=sort(T2.stars)[floor(.95*B.monte)])
+  names(T2) <- "Statistic"
+  cri95=sort(T2.stars)[floor(.95*B)]
+  names(cri95) <- "the critical value of the test at the significance level 0.05"
+  METHOD = "Statistical inference for high-dimensional spectral density matrix"
+  temp <- structure(list(statistic=T2, p.value=sum(T2.stars>T2)/B, 
+               cri95=cri95,
+               method = METHOD),
+               class = "hdtstest")
   return(temp)
 } 
 
@@ -150,7 +157,7 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
 #' \eqn{\sqrt(2\times\log(Q)-2\times\log(\log(Q))}. Default is 0.01.
 #' 
 #' 
-#' @return An object of class "SpecMulTest" is a list containing the following
+#' @return An object of class "hdtstest" is a list containing the following
 #'   components:
 #'   \item{MultiTest}{Logical vector with length Q. If the element is \code{TRUE}, 
 #'   it means rejecting the corresponding sub-null hypothesis, otherwise it means 
@@ -162,7 +169,7 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
-#' B.monte <- 1000
+#' B <- 1000
 #' burn <- 1000
 #' z.sim <- matrix(rnorm((n+burn)*p),p,n+burn)
 #' phi.mat <- 0.4*diag(p)
@@ -179,8 +186,8 @@ SpecTest <- function(B.monte, flag_c, J.set, n, p,  x, cross.indices)
 #' for (q in 1:Q) {
 #'   cross.indices <- ISET[[q]]
 #'   J.set <- JSET[[q]]
-#'   temp.q <- SpecTest(B.monte, flag_c, J.set, n, p, x, cross.indices)
-#'   PVal[q] <- temp.q$pval
+#'   temp.q <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
+#'   PVal[q] <- temp.q$p.value
 #' }  # Q
 #' res <- SpecMulTest(Q, PVal)
 #' res
@@ -212,7 +219,13 @@ SpecMulTest <- function(Q, PVal, alpha=0.05, seq_len=0.01){
   #eFDR <- sum(MultiTest[,-H1_ind])/max(sum(MultiTest),1) 
   #epower <- sum(MultiTest[,H1_ind])/length(H1_ind)
   
-  return(MultiTest)
+  METHOD = "Statistical inference for high-dimensional spectral density matrix"
+  
+  temp <- structure(list(MultiTest=MultiTest,
+                         method = METHOD),
+                    class = "hdtstest")
+  
+  return(temp)
 }
 
 

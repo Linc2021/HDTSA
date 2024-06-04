@@ -36,13 +36,13 @@
 #'   of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - \widetilde{\bf D}{\bf z}_t}
 #'   at lag \eqn{k}.
 #' @param twostep Logical. If \code{FALSE} (the default), then standard
-#'   procedures (see \code{\link{factors}}) will be implemented to estimate
+#'   procedures (see \code{\link{Factors}}) will be implemented to estimate
 #'   \eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation
-#'   procedure (see \code{\link{factors}}) will be implemented to estimate
+#'   procedure (see \code{\link{Factors}}) will be implemented to estimate
 #'   \eqn{r} and \eqn{{\bf A}}.
 
-#' @seealso \code{\link{factors}}.
-#' @return An object of class "HDSReg" is a list containing the following
+#' @seealso \code{\link{Factors}}.
+#' @return An object of class "factors" is a list containing the following
 #'   components:
 #'
 #'   \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
@@ -108,7 +108,7 @@ HDSReg <- function (Y,Z,D=NULL,lag.k=1,twostep=FALSE) {
   
   eta <- t(Y)-MatMult(D, t(Z))
   eta <- t(eta)
-  factor_list <- factors(eta, lag.k, twostep)
+  factor_list <- Factors(eta, lag.k, twostep)
   r <- factor_list$factor_num
   loading.mat <- factor_list$loading.mat
   METHOD <- "High dimensional stochastic regression with latent factors"

@@ -4,36 +4,33 @@
 \alias{SpecTest}
 \title{Statistical inference for high-dimensional spectral density matrix}
 \usage{
-SpecTest(B.monte, flag_c, J.set, n, p, x, cross.indices)
+SpecTest(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 }
 \arguments{
-\item{B.monte}{Bootstrap times for generating multivariate normal distributed 
-random vectors in calculating the critical value.}
-
-\item{flag_c}{Bandwidth \eqn{c} of the flat-top kernel for estimating 
-\eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}.}
+\item{X}{\eqn{{\bf X} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{n\times
+p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
+dimension of \eqn{{\bf x}_t}.}
 
 \item{J.set}{Set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.}
 
-\item{n}{Sample size.}
-
-\item{p}{Dimension of \eqn{{\bf x}_t}.}
-
-\item{x}{\eqn{{\bf x} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{p\times
-n} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
-dimension of \eqn{{\bf x}_t}.}
-
 \item{cross.indices}{Set \eqn{\mathcal{I}} for \eqn{(i,j)}, a matrix with 2 columns,
 used to calculate the test statistic.}
+
+\item{B}{Bootstrap times for generating multivariate normal distributed 
+random vectors in calculating the critical value. Default is \code{B} \eqn{=2000}.}
+
+\item{flag_c}{Bandwidth \eqn{c} of the flat-top kernel for estimating 
+\eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. Default is \code{flag_c} \eqn{=0.8}.}
 }
 \value{
-An object of class "SpecTest" is a list containing the following
+An object of class "hdtstest" is a list containing the following
   components:
 
   \item{Stat}{Numerical value which represents the value of test statistic.}
   \item{pval}{Numerical value which represents the p-value of the test.}
   \item{cri95}{Numerical value which represents the critical value of the test
   at the significance level 0.05.}
+  \item{method}{A character string indicating what method was performed.}
 }
 \description{
 \code{SpecTest()} implements a new global test proposed in
@@ -45,7 +42,7 @@ An object of class "SpecTest" is a list containing the following
 n <- 200
 p <- 10
 flag_c <- 0.8
-B.monte <- 1000
+B <- 1000
 burn <- 1000
 z.sim <- matrix(rnorm((n+burn)*p),p,n+burn)
 phi.mat <- 0.4*diag(p)
@@ -53,9 +50,9 @@ x.sim <- phi.mat \%*\% z.sim[,(burn+1):(burn+n)]
 x <- x.sim - rowMeans(x.sim)
 cross.indices <- matrix(c(1,2), ncol=2)
 J.set <- 2*pi*seq(0,3)/4 - pi
-res <- SpecTest(B.monte, flag_c, J.set, n, p, x, cross.indices)
+res <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 Stat <- res$Stat
-Pvalue <- res$pval
+Pvalue <- res$p.value
 CriVal <- res$cri95
 }
 \references{

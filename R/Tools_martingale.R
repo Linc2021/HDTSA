@@ -13,7 +13,7 @@
 #'   statistic. Default is \code{lag.k} \eqn{=2}.
 #' @param B Bootstrap times for generating multivariate normal distributed 
 #' random vectors in calculating the critical value. 
-#' Default is \code{B} \eqn{=2000}.
+#' Default is \code{B} \eqn{=1000}.
 #' @param type String, a map is chosen by the \proglang{R} users, such as the
 #'   default option is \code{'Linear'} means linear identity 
 #'   map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including another 
@@ -31,7 +31,7 @@
 #'                    (Bartlett kernel), see Andrews (1991) for more 
 #'                    information. Default option is \code{kernel.type = 'QS'}.
 
-#' @return An object of class "MartG_test" is a list containing the following
+#' @return An object of class "hdtstest" is a list containing the following
 #'   components:
 #'    
 #'.  \item{statistic}{The value of the test statistic.}

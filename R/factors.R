@@ -1,6 +1,6 @@
-#' @name factors
+#' @name Factors
 #' @title Factor modeling: Inference for the number of factors
-#' @description \code{factors()} deals with factor modeling for high-dimensional
+#' @description \code{Factors()} deals with factor modeling for high-dimensional
 #' time series proposed in Lam and Yao (2012):\deqn{{\bf y}_t = {\bf Ax}_t +
 #' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf x}_t} is an \eqn{r \times 1}
 #' latent process with (unknown) \eqn{r \leq p}, \eqn{{\bf A}} is a \eqn{p
@@ -54,7 +54,7 @@
 #' X <- t(cbind(x1, x2, x3))
 #' Y <- A %*% X + eps
 #' Y <- t(Y)
-#' fac <- factors(Y,lag.k=2)
+#' fac <- Factors(Y,lag.k=2)
 #' r_hat <- fac$factor_num
 #' loading_Mat <- fac$loading.mat
 #' @useDynLib HDTSA
@@ -65,7 +65,7 @@
 
 
 
-factors <- function (Y, lag.k=5, twostep=FALSE) 
+Factors <- function (Y, lag.k=5, twostep=FALSE) 
 {
   n <- nrow(Y)
   p <- ncol(Y)

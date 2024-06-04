@@ -30,13 +30,13 @@ of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - \widetilde{\bf D}{\bf z}_t}
 at lag \eqn{k}.}
 
 \item{twostep}{Logical. If \code{FALSE} (the default), then standard
-procedures (see \code{\link{factors}}) will be implemented to estimate
+procedures (see \code{\link{Factors}}) will be implemented to estimate
 \eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation
-procedure (see \code{\link{factors}}) will be implemented to estimate
+procedure (see \code{\link{Factors}}) will be implemented to estimate
 \eqn{r} and \eqn{{\bf A}}.}
 }
 \value{
-An object of class "HDSReg" is a list containing the following
+An object of class "factors" is a list containing the following
   components:
 
   \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
@@ -99,5 +99,5 @@ Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional
   Journal of Econometrics, Vol. 189, pp. 297–312.
 }
 \seealso{
-\code{\link{factors}}.
+\code{\link{Factors}}.
 }

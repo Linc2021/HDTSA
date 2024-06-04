@@ -19,7 +19,7 @@
 #'   Zhou (2017) for more information. If \code{TRUE}, then the segment
 #'   procedure will be performed to data \code{X} first. The three additional
 #'   options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are
-#'   the same as those in \code{\link{PCA4_TS}}.
+#'   the same as those in \code{\link{PCA_TS}}.
 #' @param alpha The prescribed significance level. Default is 0.05.
 #' @param kernel.type String, an option for choosing the symmetric kernel used
 #'   in the estimation of long-run covariance matrix, for example, \code{'QS'}
@@ -27,17 +27,17 @@
 #'   (Bartlett kernel), see Andrews (1991) for more information. Default option
 #'   is\code{kernel.type = 'QS'}.
 #' @param k0 A positive integer specified to calculate \eqn{\widehat{{\bf
-#'   W}}_y}. See parameter \code{lag.k} in \code{\link{PCA4_TS}} for more
+#'   W}}_y}. See parameter \code{lag.k} in \code{\link{PCA_TS}} for more
 #'   information.
 #' @param thresh Logical. It determines whether to perform the threshold method
 #'   to estimate \eqn{\widehat{{\bf W}}_y} or not. See parameter \code{thresh}
-#'   in \code{\link{PCA4_TS}} for more information.
+#'   in \code{\link{PCA_TS}} for more information.
 #' @param tuning.vec The value of thresholding tuning parameter \eqn{\lambda}.
-#'   See parameter \code{tuning.vec} in \code{\link{PCA4_TS}} for more
+#'   See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
 #'   information.
-#' @seealso \code{\link{PCA4_TS}}
+#' @seealso \code{\link{PCA_TS}}
 #'
-#' @return An object of class "WN_test" is a list containing the following
+#' @return An object of class "hdtstest" is a list containing the following
 #'   components:
 #'
 #'   \item{statistic}{The value of the test statistic.}
@@ -84,7 +84,7 @@ WN_test = function(X, lag.k = 2, B = 2000,
                      "Bart" = 3)
   
   if (pre == TRUE){
-    X_pre <- PCA4_TS(X, lag.k=k0, 
+    X_pre <- PCA_TS(X, lag.k=k0, 
                     thresh=thresh, just4pre = TRUE, 
                     tuning.vec = tuning.vec)
     

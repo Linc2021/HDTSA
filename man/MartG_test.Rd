@@ -23,7 +23,7 @@ statistic. Default is \code{lag.k} \eqn{=2}.}
 
 \item{B}{Bootstrap times for generating multivariate normal distributed 
 random vectors in calculating the critical value. 
-Default is \code{B} \eqn{=2000}.}
+Default is \code{B} \eqn{=1000}.}
 
 \item{type}{String, a map is chosen by the \proglang{R} users, such as the
 default option is \code{'Linear'} means linear identity 
@@ -45,7 +45,7 @@ for example, \code{'QS'} (Quadratic spectral kernel),
 information. Default option is \code{kernel.type = 'QS'}.}
 }
 \value{
-An object of class "MartG_test" is a list containing the following
+An object of class "hdtstest" is a list containing the following
   components:
    
 .  \item{statistic}{The value of the test statistic.}

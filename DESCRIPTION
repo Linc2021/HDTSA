@@ -1,7 +1,7 @@
 Package: HDTSA
 Type: Package
 Title: High Dimensional Time Series Analysis Tools
-Version: 1.0.4
+Version: 1.0.3
 Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"), 
     email = "linchen@smail.swufe.edu.cn"),
     person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
@@ -11,7 +11,19 @@ Author: Chen Lin [aut, cre],
    Jinyuan Chang [aut], 
    Qiwei Yao [aut]
 Maintainer: Chen Lin <linchen@smail.swufe.edu.cn>
-Description: Procedures for high-dimensional time series analysis including factor analysis proposed by Lam and Yao (2012) <doi:10.1214/12-AOS970> and Chang, Guo and Yao (2015) <doi:10.1016/j.jeconom.2015.03.024>, martingale difference test proposed by Chang, Jiang and Shao (2022) <doi:10.1016/j.jeconom.2022.09.001> in press , principal component analysis proposed by Chang, Guo and Yao (2018) <doi:10.1214/17-AOS1613>, identifying cointegration proposed by Zhang, Robinson and Yao (2019) <doi:10.1080/01621459.2018.1458620>, unit root test proposed by Chang, Cheng and Yao (2021) <doi:10.1093/biomet/asab034>, white noise test proposed by Chang, Yao and Zhou (2017) <doi:10.1093/biomet/asw066>, CP-decomposition for high-dimensional matrix time series proposed by Chang, He, Yang and Yao(2023) <doi:10.1093/jrsssb/qkac011> and Chang, Du, Huang and Yao (2024+) and Statistical inference for high-dimensional spectral density matrix porposed by Chang, Jiang, McElroy and Shao (2023) preprint.
+Description: Procedures for high-dimensional time series analysis including factor analysis 
+      proposed by Lam and Yao (2012) <doi:10.1214/12-AOS970> and Chang, Guo and Yao (2015)
+      <doi:10.1016/j.jeconom.2015.03.024>,martingale difference test proposed by 
+      Chang, Jiang and Shao (2022) <doi:10.1016/j.jeconom.2022.09.001> in press,principal 
+      component analysis proposed by Chang, Guo and Yao (2018) <doi:10.1214/17-AOS1613>,
+      identifying cointegration proposed by Zhang, Robinson and Yao (2019)
+      <doi:10.1080/01621459.2018.1458620>, unit root test proposed by Chang, Cheng and Yao (2021)
+      <doi:10.1093/biomet/asab034>, white noise test proposed by Chang, Yao and Zhou (2017)
+      <doi:10.1093/biomet/asw066>, CP-decomposition for high-dimensional matrix time 
+      series proposed by Chang, He, Yang and Yao(2023) <doi:10.1093/jrsssb/qkac011> and
+      Chang, Du, Huang and Yao (2024+), and Statistical inference for high-dimensional 
+      spectral density matrix porposed by Chang, Jiang, McElroy and Shao (2023) 
+      <doi:10.48550/arXiv.2212.13686>.
 License: GPL-3
 Depends: R (>= 3.5.0)
 Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag

@@ -1,7 +1,7 @@
 #' @title Estimation of matrix CP-factor model
-#' @description \code{HDMTS.CP.est()} deals with CP-decomposition for high-dimensional
+#' @description \code{CP_MTS()} deals with CP-decomposition for high-dimensional
 #'  matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\dlots,x_{t,d})} is an \eqn{d \times d}
+#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
 #' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
 #' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
 #'  is a \eqn{p \times q} matrix white noise process. This function aims to estimate the rank
@@ -13,7 +13,7 @@
 #' is used [See Section 5.1 in Chang et al. (2023)] to calculate the sample auto-covariance matrix
 #' \eqn{\widehat{\bf \Sigma}_{\bf Y, \xi}(k)}.
 #' @param Rank A list of the rank \eqn{d},\eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.
-#' @param K Integer. Only used in \code{CHY.Refined} and \code{Unified}. The parameter \eqn{K} used to
+#' @param lag.k Integer. Time lag \eqn{K} is only used in \code{CP.Refined} and \code{CP.Unified} to
 #' calculate the nonnegative definte matrices \eqn{\widehat{\mathbf{M}}_1} and
 #' \eqn{\widehat{\mathbf{M}}_2}: \deqn{\widehat{\mathbf{M}}_1\ =\
 #'   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)',
@@ -22,14 +22,14 @@
 #'   }
 #'   where \eqn{\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)} is the sample auto-covariance of
 #'   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}.
-#' @param Ktilde Integer. Only used in \code{Unified}. The parameter \eqn{\tilde{K}} used to calulate the
+#' @param lag.ktilde Integer. Time lag \eqn{\tilde K} is only used in \code{CP.Unified} to calulate the
 #' nonnegative definte matrix \eqn{\widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}} \ =\
 #'   \sum_{k=1}^{\tilde K}\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)'.
 #'   }
-#' @param method Method to use: \code{CHY.Direct} and \code{CHY.Refined}, Chang et al.(2023)'s direct and refined estimators;
-#'  \code{Unified}, Chang et al.(2024+)'s unified estimation procedure.
+#' @param method Method to use: \code{CP.Direct} and \code{CP.Refined}, Chang et al.(2023)'s direct and refined estimators;
+#'  \code{CP.Unified}, Chang et al.(2024+)'s unified estimation procedure.
 #'
-#' @return A list containing the following
+#' @return An object of class "mtscp" is a list containing the following
 #'   components:
 #'   \item{A}{The estimated \eqn{p \times d} left loading matrix \eqn{\widehat{\bf A}}.}
 #'   \item{B}{The estimated \eqn{q \times d} right loading matrix \eqn{\widehat{\bf B}}.}
@@ -40,6 +40,7 @@
 #' @references
 #'   Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
 #'   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
+#'   
 #'   Chang, J., Du, Y., Huang, G. and Yao, Q.(2024+). \emph{On the Identification and Unified Estimation
 #'   Procedure for the Matrix CP-factor Model}, Working paper.
 #'
@@ -50,19 +51,19 @@
 #' d = d1 = d2 = 3
 #' data <- DGP.CP(n,p,q,d,d1,d2)
 #' Y = data$Y
-#' res1 <- HDMTS.CP.est(Y,method = "CHY.Direct")
-#' res2 <- HDMTS.CP.est(Y,method = "CHY.Refined")
-#' res3 <- HDMTS.CP.est(Y,method = "Unified")
+#' res1 <- CP_MTS(Y,method = "CP.Direct")
+#' res2 <- CP_MTS(Y,method = "CP.Refined")
+#' res3 <- CP_MTS(Y,method = "CP.Unified")
 #' @export
 #' @useDynLib HDTSA
 #' @importFrom stats arima.sim rnorm runif
 
-HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method = c("CHY.Direct","CHY.Refined","Unified")){
+CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method = c("CP.Direct","CP.Refined","CP.Unified")){
   n = dim(Y)[1]; p = dim(Y)[2]; q = dim(Y)[3];
   if(is.null(xi)){
     xi = est.xi(Y)
   }
-  if(method == "CHY.Direct"){
+  if(method == "CP.Direct"){
     S_yxi_1 = Autocov_xi_Y(Y,xi,lag.k = 1)
     S_yxi_2 = Autocov_xi_Y(Y,xi,lag.k = 2)
     if(p > q){
@@ -123,15 +124,18 @@ HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method =
       B = Complex2Real(B)
       f = Complex2Real(f)
     }
-    con = list(A = A,B = B,f = f,Rank = d)
+    METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+    names(d) <- "The estimated rank of the matrix CP-factor model"
+    con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
+                    class = "mtscp")
     return(con)
   }
-  if(method == "CHY.Refined"){
+  if(method == "CP.Refined"){
     ##(1) estimation of P,Q and d
     M1 = M2 = 0
     dmax = round(min(p,q)*0.75)
 
-    for (kk in 1:K){
+    for (kk in 1:lag.k){
       S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk)
       M1 = M1 + S_yxi_k%*%t(S_yxi_k)
       M2 = M2 + t(S_yxi_k)%*%S_yxi_k
@@ -195,14 +199,17 @@ HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method =
         f = Complex2Real(f)
       }
     }
-    con = list(A = A,B = B,f = f,Rank = d)
+      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+      names(d) <- "The estimated rank of the matrix CP-factor model"
+    con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
+                    class = "mtscp")
     return(con)
   }
-  if(method == "Unified"){
+  if(method == "CP.Unified"){
     ##(1) estimation of P,Q and d1,d2
     if(is.null(Rank)){
 
-      PQ_hat_tol = est.d1d2.PQ(Y,xi,K = K)
+      PQ_hat_tol = est.d1d2.PQ(Y,xi,K = lag.k)
 
       d1  = PQ_hat_tol$d1_hat
       d2  = PQ_hat_tol$d2_hat
@@ -218,7 +225,7 @@ HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method =
       d1  = Rank$d1
       d2  = Rank$d2
 
-      PQ_hat_tol = est.PQ(Y,xi,d1,d2,K = K)
+      PQ_hat_tol = est.PQ(Y,xi,d1,d2,K = lag.k)
 
       P   = PQ_hat_tol$P_hat
       Q   = PQ_hat_tol$Q_hat
@@ -234,19 +241,26 @@ HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method =
       A = P
       B = Q
 
-      con = list(A = A,B = B,f = f,Rank = list(d=d,d1=d1,d2=d2))
+      # con = list(A = A,B = B,f = f,Rank = list(d=d,d1=d1,d2=d2))
+      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+      rank <- list(d=d,d1=d1,d2=d2)
+      names(rank) <- c("The estimated rank d of the matrix CP-factor model",
+                       "The estimated rank d1 of the matrix CP-factor model",
+                       "The estimated rankd d2 of the matrix CP-factor model")
+      con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
+                      class = "mtscp")
 
       return(con)
     }else{
 
       if(is.null(d)){
-        W_hat_tol  =  est.d.Wf(Y,P,Q,Ktilde =  Ktilde)
+        W_hat_tol  =  est.d.Wf(Y,P,Q,Ktilde =  lag.ktilde)
         d          =  W_hat_tol$d_hat
         W          =  W_hat_tol$W_hat
         f          =  W_hat_tol$f_hat
       }else{
         d          =  d
-        W_hat_tol  =  est.Wf(Y,P,Q,d,Ktilde = Ktilde)
+        W_hat_tol  =  est.Wf(Y,P,Q,d,Ktilde = lag.ktilde)
         W          =  W_hat_tol$W_hat
         f          =  W_hat_tol$f_hat
       }
@@ -283,8 +297,13 @@ HDMTS.CP.est = function(Y,xi = NULL, Rank = NULL, K = 15, Ktilde =  10, method =
       ##(4) estimation of A and B
       A = P%*%U
       B = Q%*%V
-
-      con = list(A = A,B = B,f = f, Rank = list(d=d,d1=d1,d2=d2))
+      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+      rank <- list(d=d,d1=d1,d2=d2)
+      names(rank) <- c("The estimated rank d of the matrix CP-factor model",
+                       "The estimated rank d1 of the matrix CP-factor model",
+                       "The estimated rankd d2 of the matrix CP-factor model")
+      con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
+                      class = "mtscp")
 
       return(con)
       }
@@ -353,7 +372,7 @@ Vec.tensor = function(Y){
 
 #' @title Data generate process of matrix CP-factor model
 #' @description \code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\dlots,x_{t,d})} is an \eqn{d \times d}
+#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
 #' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
 #' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
 #'  is a \eqn{p \times q} matrix white noise process.
@@ -365,6 +384,7 @@ Vec.tensor = function(Y){
 #' @param d2  Integer. Rank of \eqn{\bf B}.
 #' @param d  Integer. Number of columns of \eqn{\bf A} and \eqn{\bf B}.
 #'
+#' @seealso \code{\link{CP_MTS}}.
 #' @return A list containing the following
 #'   components:
 #'   \item{Y}{A \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}

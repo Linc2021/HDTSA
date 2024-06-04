@@ -38,7 +38,7 @@ A list containing the following
 }
 \description{
 \code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\dlots,x_{t,d})} is an \eqn{d \times d}
+{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
 latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
 \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
  is a \eqn{p \times q} matrix white noise process.
@@ -54,4 +54,7 @@ Y = data$Y
 \references{
 Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
+}
+\seealso{
+\code{\link{CP_MTS}}.
 }

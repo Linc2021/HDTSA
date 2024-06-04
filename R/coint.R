@@ -1,7 +1,7 @@
-#' @name coint
+#' @name Coint
 #' @title Identifying cointegration rank of given time series
 #'
-#' @description \code{coint} seeks for a contemporaneous linear
+#' @description \code{Coint} seeks for a contemporaneous linear
 #'   transformation for a multivariate time series such that we can identifying 
 #'   cointegration rank from the transformed series.
 #'   
@@ -29,7 +29,8 @@
 #'   cointegration rank using \code{"pptest","chang"} method. Default is 0.01.
 #'   [See (2.3) in Zhang, Robinson and Yao (2019)].
 
-#' @return A list containing the following components:
+#' @return An object of class "coint" is a list containing the following
+#'   components:
 #'   \item{Z}{The transformed series with \eqn{n} rows and \eqn{p} columns. }
 #'   \item{coint_rank}{A \eqn{1 \times 1} matrix representing the cointegration rank.
 #'   If \code{type = 'all'}, then return a \eqn{1 \times 3} matrix representing
@@ -58,8 +59,8 @@
 #' A <- matrix(runif(p*p, -3, 3), ncol = p)
 #' A[1:3,1:3] <- M1
 #' Y <- t(A%*%X)
-#' coint(Y, type = "all")
-coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
+#' Coint(Y, type = "all")
+Coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
                   c0 = 0.3, m = 20, alpha = 0.01){
   # Y the observed time series with length n and dimension p
   # k0 the lag order  of the covariance in recoverying  cointegration space
@@ -177,7 +178,7 @@ coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
     v=c(rep(0, p))
     for (l in p:1)
     {
-      v[l] <- ur.test(Z[ , l], lagk.vec = 2, alpha = alpha)$reject[1, 1]
+      v[l] <- UR_test(Z[ , l], lagk.vec = 2, alpha = alpha)$reject[1, 1]
       if(v[l] == 1) {break}
     }
     r_hat3 = p - l

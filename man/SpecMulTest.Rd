@@ -17,7 +17,7 @@ SpecMulTest(Q, PVal, alpha = 0.05, seq_len = 0.01)
 \eqn{\sqrt(2\times\log(Q)-2\times\log(\log(Q))}. Default is 0.01.}
 }
 \value{
-An object of class "SpecMulTest" is a list containing the following
+An object of class "hdtstest" is a list containing the following
   components:
   \item{MultiTest}{Logical vector with length Q. If the element is \code{TRUE}, 
   it means rejecting the corresponding sub-null hypothesis, otherwise it means 
@@ -35,7 +35,7 @@ for \eqn{q\in\{1,\dots,Q\}}.
 n <- 200
 p <- 10
 flag_c <- 0.8
-B.monte <- 1000
+B <- 1000
 burn <- 1000
 z.sim <- matrix(rnorm((n+burn)*p),p,n+burn)
 phi.mat <- 0.4*diag(p)
@@ -52,8 +52,8 @@ PVal <- rep(NA,Q)
 for (q in 1:Q) {
   cross.indices <- ISET[[q]]
   J.set <- JSET[[q]]
-  temp.q <- SpecTest(B.monte, flag_c, J.set, n, p, x, cross.indices)
-  PVal[q] <- temp.q$pval
+  temp.q <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
+  PVal[q] <- temp.q$p.value
 }  # Q
 res <- SpecMulTest(Q, PVal)
 res

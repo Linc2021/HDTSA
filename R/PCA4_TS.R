@@ -1,6 +1,6 @@
-#' @name PCA4_TS
+#' @name PCA_TS
 #' @title Principal component analysis for time serise
-#' @description \code{PCA4_TS()} seeks for a contemporaneous linear
+#' @description \code{PCA_TS()} seeks for a contemporaneous linear
 #'   transformation for a multivariate time series such that the transformed
 #'   series is segmented into several lower-dimensional subseries: \deqn{{\bf
 #'   y}_t={\bf Ax}_t,} where \eqn{{\bf x}_t} is an unobservable \eqn{p \times 1}
@@ -121,8 +121,8 @@
 #' A <- matrix(runif(p*p, -3, 3), ncol=p)
 #' Y <- A%*%X
 #' Y <- t(Y)
-#' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
-#' res1=PCA4_TS(Y, lag.k=5,permutation = "fdr", beta=10^(-10))
+#' res <- PCA_TS(Y, lag.k=5,permutation = "max")
+#' res1=PCA_TS(Y, lag.k=5,permutation = "fdr", beta=10^(-10))
 #' # The transformed series z_t
 #' Z <- res$Z
 #' # Plot the cross correlogram of z_t and y_t
@@ -154,8 +154,8 @@
 #' A <- matrix(runif(p*p, -3, 3), ncol=p)
 #' Y <- A%*%X
 #' Y <- t(Y)
-#' res <- PCA4_TS(Y, lag.k=5,permutation = "max")
-#' res1 <- PCA4_TS(Y, lag.k=5,permutation = "fdr",beta=10^(-200))
+#' res <- PCA_TS(Y, lag.k=5,permutation = "max")
+#' res1 <- PCA_TS(Y, lag.k=5,permutation = "fdr",beta=10^(-200))
 #' # The transformed series z_t
 #' Z <- res$Z
 #' # Plot the cross correlogram of x_t and y_t
@@ -179,7 +179,7 @@
 #' permutation <- res
 #' permutation$Groups  
 
-PCA4_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5, 
+PCA_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5, 
                     prewhiten=TRUE, permutation=c('max',"fdr"), m=NULL, beta, 
                     just4pre=FALSE,verbose = FALSE)
 {
