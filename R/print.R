@@ -110,8 +110,7 @@ print.mtscp <- function(x, digits = max(5, getOption("digits") - 5), prefix = "\
         sep = "\n")
         
   }
-  cat(strwrap(paste("Use ",substitute(res3),"$A or ",substitute(res3),"$B or ",
-                    substitute(res3), "$f to access the corresponding data", sep = "")), sep = "\n")
+  cat(strwrap("Use $A or $B or $f to access the corresponding data in the result list"), sep = "\n")
   invisible(x)
 }
 

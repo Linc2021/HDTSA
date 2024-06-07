@@ -6,7 +6,7 @@ Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"),
     email = "linchen@smail.swufe.edu.cn"),
     person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2023-01-07
+Date: 2024-06-04
 Author: Chen Lin [aut, cre],
    Jinyuan Chang [aut], 
    Qiwei Yao [aut]
@@ -20,7 +20,7 @@ Description: Procedures for high-dimensional time series analysis including fact
       <doi:10.1080/01621459.2018.1458620>, unit root test proposed by Chang, Cheng and Yao (2021)
       <doi:10.1093/biomet/asab034>, white noise test proposed by Chang, Yao and Zhou (2017)
       <doi:10.1093/biomet/asw066>, CP-decomposition for high-dimensional matrix time 
-      series proposed by Chang, He, Yang and Yao(2023) <doi:10.1093/jrsssb/qkac011> and
+      series proposed by Chang, He, Yang and Yao (2023) <doi:10.1093/jrsssb/qkac011> and
       Chang, Du, Huang and Yao (2024+), and Statistical inference for high-dimensional 
       spectral density matrix porposed by Chang, Jiang, McElroy and Shao (2023) 
       <doi:10.48550/arXiv.2212.13686>.

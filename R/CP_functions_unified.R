@@ -511,36 +511,29 @@ Autocov_xi_Y = function(Y,xi,lag.k = k){
   return(Sigma_Y_xi_k/(n-k))
 }
 
-est.xi  = function(Y, thresh_per = 0.99){
-
+est.xi  = function(Y, thresh_per = 0.99, d_max = 20){
+  
   n = dim(Y)[1];p = dim(Y)[2];q = dim(Y)[3];
-
+  
   xi.mat = Vec.tensor(Y)
-
-  xi.mat = scale(xi.mat,scale = F)
-
+  
   if(n > p*q){
     eig_xi.mat = eigen(MatMult(t(xi.mat),xi.mat))
     cfr =  cumsum(eig_xi.mat$values)/sum(eig_xi.mat$values)
     d_hat = min(which(cfr > thresh_per))
-    w_hat = eig_xi.mat$vectors[,1:d_hat]
-
+    d_fin = min(d_max,d_hat)
+    w_hat = eig_xi.mat$vectors[,1:d_fin]
     xi.f = xi.mat%*%w_hat
-
     xi   = rowMeans(xi.f)
-
   }else{
     eig_xi.mat = eigen(MatMult(xi.mat,t(xi.mat)))
     cfr = cumsum(eig_xi.mat$values)/sum(eig_xi.mat$values)
     d_hat = min(which(cfr > thresh_per))
-    xi.f1 = as.matrix(eig_xi.mat$vectors[,1:d_hat])
-
+    d_fin = min(d_max,d_hat)
+    xi.f1 = as.matrix(eig_xi.mat$vectors[,1:d_fin])
     weight = sqrt(eig_xi.mat$values[1:d_hat])
-
     xi.f1 = xi.f1%*%diag(weight)
-
     xi = rowMeans(xi.f1)
-
   }
   return(xi)
 }
