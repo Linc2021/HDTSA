@@ -85,7 +85,6 @@
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp
 #' @export
 HDSReg <- function (Y,Z,D=NULL,lag.k=1,twostep=FALSE) {
   Y_n <- nrow(Y)

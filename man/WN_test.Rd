@@ -7,13 +7,17 @@
 WN_test(
   X,
   lag.k = 2,
-  B = 2000,
+  B = 1000,
+  method = c("CYZ", "CLL"),
   kernel.type = c("QS", "Par", "Bart"),
+  resampling = FALSE,
   pre = FALSE,
   alpha = 0.05,
   k0 = 5,
   thresh = FALSE,
-  tuning.vec = NULL
+  tuning.vec = NULL,
+  opt = 1,
+  control = list()
 )
 }
 \arguments{
@@ -55,6 +59,12 @@ in \code{\link{PCA_TS}} for more information.}
 \item{tuning.vec}{The value of thresholding tuning parameter \eqn{\lambda}.
 See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
 information.}
+
+\item{opt}{Method options for calculating ransformation matrix in preprocessing
+procedure on data matrix \code{X}. See parameter details in \link{PCA_TS}.
+Default options is \code{opt=1}}
+
+\item{control}{a list of control parameters. See ‘Details’ in \link{PCA_TS}.}
 }
 \value{
 An object of class "hdtstest" is a list containing the following

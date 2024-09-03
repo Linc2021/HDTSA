@@ -11,6 +11,8 @@ PCA_TS(
   tuning.vec = NULL,
   K = 5,
   prewhiten = TRUE,
+  opt = 1,
+  control = list(),
   permutation = c("max", "fdr"),
   m = NULL,
   beta,
@@ -53,6 +55,14 @@ transformed component series of \eqn{\hat{\bf z}_t} [See Section 2.2.1 in
 Chang, Guo and Yao (2018)] by fitting a univariate AR model with the order
 between 0 and 5 determined by AIC. If \code{FALSE}, then prewhiten
 procedure will not be performed to \eqn{\hat{\bf z}_t}.}
+
+\item{opt}{Method options for calculating \eqn{\widehat{{\bf V}}^{-1/2}}. For 
+parameter ‘opt’, 1 is coded for performing the transformation using the sample
+ covariance; 2 is coded for performing the transformation using package 'clime'
+  with build-in cross validation on the tuning parameter for estimating the
+ contempaneous correlations.}
+
+\item{control}{a list of control parameters. See ‘Details’.}
 
 \item{permutation}{The method of permutation procedure to assign the
 components of \eqn{\hat{\bf z}_t} to different groups [See Section 2.2.1 in
@@ -103,12 +113,27 @@ The output of the permutation procedure is a list containing the
   Yao (2018).
 }
 \details{
-When \eqn{p>n^{1/2}}, the procedure use package \pkg{clime} to
-  estimate the precision matrix \eqn{\widehat{{\bf V}}^{-1}}, otherwise uses
+When \eqn{p>n^{1/2}}, we recommend setting the parameter to 
+  \code{opt=2} for estimating the precision matrix 
+  \eqn{\widehat{{\bf V}}^{-1}} use package \pkg{clime} , otherwise uses
   function \code{cov()} to estimate \eqn{\widehat{{\bf V}}} and calculate its
   inverse. When \eqn{p>n^{1/2}}, we recommend to use the thresholding method
   to calculate \eqn{\widehat{{\bf W}}_y}, see more information in Chang, Guo
   and Yao (2018).
+  
+  The control argument is a list that can supply any of the following 
+  components to \code{clime}:
+  \itemize{
+   \item \code{nlambda}: Number of values for program generated lambda. Default 100.
+   \item \code{lambda.max}: Maximum value of program generated lambda. Default 0.8.
+   \item \code{lambda.min}: Minimum value of program generated lambda. 
+   Default 1e-4(\eqn{n>p}) or 1e-2(\eqn{n<p})
+   \item \code{standardize}: Whether the variables will be standardized to
+    have mean zero and unit standard deviation. Default \code{FALSE}.
+   \item \code{linsolver}: Whether primaldual (default) or simplex method 
+   should be employed. Rule of thumb: primaldual for large \eqn{p}, simplex 
+   for small \eqn{p}.
+  }
 }
 \examples{
 ## Example 1 (Example 5 of Chang Guo and Yao (2018)).

@@ -49,7 +49,7 @@
 #' q = 10
 #' n = 400
 #' d = d1 = d2 = 3
-#' data <- DGP.CP(n,p,q,d,d1,d2)
+#' data <- DGP.CP(n,p,q,d1,d2,d)
 #' Y = data$Y
 #' res1 <- CP_MTS(Y,method = "CP.Direct")
 #' res2 <- CP_MTS(Y,method = "CP.Refined")
@@ -63,6 +63,7 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method
   if(is.null(xi)){
     xi = est.xi(Y)
   }
+  method <- match.arg(method)
   if(method == "CP.Direct"){
     S_yxi_1 = Autocov_xi_Y(Y,xi,lag.k = 1)
     S_yxi_2 = Autocov_xi_Y(Y,xi,lag.k = 2)
@@ -409,7 +410,7 @@ Vec.tensor = function(Y){
 #' q = 10
 #' n = 400
 #' d = d1 = d2 = 3
-#' data <- DGP.CP(n,p,q,d,d1,d2)
+#' data <- DGP.CP(n,p,q,d1,d2,d)
 #' Y = data$Y
 #' @export
 DGP.CP = function(n,p,q,d1,d2,d){

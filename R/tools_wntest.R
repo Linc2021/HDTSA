@@ -35,6 +35,10 @@
 #' @param tuning.vec The value of thresholding tuning parameter \eqn{\lambda}.
 #'   See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
 #'   information.
+#' @param opt Method options for calculating ransformation matrix in preprocessing
+#'   procedure on data matrix \code{X}. See parameter details in \link{PCA_TS}.
+#'   Default options is \code{opt=1}
+#' @param  control a list of control parameters. See ‘Details’ in \link{PCA_TS}.
 #' @seealso \code{\link{PCA_TS}}
 #'
 #' @return An object of class "hdtstest" is a list containing the following
@@ -69,51 +73,84 @@
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp
 #' @export
-
-WN_test = function(X, lag.k = 2, B = 2000, 
-                   kernel.type = c('QS','Par','Bart'), 
+WN_test = function(X, lag.k = 2, B = 1000, method = c("CYZ","CLL"),
+                   kernel.type = c('QS','Par','Bart'), resampling = FALSE,
                    pre = FALSE, alpha = 0.05,k0 = 5, thresh = FALSE,
-                   tuning.vec = NULL){
-  data_name <- deparse(substitute(X))
-  kernel.type <- match.arg(kernel.type)
-  ken_type <- switch(kernel.type,
-                     "QS" = 1,
-                     "Par" = 2,
-                     "Bart" = 3)
-  
-  if (pre == TRUE){
-    X_pre <- PCA_TS(X, lag.k=k0, 
-                    thresh=thresh, just4pre = TRUE, 
-                    tuning.vec = tuning.vec)
+                   tuning.vec = NULL,
+                   opt = 1, control = list()){
+  # data_name <- deparse(substitute(X))
+  method = match.arg(method)
+
+  if(method == "CYZ"){
+    kernel.type <- match.arg(kernel.type)
+    ken_type <- switch(kernel.type,
+                       "QS" = 1,
+                       "Par" = 2,
+                       "Bart" = 3)
     
-    X <- X_pre$Z
-    Bx <- X_pre$B
+    if (pre == TRUE){
+      X_pre <- PCA_TS(X, lag.k=k0, 
+                      thresh=thresh, just4pre = TRUE, 
+                      opt=opt,control=control,
+                      tuning.vec = tuning.vec)
+      
+      X <- X_pre$Z
+      Bx <- X_pre$B
+    }
+    n <- nrow(X)
+    p <- ncol(X)
+    
+    Tn_list <- WN_teststatC(X,n,p,lag.k)
+    Tn <- Tn_list$Tn
+    sigma_zero <- Tn_list$sigma_zero
+    X_mean <- Tn_list$X_mean
+    
+    ft <- WN_ftC(n, lag.k, p, X, X_mean)
+    bn <- bandwith(ft, lag.k, p, p, ken_type)
+    
+    Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, X, sigma_zero) # critical value
+    p.value <- mean(Gnstar > Tn)
+    # Results = list(reject = (p.value<0.05), p.value = p.value)
+    
+    names(Tn) <- "Statistic"
+    names(lag.k) <-"Time lag"
+    names(kernel.type) <- "Symmetric kernel"
+    METHOD <- "Testing for white noise hypothesis in high dimension"
+    structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
+                   method = METHOD, 
+                   kernel = kernel.type),
+              class = "hdtstest")
   }
-  n <- nrow(X)
-  p <- ncol(X)
-  
-  Tn_list <- WN_teststatC(X,n,p,lag.k)
-  Tn <- Tn_list$Tn
-  sigma_zero <- Tn_list$sigma_zero
-  X_mean <- Tn_list$X_mean
-  
-  ft <- WN_ftC(n, lag.k, p, X, X_mean)
-  bn <- bandwith(ft, lag.k, p, p, ken_type)
-  
-  Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, X, sigma_zero) # critical value
-  p.value <- mean(Gnstar > Tn)
-  # Results = list(reject = (p.value<0.05), p.value = p.value)
-  
-  names(Tn) <- "Statistic"
-  names(lag.k) <-"Time lag"
-  names(kernel.type) <- "Symmetric kernel"
-  METHOD <- "Testing for white noise hypothesis in high dimension"
-  structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
-                 method = METHOD, 
-                 kernel = kernel.type),
-            class = "hdtstest")
-  
-  # return(Results)
+  else if(method == "CLL"){
+    n <- nrow(X)
+    p <- ncol(X)
+    Hn <- rep(0, lag.k)
+    const <- sqrt(2) / (n-1)
+    tmp <- X %*% t(X)
+    diag(tmp) <- 0
+    sigma_n1 <- const * sum(tmp^2)
+    for(lag in c(1:lag.k)){
+      Gn_1 <- sum(tmp * tmp[c(c((n-lag+1):n),c(1:(n-lag))),c(c((n-lag+1):n),c(1:(n-lag)))])
+      
+      
+      if(lag > 1){
+        Hn[lag] <- Hn[lag-1] + Gn_1/sigma_n1
+      }
+      else{
+        Hn[lag] <- Gn_1/sigma_n1
+      }
+      
+    }
+    cv_vec <- qnorm(1-alpha,0,sqrt(c(1:lag.k)))
+    if(resampling==TRUE){
+      Hn_B <- resampling(X,n,p,B,lag.k)
+      cv_vec_resampling <- Hn_B[,floor(B*(1-alpha))]
+      return(list(res = Hn>cv_vec, res_resampling = Hn>cv_vec_resampling,Hn = Hn))
+    }
+    
+    return(list(res = Hn>cv_vec,Hn=Hn))
+    
+    
+  }
 }

@@ -2,7 +2,6 @@
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp 
 #' 
 permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
   # X: nxp data matrix

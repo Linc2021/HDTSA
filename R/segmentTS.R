@@ -1,14 +1,15 @@
 #' @importFrom stats var
-#' @importFrom clime clime cv.clime
+#' @importFrom clime clime cv.clime tracel2
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp 
 
 
 segmentTS <- function(Y, lag.k, 
                       thresh = FALSE, 
-                      tuning.vec = NULL, 
+                      tuning.vec = NULL,
+                      opt = 1,
+                      control = list(),
                       K = 5)
 {
   n=nrow(Y)
@@ -17,7 +18,7 @@ segmentTS <- function(Y, lag.k,
   storage.mode(n)<-"integer"
   
   # Part I -- standardize Y  such that var(y_t)=I_p
-  if(p<n)
+  if(opt == 1)
   {
     M <- var(Y)
     t <- eigen(M, symmetric = T)
@@ -25,22 +26,27 @@ segmentTS <- function(Y, lag.k,
     G <- as.matrix(t$vectors)
     D <- G * 0
     for (i in 1:p) {
-      if (ev[i] > 0)
+      if (ev[i] > 1e-4)
         D[i, i] <- sqrt(1 / ev[i])
       else {
         D[i, i] <- 1 / sqrt(log(p) / n)
-        #print("Data are degenerate")
-        #quit("yes")
       }
     }
   }
-  else{
+  else if(opt == 2){
     #print('now use clime to calculate')
-    M <- clime(Y, nlambda=10, standardize = FALSE, linsolver = "simplex")
+    con <- list(nlambda = 100, lambda.max = 0.8, lambda.min = ifelse(n>p,1e-4,1e-2),
+                standardize = FALSE, linsolver = "primaldual")
+    con[(namc <- names(control))] <- control
+    
+    
+    M <- clime(Y, nlambda=con$nlambda, standardize = con$standardize,
+               lambda.max = con$lambda.max, lambda.min = con$lambda.min,
+               linsolver = con$linsolver)
     M <- clime::cv.clime(M, loss = "tracel2")
     #print(M$lambda)
     #print(M$lambdaopt)
-    M <- clime(Y, lambda = M$lambdaopt)
+    M <- clime(Y, standardize = con$standardize, lambda = M$lambdaopt)
     e <- unlist(M$Omega)
     names(e) <- NULL
     M <- matrix(e,nrow = p)
@@ -51,7 +57,7 @@ segmentTS <- function(Y, lag.k,
     # square root of eigenvalues
     for(i in 1:p)
     {
-      if(ev[i] < 0)D[i, i] <- sqrt(log(p) / n)
+      if(ev[i] <  1e-4)D[i, i] <- sqrt(log(p) / n)
       else D[i, i]=sqrt(ev[i])
     }
   }

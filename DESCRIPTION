@@ -1,10 +1,10 @@
 Package: HDTSA
 Type: Package
 Title: High Dimensional Time Series Analysis Tools
-Version: 1.0.3
+Version: 1.0.5
 Authors@R: c(person("Chen", "Lin", role = c("aut", "cre"), 
     email = "linchen@smail.swufe.edu.cn"),
-    person("Jinyuan", "Chang", role = "aut", email = "changjinyuan.swufe.edu.cn"),
+    person("Jinyuan", "Chang", role = "aut", email = "changjinyuan@swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
 Date: 2024-06-04
 Author: Chen Lin [aut, cre],
@@ -26,8 +26,8 @@ Description: Procedures for high-dimensional time series analysis including fact
       <doi:10.48550/arXiv.2212.13686>.
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag
-LinkingTo: Rcpp, RcppEigen
+Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, Rcpp
+LinkingTo: RcppArmadillo,RcppEigen,Rcpp
 Suggests: knitr
 NeedsCompilation: yes
 RoxygenNote: 7.3.1

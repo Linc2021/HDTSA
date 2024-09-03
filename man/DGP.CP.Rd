@@ -48,7 +48,7 @@ p = 10
 q = 10
 n = 400
 d = d1 = d2 = 3
-data <- DGP.CP(n,p,q,d,d1,d2)
+data <- DGP.CP(n,p,q,d1,d2,d)
 Y = data$Y
 }
 \references{

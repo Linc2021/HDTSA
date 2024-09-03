@@ -37,6 +37,10 @@ WN_bootc <- function(n, k, p, B, bn, method, ft, X, sigma_zero) {
     .Call('_HDTSA_WN_bootc', PACKAGE = 'HDTSA', n, k, p, B, bn, method, ft, X, sigma_zero)
 }
 
+resampling <- function(X, n, p, B, tau) {
+    .Call('_HDTSA_resampling', PACKAGE = 'HDTSA', X, n, p, B, tau)
+}
+
 bandwith <- function(ft, k, p, d, ken_type) {
     .Call('_HDTSA_bandwith', PACKAGE = 'HDTSA', ft, k, p, d, ken_type)
 }

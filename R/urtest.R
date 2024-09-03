@@ -41,7 +41,6 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats qnorm
 #' @importFrom Rcpp evalCpp
-#' @import Rcpp
 #' @examples
 #' N=100
 #' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))

@@ -62,7 +62,6 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @importFrom methods formalArgs
-#' @import Rcpp
 #' @export
 
 

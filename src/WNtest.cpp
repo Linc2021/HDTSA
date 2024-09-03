@@ -1,12 +1,16 @@
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppEigen.h>
+// [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
+// [[Rcpp::depends(Rcpp)]]
 #include <iostream>
 #include <algorithm>
 #include <math.h>
 #include <random>
 #include <ctime>
 #include "testtools.h"
-// [[Rcpp::depends(RcppEigen,Rcpp)]]
+// [[Rcpp::depends(RcppEigen,Rcpp,RcppArmadillo)]]
 using namespace std;
 using namespace Eigen;
 using namespace Rcpp;
@@ -72,4 +76,51 @@ std::vector<double> WN_bootc(const int n, const int k, const int p, const int B,
   }
   sort(GnStar.begin(),GnStar.end());
   return GnStar;
+}
+
+
+// [[Rcpp::export]]
+arma::mat resampling(arma::mat X, int n, int p, int B, int tau) {
+  // You can include R code blocks in C++ files processed with sourceCpp
+  // (useful for testing and development). The R code will be automatically 
+  // run after the compilation.
+  double constant = sqrt(2)/double(n-1);
+  double Gn_1e, sigma_n1e;
+  arma::mat Y, tmp;
+  arma::mat Hn_B(tau, B);
+  arma::vec Hne(tau, arma::fill::zeros);
+  arma::vec rand_unif(n, arma::fill::zeros);
+  
+  for(int i = 0; i < B; i++){
+    rand_unif.randu();
+    arma::vec et(n, arma::fill::value(-1.0));
+    et.elem(find(rand_unif > 0.5)) += 2;
+    //X.print();
+    //et.print();
+    Y = et % X.each_col();
+    tmp = Y * Y.t();
+    tmp.diag().zeros();
+    sigma_n1e = constant * accu(pow(tmp, 2));
+    Hne.zeros();
+    for(int lag=1; lag<=tau; lag++){
+      arma::uvec indices1 = arma::linspace<arma::uvec>(n - lag, n-1, lag);
+      arma::uvec indices2 = arma::linspace<arma::uvec>(0, n - 1- lag, n - lag);
+      arma::uvec indices = join_cols(indices1, indices2);
+      // if(i==0)
+      //   indices.print();
+      // Gn_1e = accu(tmp.submat(0 , 0, n-1-lag, n-1-lag ) % tmp.submat(lag , lag, n-1, n-1 ));
+      Gn_1e = accu(tmp % tmp.submat(indices , indices));
+      // Rcpp::Rcout << Gn_1e <<'\n'<< std::endl;
+      if(lag > 1){
+        Hne(lag-1) = Hne(lag-2) + Gn_1e/sigma_n1e;
+      }
+      else{
+        Hne(lag-1) = Gn_1e / sigma_n1e;
+      }
+      
+      // Hne(lag-1) = sum(Hne) + Gn_1e / sigma_n1e;
+    }
+    Hn_B.col(i) = Hne;
+  }
+  return sort(Hn_B, "ascend", 1);
 }
