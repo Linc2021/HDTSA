@@ -349,16 +349,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 high-dimensional time series problems, which includes solutions to a
 series of statistical issues, primarily comprising:Procedures for
 high-dimensional time series analysis including factor analysis proposed
-by Lam and Yao (2012) <a href="doi:10.1214/12-AOS970" class="uri">doi:10.1214/12-AOS970</a> and Chang, Guo and Yao (2015) <a href="doi:10.1016/j.jeconom.2015.03.024" class="uri">doi:10.1016/j.jeconom.2015.03.024</a>,martingale difference
-test proposed by Chang, Jiang and Shao (2022) <a href="doi:10.1016/j.jeconom.2022.09.001" class="uri">doi:10.1016/j.jeconom.2022.09.001</a> in press,principal
-component analysis proposed by Chang, Guo and Yao (2018) <a href="doi:10.1214/17-AOS1613" class="uri">doi:10.1214/17-AOS1613</a>,
-identifying cointegration proposed by Zhang, Robinson and Yao (2019) <a href="doi:10.1080/01621459.2018.1458620" class="uri">doi:10.1080/01621459.2018.1458620</a>, unit root test
-proposed by Chang, Cheng and Yao (2021) <a href="doi:10.1093/biomet/asab034" class="uri">doi:10.1093/biomet/asab034</a>, white noise test proposed by
-Chang, Yao and Zhou (2017) <a href="doi:10.1093/biomet/asw066" class="uri">doi:10.1093/biomet/asw066</a>, CP-decomposition for
-high-dimensional matrix time series proposed by Chang, He, Yang and Yao
-(2023) <a href="doi:10.1093/jrsssb/qkac011" class="uri">doi:10.1093/jrsssb/qkac011</a> and Chang, Du, Huang and Yao
-(2024+), and Statistical inference for high-dimensional spectral density
-matrix porposed by Chang, Jiang, McElroy and Shao (2023) <a href="doi:10.48550/arXiv.2212.13686" class="uri">doi:10.48550/arXiv.2212.13686</a>.</p>
+by Lam and Yao (2012) <a href="https://doi.org/10.1214/12-AOS970">&lt;doi:10.1214/12-AOS970&gt;</a>
+and Chang, Guo and Yao (2015) <a href="https://doi.org/10.1016/j.jeconom.2015.03.024">&lt;doi:10.1016/j.jeconom.2015.03.024&gt;</a>,
+martingale difference test proposed by Chang, Jiang and Shao (2022) <a href="https://doi.org/10.1016/j.jeconom.2022.09.001">&lt;doi:10.1016/j.jeconom.2022.09.001&gt;</a>,
+principal component analysis proposed by Chang, Guo and Yao (2018) <a href="https://doi.org/10.1214/17-AOS1613">&lt;doi:10.1214/17-AOS1613&gt;</a>,
+identifying cointegration proposed by Zhang, Robinson and Yao (2019) <a href="https://doi.org/10.1080/01621459.2018.1458620">&lt;doi:10.1080/01621459.2018.1458620&gt;</a>,
+unit root test proposed by Chang, Cheng and Yao (2021) <a href="https://doi.org/10.1093/biomet/asab034">&lt;doi:10.1093/biomet/asab034&gt;</a>,
+white noise test proposed by Chang, Yao and Zhou (2017) <a href="https://doi.org/10.1093/biomet/asw066">&lt;doi:10.1093/biomet/asw066&gt;</a>,
+CP-decomposition for high-dimensional matrix time series proposed by
+Chang, He, Yang and Yao (2023) <a href="https://doi.org/10.1093/jrsssb/qkac011">&lt;doi:10.1093/jrsssb/qkac011&gt;</a>
+and Chang, Du, Huang and Yao (2024+), and Statistical inference for
+high-dimensional spectral density matrix porposed by Chang, Jiang,
+McElroy and Shao (2023) <a href="https://doi.org/10.48550/arXiv.2212.13686">&lt;doi:10.48550/arXiv.2212.13686&gt;</a>.</p>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>You can install the released version of <code>HDTSA</code> from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
@@ -382,7 +384,7 @@ problem :</p>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Reject the null hypothesis or not with different argument</span></span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt;          time_lag=0 time_lag=1 time_lag=2</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; con=0.45          0          0          0</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; con=0.45          1          1          1</span></span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; con=0.55          0          0          0</span></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; con=0.65          0          0          0</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">UR_test</span>(Y,<span class="at">alpha=</span><span class="fl">0.05</span>)</span>
