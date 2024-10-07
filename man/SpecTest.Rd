@@ -11,15 +11,15 @@ SpecTest(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
 dimension of \eqn{{\bf x}_t}.}
 
-\item{J.set}{Set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.}
+\item{J.set}{The set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.}
 
-\item{cross.indices}{Set \eqn{\mathcal{I}} for \eqn{(i,j)}, a matrix with 2 columns,
-used to calculate the test statistic.}
+\item{cross.indices}{The set \eqn{\mathcal{I}} for \eqn{(i,j)} is a matrix with two columns,
+employed in calculating the test statistic.}
 
-\item{B}{Bootstrap times for generating multivariate normal distributed 
+\item{B}{The bootstrap times for generating multivariate normal distributed 
 random vectors in calculating the critical value. Default is \code{B} \eqn{=2000}.}
 
-\item{flag_c}{Bandwidth \eqn{c} of the flat-top kernel for estimating 
+\item{flag_c}{The bandwidth \eqn{c} of the flat-top kernel for estimating 
 \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. Default is \code{flag_c} \eqn{=0.8}.}
 }
 \value{
@@ -33,10 +33,19 @@ An object of class "hdtstest" is a list containing the following
   \item{method}{A character string indicating what method was performed.}
 }
 \description{
-\code{SpecTest()} implements a new global test proposed in
- Chang, Jiang, McElroy and Shao (2023) for the following hypothesis testing problem: 
+\code{SpecTest()} implements a new global test proposed in 
+Chang et al. (2023) for the following hypothesis testing problem: 
 \deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in\mathcal{I}\mathrm{\ and\ }
 \omega \in \mathcal{J}\mathrm{\ \ versus\ \ H_1:H_0\ is\ not\ true.} }
+Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
+components \eqn{i} and \eqn{j} of a multivariate time series at frequency 
+\eqn{\omega}. The set \eqn{\mathcal{I}} refers to the pairs of indices of 
+interest (i.e., those under investigation for potential cross-spectral 
+relationships), while \eqn{\mathcal{J}} represents the frequency domain over 
+which the test is performed. The null hypothesis \eqn{H_0} posits that the 
+cross-spectral density is zero for all specified pairs \eqn{(i,j)\in \mathcal{I}} and 
+frequencies \eqn{\omega \in \mathcal{J}}, implying no linear relationship between these 
+components across the frequency domain.
 }
 \examples{
 n <- 200
@@ -56,6 +65,9 @@ Pvalue <- res$p.value
 CriVal <- res$cri95
 }
 \references{
-Chang, J., Jiang, Q., McElroy, T. & Shao, X. (2023). 
-\emph{Statistical inference for high-dimensional spectral density matrix}.
+Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2023). 
+\emph{Statistical inference for high-dimensional spectral density matrix}. arXiv preprint arXiv:2212.13686.
+}
+\seealso{
+\code{\link{SpecMulTest}}
 }

@@ -7,14 +7,14 @@
 SpecMulTest(Q, PVal, alpha = 0.05, seq_len = 0.01)
 }
 \arguments{
-\item{Q}{Number of the hypothesis tests.}
+\item{Q}{The number of the hypothesis tests.}
 
-\item{PVal}{P-values for the \eqn{Q} hypothesis tests, a \eqn{Q} vector.}
+\item{PVal}{A vector of length \code{Q} representing P-values for the \code{Q} hypothesis tests.}
 
 \item{alpha}{The prescribed significance level. Default is 0.05.}
 
 \item{seq_len}{Length used to take discrete points between 0 and 
-\eqn{\sqrt(2\times\log(Q)-2\times\log(\log(Q))}. Default is 0.01.}
+\eqn{\sqrt{(2\times\log(Q)-2\times\log(\log(Q))}}. Default is 0.01.}
 }
 \value{
 An object of class "hdtstest" is a list containing the following
@@ -25,11 +25,17 @@ An object of class "hdtstest" is a list containing the following
 }
 \description{
 \code{SpecMulTest()} implements a new multiple test proposed in
- Chang, Jiang, McElroy and Shao (2023) for the \eqn{Q} hypothesis testing problems: 
+ Chang et al. (2023) for the \eqn{Q} hypothesis testing problems: 
 \deqn{H_{0,q}:f_{i,j}(\omega)=0\mathrm{\ for\ any\ }(i,j)\in\mathcal{I}^{(q)}\mathrm{\ and\ }
 \omega\in\mathcal{J}^{(q)}\mathrm{\ \ versus\ \ }
 H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true.} }
-for \eqn{q\in\{1,\dots,Q\}}.
+for \eqn{q\in\{1,\dots,Q\}}. 
+Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
+components \eqn{i} and \eqn{j} at frequency \eqn{\omega}. The sets 
+\eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to the index pairs 
+and frequency domain associated with the \eqn{q}-th test. The goal is to 
+simultaneously test multiple hypotheses regarding the nullity of cross-spectral 
+densities across different pairs and frequencies.
 }
 \examples{
 n <- 200
@@ -60,6 +66,9 @@ res
 
 }
 \references{
-Chang, J., Jiang, Q., McElroy, T. & Shao, X. (2023). 
-\emph{Statistical inference for high-dimensional spectral density matrix}.
+Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2023). 
+\emph{Statistical inference for high-dimensional spectral density matrix}. arXiv preprint arXiv:2212.13686.
+}
+\seealso{
+\code{\link{SpecTest}}
 }

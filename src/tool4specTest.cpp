@@ -1,4 +1,7 @@
-// [[Rcpp::depends(RcppEigen,Rcpp)]]
+#include <Rcpp.h>
+using namespace Rcpp;
+
+
 #include <RcppEigen.h>
 #include <Rcpp.h>
 #include <iostream>
@@ -8,6 +11,7 @@
 #include <ctime>
 
 
+// [[Rcpp::depends(RcppEigen,Rcpp)]]
 using namespace std;
 using namespace Eigen;
 using namespace Rcpp;
@@ -234,7 +238,7 @@ Rcpp::List SpecEstC(Rcpp::List Gamma, int n, int p, int r, int K, Eigen::MatrixX
   Eigen::MatrixXcd newspec;
   for(int k=0; k<K; k++)
   {
-    newspec = MatrixXcd::Zero(p,p);
+    newspec = Eigen::MatrixXcd::Zero(p,p);
     for(int h=-n; h<n+1; h++)
     {
       //cout << h << endl;
@@ -248,6 +252,43 @@ Rcpp::List SpecEstC(Rcpp::List Gamma, int n, int p, int r, int K, Eigen::MatrixX
   } // k
   
   return x_spc;
+}
+
+// ===================================================================
+//  compute test statistic
+// ===================================================================
+// [[Rcpp::export]]
+double TestStatC(Rcpp::List Gamma, int n, int p, int r, int K, Eigen::MatrixXd cross_indices, 
+                    Eigen::VectorXd J_set, double l_band, double flag_c)
+{
+
+  // compute cross spectral
+  Eigen::MatrixXd newspecReal;
+  Eigen::MatrixXd newspecImag;
+  Eigen::MatrixXd T2vec = Eigen::MatrixXd::Zero(K,1);
+  for(int k=0; k<K; k++)
+  {
+    newspecReal = Eigen::MatrixXd::Zero(p,p);
+    newspecImag = Eigen::MatrixXd::Zero(p,p);
+    for(int h=-n; h<n+1; h++)
+    {
+      //cout << h << endl;
+      double  q = TaperFlatC(h/l_band, flag_c);
+      Eigen::MatrixXd GammaM = EvalGammaJC(Gamma, h, n);
+      newspecReal = newspecReal + q*cos(double(h)*J_set(k))*GammaM;
+      newspecImag = newspecImag - q*sin(double(h)*J_set(k))*GammaM;
+    } // h
+    Eigen::MatrixXd specStack = Eigen::MatrixXd::Zero(r,1);
+    for(int j=0; j<r; j++){
+      int k1 = cross_indices(j,0)-1;
+      int k2 = cross_indices(j,1)-1;
+      specStack(j,0) =  pow(newspecReal(k1,k2),2) + pow(newspecImag(k1,k2),2) ;
+    }
+    T2vec(k,0) = specStack.maxCoeff();
+  } // k
+  double T2 = double(n) * T2vec.maxCoeff()/ (2*M_PI*2*M_PI*l_band);
+  
+  return T2;
 }
 
 // ===================================================================
@@ -285,6 +326,42 @@ Rcpp::List CEst2C(Eigen::MatrixXd x, Rcpp::List Gamma, int n_tilde, int n, int p
   
   return Chat;
 }
+
+// ===================================================================
+//  compute C matrix
+// ===================================================================
+// [[Rcpp::export]]
+Eigen::MatrixXd CEst3C(Eigen::MatrixXd x, Rcpp::List Gamma, int n_tilde, int n, int p, int r,
+                  Eigen::MatrixXd cross_indices, int l_band)
+{
+  Eigen::MatrixXd Chat = Eigen::MatrixXd::Zero(r*(2*l_band+1), n_tilde);
+  Eigen::MatrixXd GammaM = EvalGammaJC(Gamma, n, n);
+  
+  for(int t=0; t<n_tilde; t++)
+  {
+    //cout << t << endl;
+    //MatrixXd temp = MatrixXd::Zero(r*(2*l_band+1),1);
+    for(int j=0; j<r; j++)
+    {
+      int k1 = cross_indices(j,0)-1;
+      int k2 = cross_indices(j,1)-1;
+      Chat(j*(2*l_band+1)+l_band,t) = (x(k1,t+l_band) * x(k2,t+l_band)-GammaM(k1,k2)) / (2*M_PI);
+      //if(t==0){cout << x(k1,t+l_band) * x(k2,t+l_band)-GammaM(k1,k2) << endl;}
+      
+      
+      for(int q=0; q<l_band; q++)
+      {
+        Eigen::MatrixXd GammaJ1 = EvalGammaJC(Gamma,l_band-q,n);
+        Chat(j*(2*l_band+1)+q,t) = (x(k1,t+q) * x(k2,t+l_band) - GammaJ1(k2,k1)) / (2*M_PI);
+        Eigen::MatrixXd GammaJ2 = EvalGammaJC(Gamma,q+1,n);
+        Chat(j*(2*l_band+1)+q+l_band+1,t) = (x(k1,t+l_band+q+1) * x(k2,t+l_band) - GammaJ2(k1,k2)) / (2*M_PI);
+      } // q
+    } // j
+  } // t
+  //cout << Chat << endl;
+  return Chat;
+}
+
 
 
 // ===================================================================
@@ -373,7 +450,7 @@ Eigen::MatrixXd etaC(int n, int p, int B, int n_tilde, double bn, int type){
 
 // [[Rcpp::export]]
 Eigen::MatrixXd LongCovEstC(int n_tilde, int ln, int r, Eigen::VectorXi Shat_c, 
-                            Eigen::MatrixXd Chat, int Kern)
+                     Eigen::MatrixXd Chat, int Kern)
 {
   Eigen::MatrixXd SigmaMat = Eigen::MatrixXd::Zero(r*(2*ln+1), r*(2*ln+1));
   for(int j1=0; j1<r*(2*ln+1); j1++)
@@ -435,3 +512,41 @@ Eigen::MatrixXd LongCovEstC(int n_tilde, int ln, int r, Eigen::VectorXi Shat_c,
   return SigmaMat;
 }
 
+// ===================================================================
+//  compute Test star
+// ===================================================================
+// [[Rcpp::export]]
+Eigen::VectorXd TestStarC(Eigen::MatrixXd x, Rcpp::List GhatC, int n_tilde, int n, int p, int r, 
+                   int K, double flag_c, Eigen::MatrixXd cross_indices, Eigen::VectorXd J_set, 
+                   int l_band, int B_monte, int type){
+  
+  Eigen::MatrixXd Chat = CEst3C(x,GhatC,n_tilde,n,p,r,cross_indices,l_band); //  r(2ln+1) * n.tilde
+  double bn = BandEstC(Chat, n_tilde, r, l_band, type);
+  //cout << bn << endl;
+  Eigen::MatrixXd eta = etaC(n,p,B_monte,n_tilde,bn,type); // n.tilde*B
+  Eigen::MatrixXd mag = Eigen::MatrixXd::Zero(r,1);
+  Eigen::VectorXd T_star = Eigen::VectorXd::Zero(B_monte);
+  Eigen::MatrixXd Acos_mat = Eigen::MatrixXd::Zero(K, 2*l_band+1);
+  Eigen::MatrixXd Asin_mat = Eigen::MatrixXd::Zero(K, 2*l_band+1);
+  for(int h=-l_band; h<l_band; h++){
+    for(int k=0; k<K; k++){
+      Acos_mat(k,h+l_band) = TaperFlatC(h/l_band,flag_c)*cos(J_set(k)*h)/sqrt(l_band);
+      Asin_mat(k,h+l_band) = -1.0*TaperFlatC(h/l_band,flag_c)*sin(J_set(k)*h)/sqrt(l_band);
+    }  // k
+  } // h
+  for(int bb=0; bb<B_monte; bb++){
+    for(int j=0; j<r; j++){
+      Eigen::MatrixXd Chat_j = Chat.middleRows(j*(2*l_band+1),2*l_band+1);
+      Eigen::MatrixXd xi_cos = Acos_mat * Chat_j * eta.col(bb+1) / sqrt(double(n_tilde));  // K*B
+      Eigen::MatrixXd xi_sin = Asin_mat * Chat_j * eta.col(bb+1) / sqrt(double(n_tilde));  // K*B
+      mag(j,0) = (xi_cos.cwiseProduct(xi_cos) + xi_sin.cwiseProduct(xi_sin)).maxCoeff();
+    } // j
+    
+    T_star(bb) =  mag.maxCoeff();
+    //cout << mag << endl;
+  } // bb
+  
+  return T_star;
+} 
+
+ 
