@@ -537,8 +537,8 @@ Eigen::VectorXd TestStarC(Eigen::MatrixXd x, Rcpp::List GhatC, int n_tilde, int 
   for(int bb=0; bb<B_monte; bb++){
     for(int j=0; j<r; j++){
       Eigen::MatrixXd Chat_j = Chat.middleRows(j*(2*l_band+1),2*l_band+1);
-      Eigen::MatrixXd xi_cos = Acos_mat * Chat_j * eta.col(bb+1) / sqrt(double(n_tilde));  // K*B
-      Eigen::MatrixXd xi_sin = Asin_mat * Chat_j * eta.col(bb+1) / sqrt(double(n_tilde));  // K*B
+      Eigen::MatrixXd xi_cos = Acos_mat * Chat_j * eta.col(bb) / sqrt(double(n_tilde));  // K*B
+      Eigen::MatrixXd xi_sin = Asin_mat * Chat_j * eta.col(bb) / sqrt(double(n_tilde));  // K*B
       mag(j,0) = (xi_cos.cwiseProduct(xi_cos) + xi_sin.cwiseProduct(xi_sin)).maxCoeff();
     } // j
     

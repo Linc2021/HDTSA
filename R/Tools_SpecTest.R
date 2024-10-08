@@ -59,10 +59,10 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 {
   p <- ncol(X)
   n <- nrow(X)
-  X <- t(X)
   K <- length(J.set)
   r <- dim(cross.indices)[1]
   l.band <- ChooseLn(X, 2, 5) 
+  X <- t(X)
   
   
   ## ------------------------------------
