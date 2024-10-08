@@ -52,8 +52,8 @@
 #'   \eqn{{\bf \widehat{A}}}.}
 #'   \item{lag.k}{the time lag used in function.}
 #'   \item{method}{a character string indicating what method was performed.}
-#' @references Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional
-#'   stochastic regression with latent factors, endogeneity and nonlinearity},
+#' @references Chang, J., Guo, B., & Yao, Q. (2015).  \emph{High dimensional
+#'   stochastic regression with latent factors, endogeneity and nonlinearity}.
 #'   Journal of Econometrics, Vol. 189, pp. 297–312.
 #' @examples
 #' n <- 400
@@ -85,8 +85,9 @@
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
+#' @import Rcpp
 #' @export
-HDSReg <- function (Y,Z,D=NULL,lag.k=1,twostep=FALSE) {
+HDSReg <- function(Y, Z, D = NULL, lag.k = 1, twostep = FALSE) {
   Y_n <- nrow(Y)
   Y_p <- ncol(Y)
   Z_n <- nrow(Z)

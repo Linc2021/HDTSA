@@ -57,7 +57,7 @@ segmentTS <- function(Y, lag.k,
     # square root of eigenvalues
     for(i in 1:p)
     {
-      if(ev[i] <  1e-4)D[i, i] <- sqrt(log(p) / n)
+      if(ev[i] <  1e-4 | ev[i] > 1e+4)D[i, i] <- sqrt(log(p) / n)
       else D[i, i]=sqrt(ev[i])
     }
   }

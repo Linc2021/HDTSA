@@ -33,7 +33,7 @@ option \code{'Quad'} (Both linear and quadratic terms
 can choose set the map themselves, use for example \code{expression(X, X^2)},
  \code{quote(X, X^2)}, \code{parse(X, X^2)}, \code{substitute(X, X^2)} or 
  just map without function (such as cbind(X, X^2)) to set their own map. 
-See Section 2.1 in Chang, Jiang and Shao (2021) for more information.}
+See Section 2.1 in Chang, Jiang and Shao (2023) for more information.}
 
 \item{alpha}{The prescribed significance level. Default is 0.05.}
 
@@ -47,8 +47,7 @@ information. Default option is \code{kernel.type = 'QS'}.}
 \value{
 An object of class "hdtstest" is a list containing the following
   components:
-   
-.  \item{statistic}{The value of the test statistic.}
+  \item{statistic}{The value of the test statistic.}
   \item{p.value}{Numerical value which represents the p-value of the test.}
   \item{lag.k}{The time lag used in function.}
   \item{method}{A character string indicating what method was performed.}
@@ -57,7 +56,7 @@ An object of class "hdtstest" is a list containing the following
 }
 \description{
 \code{MartG_test()} implements a new test proposed in
- Chang, Jiang and Shao (2021) for the following hypothesis testing problem: 
+ Chang, Jiang and Shao (2023) for the following hypothesis testing problem: 
 \deqn{H_0:\{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:
 \{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ not\ a\ MDS,} } where 
 MDS is the abbreviation of "martingale difference sequence".
@@ -78,7 +77,7 @@ Pvalue <- res$p.value
 rej <- res$reject
 }
 \references{
-Chang, J., Jiang, Q. & Shao, X. (2022). \emph{Testing the
-  martingale difference hypothesis in high dimension}.  Journal of 
-  Econometrics, in press
+Chang, J., Jiang, Q., & Shao, X. (2023). \emph{Testing the
+  martingale difference hypothesis in high dimension}. Journal of 
+  Econometrics, Vol. 235(2), pp. 972--1000.
 }

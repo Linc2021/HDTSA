@@ -17,29 +17,41 @@
 #' @param pre Logical value which determines whether to performs preprocessing
 #'   procedure on data matrix \code{X} or not, see Remark 1 in Chang, Yao and
 #'   Zhou (2017) for more information. If \code{TRUE}, then the segment
-#'   procedure will be performed to data \code{X} first. The three additional
-#'   options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are
-#'   the same as those in \code{\link{PCA_TS}}.
+#'   procedure will be performed to data \code{X} first. The additional
+#'   parameter which control the preprocessing procedure could be set 
+#'   through parameter \code{control}.
 #' @param alpha The prescribed significance level. Default is 0.05.
 #' @param kernel.type String, an option for choosing the symmetric kernel used
 #'   in the estimation of long-run covariance matrix, for example, \code{'QS'}
 #'   (Quadratic spectral kernel), \code{'Par'} (Parzen kernel) and \code{'Bart'}
 #'   (Bartlett kernel), see Andrews (1991) for more information. Default option
 #'   is\code{kernel.type = 'QS'}.
-#' @param k0 A positive integer specified to calculate \eqn{\widehat{{\bf
+#' @param  control A list of control parameters. See ‘Details’ and ‘Details’ in \link{PCA_TS}.
+#' @seealso \code{\link{PCA_TS}}
+#' 
+#' @details
+#' The control argument is a list that can supply any of the following 
+#'   components to \code{PCA_TS()}:
+#'   \itemize{
+#'   \item \code{k0}: A positive integer specified to calculate \eqn{\widehat{{\bf
 #'   W}}_y}. See parameter \code{lag.k} in \code{\link{PCA_TS}} for more
 #'   information.
-#' @param thresh Logical. It determines whether to perform the threshold method
+#'   \item \code{thresh}: Logical. It determines whether to perform the threshold method
 #'   to estimate \eqn{\widehat{{\bf W}}_y} or not. See parameter \code{thresh}
 #'   in \code{\link{PCA_TS}} for more information.
-#' @param tuning.vec The value of thresholding tuning parameter \eqn{\lambda}.
+#'   \item \code{tuning.vec}: The value of thresholding tuning parameter \eqn{\lambda}.
 #'   See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
 #'   information.
-#' @param opt Method options for calculating ransformation matrix in preprocessing
+#'   \item \code{standardize}: Whether the variables will be standardized to
+#'   have mean zero and unit standard deviation. Default \code{FALSE}.
+#'   \item \code{opt}: Method options for calculating ransformation matrix in preprocessing
 #'   procedure on data matrix \code{X}. See parameter details in \link{PCA_TS}.
-#'   Default options is \code{opt=1}
-#' @param  control a list of control parameters. See ‘Details’ in \link{PCA_TS}.
-#' @seealso \code{\link{PCA_TS}}
+#'   Default options is \code{opt=1}.
+#'   \item \code{K}: The number of folders used in the cross validation for the
+#'   selection of \eqn{\lambda}, the default is 5. It is required when
+#'   \code{control(thresh = TRUE)}. See parameter details in \link{PCA_TS}.
+#'   }
+#' 
 #'
 #' @return An object of class "hdtstest" is a list containing the following
 #'   components:
@@ -51,15 +63,15 @@
 #'   \item{method}{A character string indicating what method was performed.}
 #'   \item{kernel.type}{A character string indicating what kenel method was performed.}
 #'   
-#' @references Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for
+#' @references Chang, J., Yao, Q., & Zhou, W. (2017). \emph{Testing for
 #'   high-dimensional white noise using maximum cross-correlations}, Biometrika,
 #'   Vol. 104, pp. 111–127.
 #'
-#'   Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for
+#'   Chang, J., Guo, B., & Yao, Q. (2018). \emph{Principal component analysis for
 #'   second-order stationary vector time series}, The Annals of Statistics, Vol.
 #'   46, pp. 2094–2124.
 #'
-#'   Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse
+#'   Cai, T., and Liu, W. (2011). \emph{Adaptive thresholding for sparse
 #'   covariance matrix estimation},  Journal of the American Statistical
 #'   Association, Vol. 106, pp. 672--684.
 #'
@@ -74,83 +86,55 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @export
-WN_test = function(X, lag.k = 2, B = 1000, method = c("CYZ","CLL"),
-                   kernel.type = c('QS','Par','Bart'), resampling = FALSE,
-                   pre = FALSE, alpha = 0.05,k0 = 5, thresh = FALSE,
-                   tuning.vec = NULL,
-                   opt = 1, control = list()){
-  # data_name <- deparse(substitute(X))
-  method = match.arg(method)
-
-  if(method == "CYZ"){
-    kernel.type <- match.arg(kernel.type)
-    ken_type <- switch(kernel.type,
-                       "QS" = 1,
-                       "Par" = 2,
-                       "Bart" = 3)
+# WN_test = function(X, lag.k = 2, B = 1000, method = c("CYZ","CLL"),
+#                    kernel.type = c('QS','Par','Bart'), resampling = FALSE,
+#                    pre = FALSE, alpha = 0.05,k0 = 5, thresh = FALSE,
+#                    tuning.vec = NULL,
+#                    opt = 1, control = list()){
+WN_test = function(X, lag.k = 2, B = 1000, kernel.type = c("QS", "Par", "Bart"),
+                   pre = FALSE, alpha = 0.05, control = list()){
+  
+  kernel.type <- match.arg(kernel.type)
+  ken_type <- switch(kernel.type,
+                     "QS" = 1,
+                     "Par" = 2,
+                     "Bart" = 3)
+  
+  if (pre == TRUE){
+    con <- list(k0 = 5, thresh = FALSE, tuning.vec = NULL, K=5, opt = 1)
+    con[(namc <- names(control))] <- control
+    # print(con)
+    X_pre <- segmentTS(X, lag.k = con$k0,
+                      thresh = con$thresh,
+                      tuning.vec = con$tuning.vec,
+                      opt = con$opt,
+                      control = control,
+                      K = con$K)
     
-    if (pre == TRUE){
-      X_pre <- PCA_TS(X, lag.k=k0, 
-                      thresh=thresh, just4pre = TRUE, 
-                      opt=opt,control=control,
-                      tuning.vec = tuning.vec)
-      
-      X <- X_pre$Z
-      Bx <- X_pre$B
-    }
-    n <- nrow(X)
-    p <- ncol(X)
-    
-    Tn_list <- WN_teststatC(X,n,p,lag.k)
-    Tn <- Tn_list$Tn
-    sigma_zero <- Tn_list$sigma_zero
-    X_mean <- Tn_list$X_mean
-    
-    ft <- WN_ftC(n, lag.k, p, X, X_mean)
-    bn <- bandwith(ft, lag.k, p, p, ken_type)
-    
-    Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, X, sigma_zero) # critical value
-    p.value <- mean(Gnstar > Tn)
-    # Results = list(reject = (p.value<0.05), p.value = p.value)
-    
-    names(Tn) <- "Statistic"
-    names(lag.k) <-"Time lag"
-    names(kernel.type) <- "Symmetric kernel"
-    METHOD <- "Testing for white noise hypothesis in high dimension"
-    structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
-                   method = METHOD, 
-                   kernel = kernel.type),
-              class = "hdtstest")
+    X <- X_pre$Z
+    Bx <- X_pre$B
   }
-  else if(method == "CLL"){
-    n <- nrow(X)
-    p <- ncol(X)
-    Hn <- rep(0, lag.k)
-    const <- sqrt(2) / (n-1)
-    tmp <- X %*% t(X)
-    diag(tmp) <- 0
-    sigma_n1 <- const * sum(tmp^2)
-    for(lag in c(1:lag.k)){
-      Gn_1 <- sum(tmp * tmp[c(c((n-lag+1):n),c(1:(n-lag))),c(c((n-lag+1):n),c(1:(n-lag)))])
-      
-      
-      if(lag > 1){
-        Hn[lag] <- Hn[lag-1] + Gn_1/sigma_n1
-      }
-      else{
-        Hn[lag] <- Gn_1/sigma_n1
-      }
-      
-    }
-    cv_vec <- qnorm(1-alpha,0,sqrt(c(1:lag.k)))
-    if(resampling==TRUE){
-      Hn_B <- resampling(X,n,p,B,lag.k)
-      cv_vec_resampling <- Hn_B[,floor(B*(1-alpha))]
-      return(list(res = Hn>cv_vec, res_resampling = Hn>cv_vec_resampling,Hn = Hn))
-    }
-    
-    return(list(res = Hn>cv_vec,Hn=Hn))
-    
-    
-  }
+  n <- nrow(X)
+  p <- ncol(X)
+  
+  Tn_list <- WN_teststatC(X,n,p,lag.k)
+  Tn <- Tn_list$Tn
+  sigma_zero <- Tn_list$sigma_zero
+  X_mean <- Tn_list$X_mean
+  
+  ft <- WN_ftC(n, lag.k, p, X, X_mean)
+  bn <- bandwith(ft, lag.k, p, p, ken_type)
+  
+  Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, X, sigma_zero) # critical value
+  p.value <- mean(Gnstar > Tn)
+  # Results = list(reject = (p.value<0.05), p.value = p.value)
+  
+  names(Tn) <- "Statistic"
+  names(lag.k) <-"Time lag"
+  names(kernel.type) <- "Symmetric kernel"
+  METHOD <- "Testing for white noise hypothesis in high dimension"
+  structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
+                 method = METHOD, 
+                 kernel = kernel.type),
+            class = "hdtstest")
 }

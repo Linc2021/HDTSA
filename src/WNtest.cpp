@@ -10,7 +10,6 @@
 #include <random>
 #include <ctime>
 #include "testtools.h"
-// [[Rcpp::depends(RcppEigen,Rcpp,RcppArmadillo)]]
 using namespace std;
 using namespace Eigen;
 using namespace Rcpp;

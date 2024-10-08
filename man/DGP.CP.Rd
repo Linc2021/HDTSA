@@ -22,37 +22,37 @@ DGP.CP(n, p, q, d1, d2, d)
 \value{
 A list containing the following
   components:
-  \item{Y}{A \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
-  \item{S}{A \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
+  \item{Y}{An \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
+  \item{S}{An \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
   \item{A}{A \eqn{p \times d} coefficient matrix.}
   \item{B}{A \eqn{q \times d} coefficient matrix.}
-  \item{X}{A \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
+  \item{X}{An \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
   \item{P}{A \eqn{p \times d_1} orthogonal matrix such that \eqn{\bf A = \bf P \bf U}.}
   \item{Q}{A \eqn{q \times d_2} orthogonal matrix such that \eqn{\bf B = \bf Q \bf V}.}
   \item{U}{A \eqn{d_1 \times d} matrix such that \eqn{\bf A = \bf P \bf U}.}
   \item{V}{A \eqn{d_2 \times d} matrix such that \eqn{\bf B = \bf Q \bf V}.}
   \item{W}{A \eqn{d_1 d_2 \times d} matrix such that \eqn{\bf W = (\bf v_1 \otimes \bf u_1,\ldots,\bf v_d \otimes \bf u_d)}.}
   \item{Ws}{A \eqn{d_1 d_2 \times d} matrix. An orthogonal basis of \eqn{\bf W}.}
-  \item{Xmat}{A \eqn{n \times d} data matrix of \eqn{diag(\bf X_t)}.}
-  \item{Smat}{A \eqn{n \times pq} data matrix of \eqn{vec(\bf S_t)}.}
+  \item{Xmat}{An \eqn{n \times d} data matrix of \eqn{\rm{diag}(\bf X_t)}.}
+  \item{Smat}{An \eqn{n \times pq} data matrix of \eqn{\rm{vec}(\bf S_t)}.}
 }
 \description{
 \code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
 latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
 \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
  is a \eqn{p \times q} matrix white noise process.
 }
 \examples{
-p = 10
-q = 10
-n = 400
-d = d1 = d2 = 3
+p <- 10
+q <- 10
+n <- 400
+d = d1 = d2 <- 3
 data <- DGP.CP(n,p,q,d1,d2,d)
-Y = data$Y
+Y <- data$Y
 }
 \references{
-Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
+Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
 }
 \seealso{

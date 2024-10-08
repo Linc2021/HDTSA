@@ -8,24 +8,26 @@ CP_MTS(
   Y,
   xi = NULL,
   Rank = NULL,
-  lag.k = 15,
+  lag.k = 20,
   lag.ktilde = 10,
   method = c("CP.Direct", "CP.Refined", "CP.Unified")
 )
 }
 \arguments{
-\item{Y}{A \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
+\item{Y}{An \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
 is the dimension of \eqn{{\bf Y}_t}.}
 
-\item{xi}{A \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
-is used [See Section 5.1 in Chang et al. (2023)] to calculate the sample auto-covariance matrix
+\item{xi}{An \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
+is used to calculate the sample auto-covariance matrix. See Section 5.1 in Chang et al. (2023) for 
+more information. 
 \eqn{\widehat{\bf \Sigma}_{\bf Y, \xi}(k)}.}
 
-\item{Rank}{A list of the rank \eqn{d},\eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.}
+\item{Rank}{A list of the rank \eqn{d}, \eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.}
 
-\item{lag.k}{Integer. Time lag \eqn{K} is only used in \code{CP.Refined} and \code{CP.Unified} to
-calculate the nonnegative definte matrices \eqn{\widehat{\mathbf{M}}_1} and
-\eqn{\widehat{\mathbf{M}}_2}: \deqn{\widehat{\mathbf{M}}_1\ =\
+\item{lag.k}{The time lag \eqn{K}, an integer, is utilized to compute the nonnegative definite 
+matrices \eqn{\widehat{\mathbf{M}}_1} and \eqn{\widehat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
+ or \code{method = "CP.Unified"}:
+ \deqn{\widehat{\mathbf{M}}_1\ =\
   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)',
   }, \deqn{\widehat{\mathbf{M}}_2\ =\
   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)'\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k),
@@ -33,13 +35,14 @@ calculate the nonnegative definte matrices \eqn{\widehat{\mathbf{M}}_1} and
   where \eqn{\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)} is the sample auto-covariance of
   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}.}
 
-\item{lag.ktilde}{Integer. Time lag \eqn{\tilde K} is only used in \code{CP.Unified} to calulate the
-nonnegative definte matrix \eqn{\widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}} \ =\
+\item{lag.ktilde}{The time lag \eqn{\tilde K}, an integer, is utilized to compute the nonnegative definite 
+matrices \eqn{\widehat{\mathbf{M}}} when \code{method = "CP.Unified"}: \deqn{\widehat{\mathbf{M}} \ =\
   \sum_{k=1}^{\tilde K}\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)'.
   }}
 
-\item{method}{Method to use: \code{CP.Direct} and \code{CP.Refined}, Chang et al.(2023)'s direct and refined estimators;
-\code{CP.Unified}, Chang et al.(2024+)'s unified estimation procedure.}
+\item{method}{A character string indicating which method was performed, available methods include:
+\code{"CP.Direct"} and \code{"CP.Refined"}, corresponding to Chang et al. (2023)'s direct and refined estimation procedure;
+ and \code{"CP.Unified"}, representing Chang et al. (2024+)'s unified estimation procedure.}
 }
 \value{
 An object of class "mtscp" is a list containing the following
@@ -51,28 +54,42 @@ An object of class "mtscp" is a list containing the following
 }
 \description{
 \code{CP_MTS()} deals with CP-decomposition for high-dimensional
- matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
+ matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
+{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
 \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
  is a \eqn{p \times q} matrix white noise process. This function aims to estimate the rank
  \eqn{d} and the coefficient matrices \eqn{{\bf A}} and \eqn{{\bf B}}.
 }
 \examples{
-p = 10
-q = 10
-n = 400
-d = d1 = d2 = 3
+## Example 1.
+p <- 10
+q <- 10
+n <- 400
+d = d1 = d2 <- 3
 data <- DGP.CP(n,p,q,d1,d2,d)
-Y = data$Y
+Y <- data$Y
 res1 <- CP_MTS(Y,method = "CP.Direct")
 res2 <- CP_MTS(Y,method = "CP.Refined")
 res3 <- CP_MTS(Y,method = "CP.Unified")
+
+## Example 2.
+p <- 10
+q <- 10
+n <- 400
+d1 = d2 <- 2
+d <-3
+data <- DGP.CP(n,p,q,d1,d2,d)
+Y1 <- data$Y
+res <- CP_MTS(Y,method = "CP.Unified")
+res4 <- CP_MTS(Y1, Rank=list(d=3), method = "CP.Direct")
+res5 <- CP_MTS(Y1, Rank=list(d=3, d1=2, d2=2), method = "CP.Unified")
+
 }
 \references{
-Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
+Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
   
-  Chang, J., Du, Y., Huang, G. and Yao, Q.(2024+). \emph{On the Identification and Unified Estimation
-  Procedure for the Matrix CP-factor Model}, Working paper.
+  Chang, J., Du, Y., Huang, G., & Yao, Q. (2024+). \emph{On the Identification and Unified Estimation
+  Procedure for the Matrix CP-factor Model}. Working paper.
 }

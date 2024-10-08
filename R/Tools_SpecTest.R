@@ -51,7 +51,7 @@
 #' cross.indices <- matrix(c(1,2), ncol=2)
 #' J.set <- 2*pi*seq(0,3)/4 - pi
 #' res <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
-#' Stat <- res$Stat
+#' Stat <- res$statistic
 #' Pvalue <- res$p.value
 #' CriVal <- res$cri95
 #' @export

@@ -94,8 +94,8 @@ res1 <- HDSReg(Y,Z,D,lag.k=2)
 res2 <- HDSReg(Y,Z,lag.k=2)
 }
 \references{
-Chang, J., Guo, B. & Yao, Q. (2015).  \emph{High dimensional
-  stochastic regression with latent factors, endogeneity and nonlinearity},
+Chang, J., Guo, B., & Yao, Q. (2015).  \emph{High dimensional
+  stochastic regression with latent factors, endogeneity and nonlinearity}.
   Journal of Econometrics, Vol. 189, pp. 297–312.
 }
 \seealso{

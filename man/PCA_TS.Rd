@@ -7,16 +7,15 @@
 PCA_TS(
   Y,
   lag.k = 5,
+  opt = 1,
   thresh = FALSE,
   tuning.vec = NULL,
   K = 5,
-  prewhiten = TRUE,
-  opt = 1,
-  control = list(),
   permutation = c("max", "fdr"),
+  prewhiten = TRUE,
   m = NULL,
   beta,
-  just4pre = FALSE,
+  control = list(),
   verbose = FALSE
 )
 }
@@ -35,6 +34,12 @@ matrix \eqn{\widehat{{\bf W}}_y}: \deqn{\widehat{\mathbf{W}}_y\ =\
 \eqn{ \widehat{{\bf V}}^{-1/2}{\bf y}_t} at lag \eqn{k}. See (2.5) in
 Chang, Guo and Yao (2018).}
 
+\item{opt}{Method options for calculating \eqn{\widehat{{\bf V}}^{-1/2}}. For 
+parameter ‘opt’, 1 is coded for performing the transformation using the sample
+ covariance; 2 is coded for performing the transformation using package 'clime'
+  with build-in cross validation on the tuning parameter for estimating the
+ contempaneous correlations.}
+
 \item{thresh}{Logical. If \code{FALSE} (the default), no thresholding will
 be applied to estimate \eqn{\widehat{{\bf W}}_y}. If \code{TRUE}, a
 thresholding method will be applied first to estimate \eqn{\widehat{{\bf
@@ -50,26 +55,18 @@ tuning parameter \eqn{\lambda}.}
 selection of \eqn{\lambda}, the default is 5. It is required when
 \code{thresh = TRUE}.}
 
-\item{prewhiten}{Logical. If \code{TRUE} (the default), we prewhiten each
-transformed component series of \eqn{\hat{\bf z}_t} [See Section 2.2.1 in
-Chang, Guo and Yao (2018)] by fitting a univariate AR model with the order
-between 0 and 5 determined by AIC. If \code{FALSE}, then prewhiten
-procedure will not be performed to \eqn{\hat{\bf z}_t}.}
-
-\item{opt}{Method options for calculating \eqn{\widehat{{\bf V}}^{-1/2}}. For 
-parameter ‘opt’, 1 is coded for performing the transformation using the sample
- covariance; 2 is coded for performing the transformation using package 'clime'
-  with build-in cross validation on the tuning parameter for estimating the
- contempaneous correlations.}
-
-\item{control}{a list of control parameters. See ‘Details’.}
-
 \item{permutation}{The method of permutation procedure to assign the
 components of \eqn{\hat{\bf z}_t} to different groups [See Section 2.2.1 in
 Chang, Guo and Yao (2018)]. Option is \code{'max'} (Maximum cross
 correlation method) or \code{'fdr'} (False discovery rate procedure based
 on multiple tests), default is \code{permutation = 'max'}. See Sections
 2.2.2 and 2.2.3 in Chang, Guo and Yao (2018) for more information.}
+
+\item{prewhiten}{Logical. If \code{TRUE} (the default), we prewhiten each
+transformed component series of \eqn{\hat{\bf z}_t} [See Section 2.2.1 in
+Chang, Guo and Yao (2018)] by fitting a univariate AR model with the order
+between 0 and 5 determined by AIC. If \code{FALSE}, then prewhiten
+procedure will not be performed to \eqn{\hat{\bf z}_t}.}
 
 \item{m}{A positive constant used in the permutation procedure [See (2.10) in
 Chang, Guo and Yao (2018)]. If \eqn{m} is not specified, then default
@@ -78,9 +75,7 @@ option is \code{m = }10.}
 \item{beta}{The error rate used in the permutation procedure when
 \code{permutation = 'fdr'}.}
 
-\item{just4pre}{Logical. If \code{TRUE}, the procedure outputs \eqn{\hat{\bf
-z}_t}, otherwise outputs \eqn{\hat{\bf x}_t} (the permutated version of
-\eqn{\hat{\bf z}_t}).}
+\item{control}{A list of control parameters. See ‘Details’.}
 
 \item{verbose}{Logical. If \code{TRUE}, the main results of the permutation 
 procedure will be output on the console. Otherwise, the result will not be 
@@ -113,13 +108,13 @@ The output of the permutation procedure is a list containing the
   Yao (2018).
 }
 \details{
-When \eqn{p>n^{1/2}}, we recommend setting the parameter to 
+When \eqn{p>n}, we recommend setting the parameter to 
   \code{opt=2} for estimating the precision matrix 
   \eqn{\widehat{{\bf V}}^{-1}} use package \pkg{clime} , otherwise uses
   function \code{cov()} to estimate \eqn{\widehat{{\bf V}}} and calculate its
-  inverse. When \eqn{p>n^{1/2}}, we recommend to use the thresholding method
-  to calculate \eqn{\widehat{{\bf W}}_y}, see more information in Chang, Guo
-  and Yao (2018).
+  inverse. When \eqn{p>n^{1/2}}, we recommend to use the thresholding method 
+  (\code{thresh=TRUE}) to calculate \eqn{\widehat{{\bf W}}_y}, see more 
+  information in Chang, Guo and Yao (2018).
   
   The control argument is a list that can supply any of the following 
   components to \code{clime}:
@@ -136,7 +131,7 @@ When \eqn{p>n^{1/2}}, we recommend setting the parameter to
   }
 }
 \examples{
-## Example 1 (Example 5 of Chang Guo and Yao (2018)).
+## Example 1 (Example 1 in the supplementary material of Chang Guo and Yao (2018)).
 ## p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.
 
 p <- 6;n <- 1500
@@ -166,7 +161,7 @@ acfY <- acf(Y)
 # The cross correlogram of z_t shows 3-2-1 block pattern
 acfZ <- acf(Z)
 
-## Example 2 (Example 6 of Chang Guo and Yao (2018)).
+## Example 2 (Example 2 in the supplementary material of Chang Guo and Yao (2018)).
 ## p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.
 p <- 20;n <- 3000
 # Generate x_t
@@ -212,11 +207,11 @@ permutation <- res
 permutation$Groups  
 }
 \references{
-Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component
+Chang, J., Guo, B., & Yao, Q. (2018). \emph{Principal component
   analysis for second-order stationary vector time series}, The Annals of
   Statistics, Vol. 46, pp. 2094--2124.
 
-  Cai, T. & Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance
+  Cai, T., & Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance
   matrix estimation},  Journal of the American Statistical Association, Vol.
   106, pp. 672--684.
 

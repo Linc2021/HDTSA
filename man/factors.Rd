@@ -4,7 +4,7 @@
 \alias{Factors}
 \title{Factor modeling: Inference for the number of factors}
 \usage{
-Factors(Y, lag.k = 5, twostep = FALSE)
+Factors(Y, lag.k = 1, twostep = FALSE)
 }
 \arguments{
 \item{Y}{\eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix
@@ -29,8 +29,8 @@ An object of class "factors" is a list containing the following
   \eqn{\hat{r}}.} 
   \item{loading.mat}{The estimated \eqn{p \times r} factor
   loading matrix \eqn{\widehat{\bf A}}.}
-  \item{lag.k}{the time lag used in function.}
-  \item{method}{a character string indicating what method was performed.}
+  \item{lag.k}{The time lag used in function.}
+  \item{method}{A character string indicating what method was performed.}
 }
 \description{
 \code{Factors()} deals with factor modeling for high-dimensional
@@ -65,7 +65,7 @@ r_hat <- fac$factor_num
 loading_Mat <- fac$loading.mat
 }
 \references{
-Lam, C. & Yao, Q. (2012). \emph{Factor modelling for
+Lam, C., & Yao, Q. (2012). \emph{Factor modelling for
   high-dimensional time series: Inference for the number of factors}, The
   Annals of Statistics, Vol. 40, pp. 694--726.
 }

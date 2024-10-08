@@ -1,33 +1,36 @@
 #' @title Estimation of matrix CP-factor model
 #' @description \code{CP_MTS()} deals with CP-decomposition for high-dimensional
-#'  matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-#' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
+#'  matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
+#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+#' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
 #' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
 #'  is a \eqn{p \times q} matrix white noise process. This function aims to estimate the rank
 #'  \eqn{d} and the coefficient matrices \eqn{{\bf A}} and \eqn{{\bf B}}.
 #'
-#' @param Y A \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
+#' @param Y An \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
 #' is the dimension of \eqn{{\bf Y}_t}.
-#' @param xi A \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
-#' is used [See Section 5.1 in Chang et al. (2023)] to calculate the sample auto-covariance matrix
+#' @param xi An \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
+#' is used to calculate the sample auto-covariance matrix. See Section 5.1 in Chang et al. (2023) for 
+#' more information. 
 #' \eqn{\widehat{\bf \Sigma}_{\bf Y, \xi}(k)}.
-#' @param Rank A list of the rank \eqn{d},\eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.
-#' @param lag.k Integer. Time lag \eqn{K} is only used in \code{CP.Refined} and \code{CP.Unified} to
-#' calculate the nonnegative definte matrices \eqn{\widehat{\mathbf{M}}_1} and
-#' \eqn{\widehat{\mathbf{M}}_2}: \deqn{\widehat{\mathbf{M}}_1\ =\
+#' @param Rank A list of the rank \eqn{d}, \eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.
+#' @param lag.k The time lag \eqn{K}, an integer, is utilized to compute the nonnegative definite 
+#' matrices \eqn{\widehat{\mathbf{M}}_1} and \eqn{\widehat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
+#'  or \code{method = "CP.Unified"}:
+#'  \deqn{\widehat{\mathbf{M}}_1\ =\
 #'   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)',
 #'   }, \deqn{\widehat{\mathbf{M}}_2\ =\
 #'   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)'\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k),
 #'   }
 #'   where \eqn{\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)} is the sample auto-covariance of
 #'   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}.
-#' @param lag.ktilde Integer. Time lag \eqn{\tilde K} is only used in \code{CP.Unified} to calulate the
-#' nonnegative definte matrix \eqn{\widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}} \ =\
+#' @param lag.ktilde The time lag \eqn{\tilde K}, an integer, is utilized to compute the nonnegative definite 
+#' matrices \eqn{\widehat{\mathbf{M}}} when \code{method = "CP.Unified"}: \deqn{\widehat{\mathbf{M}} \ =\
 #'   \sum_{k=1}^{\tilde K}\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)'.
 #'   }
-#' @param method Method to use: \code{CP.Direct} and \code{CP.Refined}, Chang et al.(2023)'s direct and refined estimators;
-#'  \code{CP.Unified}, Chang et al.(2024+)'s unified estimation procedure.
+#' @param method A character string indicating which method was performed, available methods include:
+#'  \code{"CP.Direct"} and \code{"CP.Refined"}, corresponding to Chang et al. (2023)'s direct and refined estimation procedure;
+#'   and \code{"CP.Unified"}, representing Chang et al. (2024+)'s unified estimation procedure.
 #'
 #' @return An object of class "mtscp" is a list containing the following
 #'   components:
@@ -38,27 +41,41 @@
 #'
 #'
 #' @references
-#'   Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
+#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
 #'   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
 #'   
-#'   Chang, J., Du, Y., Huang, G. and Yao, Q.(2024+). \emph{On the Identification and Unified Estimation
-#'   Procedure for the Matrix CP-factor Model}, Working paper.
+#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024+). \emph{On the Identification and Unified Estimation
+#'   Procedure for the Matrix CP-factor Model}. Working paper.
 #'
 #' @examples
-#' p = 10
-#' q = 10
-#' n = 400
-#' d = d1 = d2 = 3
+#' ## Example 1.
+#' p <- 10
+#' q <- 10
+#' n <- 400
+#' d = d1 = d2 <- 3
 #' data <- DGP.CP(n,p,q,d1,d2,d)
-#' Y = data$Y
+#' Y <- data$Y
 #' res1 <- CP_MTS(Y,method = "CP.Direct")
 #' res2 <- CP_MTS(Y,method = "CP.Refined")
 #' res3 <- CP_MTS(Y,method = "CP.Unified")
+#' 
+#' ## Example 2.
+#' p <- 10
+#' q <- 10
+#' n <- 400
+#' d1 = d2 <- 2
+#' d <-3
+#' data <- DGP.CP(n,p,q,d1,d2,d)
+#' Y1 <- data$Y
+#' res <- CP_MTS(Y,method = "CP.Unified")
+#' res4 <- CP_MTS(Y1, Rank=list(d=3), method = "CP.Direct")
+#' res5 <- CP_MTS(Y1, Rank=list(d=3, d1=2, d2=2), method = "CP.Unified")
+#' 
 #' @export
 #' @useDynLib HDTSA
 #' @importFrom stats arima.sim rnorm runif
 
-CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method = c("CP.Direct","CP.Refined","CP.Unified")){
+CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde =  10, method = c("CP.Direct","CP.Refined","CP.Unified")){
   n = dim(Y)[1]; p = dim(Y)[2]; q = dim(Y)[3];
   if(is.null(xi)){
     xi = est.xi(Y)
@@ -126,7 +143,7 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method
       f = Complex2Real(f)
     }
     METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-    names(d) <- "The estimated rank of the matrix CP-factor model"
+    names(d) <- "The estimated number of factors d"
     con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
                     class = "mtscp")
     return(con)
@@ -201,7 +218,7 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method
       }
     }
       METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-      names(d) <- "The estimated rank of the matrix CP-factor model"
+      names(d) <- "The estimated number of factors d"
     con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
                     class = "mtscp")
     return(con)
@@ -245,9 +262,9 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method
       # con = list(A = A,B = B,f = f,Rank = list(d=d,d1=d1,d2=d2))
       METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
       rank <- list(d=d,d1=d1,d2=d2)
-      names(rank) <- c("The estimated rank d of the matrix CP-factor model",
-                       "The estimated rank d1 of the matrix CP-factor model",
-                       "The estimated rankd d2 of the matrix CP-factor model")
+      names(rank) <- c("The estimated number of factors d",
+                       "The estimated rank of the left loading matrix d1",
+                       "The estimated rank of the right loading matrix d2")
       con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
                       class = "mtscp")
 
@@ -300,9 +317,9 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 15, lag.ktilde =  10, method
       B = Q%*%V
       METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
       rank <- list(d=d,d1=d1,d2=d2)
-      names(rank) <- c("The estimated rank d of the matrix CP-factor model",
-                       "The estimated rank d1 of the matrix CP-factor model",
-                       "The estimated rankd d2 of the matrix CP-factor model")
+      names(rank) <- c("The estimated number of factors d",
+                       "The estimated rank of the left loading matrix d1",
+                       "The estimated rank of the right loading matrix d2")
       con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
                       class = "mtscp")
 
@@ -373,7 +390,7 @@ Vec.tensor = function(Y){
 
 #' @title Data generate process of matrix CP-factor model
 #' @description \code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = diag(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
 #' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
 #' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
 #'  is a \eqn{p \times q} matrix white noise process.
@@ -388,30 +405,30 @@ Vec.tensor = function(Y){
 #' @seealso \code{\link{CP_MTS}}.
 #' @return A list containing the following
 #'   components:
-#'   \item{Y}{A \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
-#'   \item{S}{A \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
+#'   \item{Y}{An \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
+#'   \item{S}{An \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
 #'   \item{A}{A \eqn{p \times d} coefficient matrix.}
 #'   \item{B}{A \eqn{q \times d} coefficient matrix.}
-#'   \item{X}{A \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
+#'   \item{X}{An \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
 #'   \item{P}{A \eqn{p \times d_1} orthogonal matrix such that \eqn{\bf A = \bf P \bf U}.}
 #'   \item{Q}{A \eqn{q \times d_2} orthogonal matrix such that \eqn{\bf B = \bf Q \bf V}.}
 #'   \item{U}{A \eqn{d_1 \times d} matrix such that \eqn{\bf A = \bf P \bf U}.}
 #'   \item{V}{A \eqn{d_2 \times d} matrix such that \eqn{\bf B = \bf Q \bf V}.}
 #'   \item{W}{A \eqn{d_1 d_2 \times d} matrix such that \eqn{\bf W = (\bf v_1 \otimes \bf u_1,\ldots,\bf v_d \otimes \bf u_d)}.}
 #'   \item{Ws}{A \eqn{d_1 d_2 \times d} matrix. An orthogonal basis of \eqn{\bf W}.}
-#'   \item{Xmat}{A \eqn{n \times d} data matrix of \eqn{diag(\bf X_t)}.}
-#'   \item{Smat}{A \eqn{n \times pq} data matrix of \eqn{vec(\bf S_t)}.}
+#'   \item{Xmat}{An \eqn{n \times d} data matrix of \eqn{\rm{diag}(\bf X_t)}.}
+#'   \item{Smat}{An \eqn{n \times pq} data matrix of \eqn{\rm{vec}(\bf S_t)}.}
 #' @references
-#'   Chang, J., He, J., Yang, L. and Yao, Q.(2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
+#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
 #'   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
 #'
 #' @examples
-#' p = 10
-#' q = 10
-#' n = 400
-#' d = d1 = d2 = 3
+#' p <- 10
+#' q <- 10
+#' n <- 400
+#' d = d1 = d2 <- 3
 #' data <- DGP.CP(n,p,q,d1,d2,d)
-#' Y = data$Y
+#' Y <- data$Y
 #' @export
 DGP.CP = function(n,p,q,d1,d2,d){
 

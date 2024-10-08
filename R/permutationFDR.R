@@ -3,7 +3,7 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' 
-permutationFDR <- function(X,prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
+permutationFDR <- function(X, prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
   # X: nxp data matrix
   # m: maximum lag used in multipe test for each pair components
   # beta: the error rate in FDR

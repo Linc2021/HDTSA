@@ -12,36 +12,36 @@
 #'   matrix \eqn{\widehat{{\bf W}}_y}: \deqn{\widehat{\mathbf{W}}_y\ =\
 #'   \sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'}
 #'    where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of
-#'   \eqn{ \widehat{{\bf y}_t}} at lag \eqn{k}.
+#'   \eqn{ \widehat{{\bf y}}_t} at lag \eqn{k}.
 #' @param type The method of identifying cointegration rank after segment 
 #'   procedure. Option is \code{'acf'}, \code{'all'}, \code{'chang'} or \code{'pptest'}
 #'   , the latter two methods use the unit-root test method to identify the 
 #'   cointegration rank, and the option \code{type = 'all'} means use all three
 #'   methods to identify the cointegration rank. Default is \code{type = 'acf'}.
-#'    See Sections 2.3 in Zhang, Robinson and Yao (2019) for more information.
+#'    See Section 2.3 in Zhang, Robinson and Yao (2019) for more information.
 #' @param c0 The prescribed constant for identifying 
-#'   cointegration rank using \code{"acf"} method. Default is 0.3.[See (2.3) in
-#'   Zhang, Robinson and Yao (2019)].
+#'   cointegration rank using \code{"acf"} method. Default is 0.3. See Section 2.3 in
+#'   Zhang, Robinson and Yao (2019).
 #' @param m The prescribed constant for identifying 
-#'   cointegration rank using \code{"acf"} method. Default is 20. [See (2.3) in
-#'   Zhang, Robinson and Yao (2019)].
+#'   cointegration rank using \code{"acf"} method. Default is 20. See Section 2.3 in
+#'   Zhang, Robinson and Yao (2019).
 #' @param alpha The prescribed significance level for identifying 
-#'   cointegration rank using \code{"pptest","chang"} method. Default is 0.01.
-#'   [See (2.3) in Zhang, Robinson and Yao (2019)].
+#'   cointegration rank using \code{"pptest"}, \code{"Chang"} method. Default is 0.01.
+#'   See Section 2.3 in Zhang, Robinson and Yao (2019).
 
 #' @return An object of class "coint" is a list containing the following
 #'   components:
-#'   \item{Z}{The transformed series with \eqn{n} rows and \eqn{p} columns. }
+#'   \item{A}{The estimated \eqn{\widehat{\bf A}}. }
 #'   \item{coint_rank}{A \eqn{1 \times 1} matrix representing the cointegration rank.
 #'   If \code{type = 'all'}, then return a \eqn{1 \times 3} matrix representing
 #'    the cointegration rank of all three methods.}
-#'   \item{lag.k}{a prescribed positive integer which means the time lags used
+#'   \item{lag.k}{A prescribed positive integer which means the time lags used
 #'    to calculate the statistic.}
-#'   \item{method}{a character string indicating which method was performed.}
+#'   \item{method}{A character string indicating which method was performed.}
 #'
-#' @references Zhang, R., Robinson, P. & Yao, Q. (2019).  \emph{Identifying 
+#' @references Zhang, R., Robinson, P., & Yao, Q. (2019).  \emph{Identifying 
 #' Cointegration by Eigenanalysis}.  Journal of the American Statistical 
-#' Association, Vol. 114, pp. 916--927
+#' Association, Vol. 114, pp. 916--927.
 #' @export
 #' @importFrom stats PP.test cor
 #' @useDynLib HDTSA
@@ -121,12 +121,12 @@ Coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
     if (type == "acf"){
       # result <- as.matrix(r_hat1)
       METHOD <- c("Identifying cointegration rank of given time series",
-                  "using acf method")
+                  "Using acf method")
       # rownames(result) <- "r_hat"
       # colnames(result) <- "acf"
       names(r_hat1) <- "The estimated number of cointegration rank"
       names(lag.k) <-"Time lag"
-      return(structure(list(Z = Z, coint_rank = r_hat1, lag.k = lag.k,
+      return(structure(list(A = G, coint_rank = r_hat1, lag.k = lag.k,
                             method = METHOD),
                        class = "coint"))
     }
@@ -153,11 +153,11 @@ Coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
     
     
     if (type == "pptest"){
-      METHOD <- c("Identifying cointegration rank of given time series",
-                  "using Phillips-Perron test")
+      METHOD <- c("Identifying the cointegration rank of given time series",
+                  "Using Phillips-Perron test")
       names(r_hat2) <- "The estimated number of cointegration rank"
       names(lag.k) <- "Time lag"
-      return(structure(list(Z = Z, coint_rank = r_hat2, lag.k = lag.k,
+      return(structure(list(A = G, coint_rank = r_hat2, lag.k = lag.k,
                             method = METHOD),
                        class = "coint"))
     }
@@ -183,11 +183,11 @@ Coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
     }
     r_hat3 = p - l
     if (type == "Chang"){
-      METHOD <- c("Identifying cointegration rank of given time series",
-                  "using Chang's method")
+      METHOD <- c("Identifying the cointegration rank of given time series",
+                  "Using Chang's method")
       names(r_hat3) <- "The estimated number of cointegration rank"
       names(lag.k) <- "Time lag"
-      return(structure(list(Z = Z, coint_rank = r_hat3, lag.k = lag.k,
+      return(structure(list(A = G, coint_rank = r_hat3, lag.k = lag.k,
                             method = METHOD),
                        class = "coint"))
     }
@@ -196,10 +196,10 @@ Coint <- function(Y, lag.k=5, type=c("acf","pptest","Chang","all"),
     result <- t(as.matrix(c(r_hat1,r_hat2,r_hat3)))
     rownames(result) <- "r_hat"
     colnames(result) <- c("acf","pptest","chang")
-    METHOD <- c("Identifying cointegration rank of given time series",
-                "using both three methods")
+    METHOD <- c("Identifying the cointegration rank of given time series",
+                "Using both three methods")
     names(lag.k) <-"Time lag"
-    return(structure(list(Z = Z, coint_rank = result, lag.k = lag.k,
+    return(structure(list(A = G, coint_rank = result, lag.k = lag.k,
                           method = METHOD),
                      class = "coint"))
   }

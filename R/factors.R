@@ -32,12 +32,12 @@
 #'   \eqn{\hat{r}}.} 
 #'   \item{loading.mat}{The estimated \eqn{p \times r} factor
 #'   loading matrix \eqn{\widehat{\bf A}}.}
-#'   \item{lag.k}{the time lag used in function.}
-#'   \item{method}{a character string indicating what method was performed.}
+#'   \item{lag.k}{The time lag used in function.}
+#'   \item{method}{A character string indicating what method was performed.}
 #'   
 #'  
 
-#' @references Lam, C. & Yao, Q. (2012). \emph{Factor modelling for
+#' @references Lam, C., & Yao, Q. (2012). \emph{Factor modelling for
 #'   high-dimensional time series: Inference for the number of factors}, The
 #'   Annals of Statistics, Vol. 40, pp. 694--726.
 #' @examples
@@ -64,15 +64,14 @@
 
 
 
-Factors <- function (Y, lag.k=5, twostep=FALSE) 
+Factors <- function (Y, lag.k = 1, twostep = FALSE) 
 {
   n <- nrow(Y)
   p <- ncol(Y)
-  r <- 0
+  r <- c()
   step <- ifelse(twostep==TRUE,2,1)
   Y <- t(Y)
   
-  storage.mode(r) <- "integer"
   storage.mode(p) <- "integer"
   storage.mode(n) <- "integer"
   storage.mode(step) <- "integer"
@@ -102,21 +101,21 @@ Factors <- function (Y, lag.k=5, twostep=FALSE)
     ratio <- ev[2:(p1+1)] / ev[1:p1]
     min_ratio <- min(ratio)
     index <- 1:p1
-    r <- r + index[ratio==min_ratio]
+    # r <- r + index[ratio==min_ratio]
+    r <- c(r, which.min(ratio))
     if(time == 1){
-      final_vector <- G[,c(1:r)]
+      final_vector <- G[,c(1:r[time])]
       if(twostep){
         Y <- Y - final_vector %*% t(final_vector) %*% Y
       }
     }
     else{
-      final_vector <- cbind(final_vector, G[, c(1:r)])
+      final_vector <- cbind(final_vector, G[, c(1:r[time])])
     }
   }
   
-  PARAMETER <- twostep
   METHOD <- "Inference for the number of factors"
-  names(r) <- "The estimated number of factors"
+  # names(r) <- "The estimated number of factors"
   names(lag.k) <-"Time lag"
   #outlist$call <- match.call(expand.dots = FALSE)
   #outlist <- list(factor_num = r, loading.mat = final_vector)

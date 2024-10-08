@@ -11,14 +11,14 @@ UR_test(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05)
 time series used for the test.}
 
 \item{lagk.vec}{Time lag \eqn{K_0} used to calculate the test statistic, see
-Section 2.1 in Chang, Cheng and Yao (2021). It can be a vector containing
+Section 2.1 in Chang, Cheng and Yao (2022). It can be a vector containing
 more than one time lag. If it is a vector, the procedure will output all
 the test results based on the different \eqn{K_0} in the vector
 \code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose
 lagk.vec=c(0,1,2,3,4).}
 
 \item{con_vec}{Constant \eqn{c_\kappa}, see (5) in Chang, Cheng and Yao
-(2021). It also can be a vector. If missing, the default value we use 0.55.}
+(2022). It also can be a vector. If missing, the default value we use 0.55.}
 
 \item{alpha}{The prescribed significance level. Default is 0.05.}
 }
@@ -27,18 +27,18 @@ An object of class "urtest" is a list containing the following
   components:
 
   \item{statistic}{A vector which represents the value of the test statistic,
-   the length of this vector is the same as \code{lag.vec}}
+   the length of this vector is the same as \code{lag.vec}.}
   \item{reject}{A data matrix containing result with different arguments,
    each column represents the results of different \eqn{c_\kappa} calculations, and 
    each column is a vector representing the results of different time lag
-    K0 calculations.\code{'1'} means we reject the null hypothesis and \code{'0'}
-  means we do not reject the null hypothesis}
+    \eqn{K_0} calculations. \code{'1'} means we reject the null hypothesis and \code{'0'}
+  means we do not reject the null hypothesis.}
   \item{lag.vec}{The time lag used in function.}
   \item{method}{A character string indicating what method was performed.}
   \item{type}{A character string which map used on data matrix \code{X}.}
 }
 \description{
-The test proposed in Chang, Cheng and Yao (2021) for the following hypothesis
+The test proposed in Chang, Cheng and Yao (2022) for the following hypothesis
 testing problems: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
 I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
 }
@@ -51,7 +51,6 @@ UR_test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
 UR_test(Y,alpha=0.05)
 }
 \references{
-Chang, J., Cheng, G. & Yao, Q. (2021).  \emph{Testing for unit
-  roots based on sample autocovariances}. Available at
-  \url{https://arxiv.org/abs/2006.07551}
+Chang, J., Cheng, G., & Yao, Q. (2022).  \emph{Testing for unit
+  roots based on sample autocovariances}. Biometrika, Vol. 109(2), pp. 543-550.
 }

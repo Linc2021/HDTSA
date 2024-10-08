@@ -10,13 +10,13 @@
 #'
 #'
 #'
-#' @details When \eqn{p>n^{1/2}}, we recommend setting the parameter to 
+#' @details When \eqn{p>n}, we recommend setting the parameter to 
 #'   \code{opt=2} for estimating the precision matrix 
 #'   \eqn{\widehat{{\bf V}}^{-1}} use package \pkg{clime} , otherwise uses
 #'   function \code{cov()} to estimate \eqn{\widehat{{\bf V}}} and calculate its
-#'   inverse. When \eqn{p>n^{1/2}}, we recommend to use the thresholding method
-#'   to calculate \eqn{\widehat{{\bf W}}_y}, see more information in Chang, Guo
-#'   and Yao (2018).
+#'   inverse. When \eqn{p>n^{1/2}}, we recommend to use the thresholding method 
+#'   (\code{thresh=TRUE}) to calculate \eqn{\widehat{{\bf W}}_y}, see more 
+#'   information in Chang, Guo and Yao (2018).
 #'   
 #'   The control argument is a list that can supply any of the following 
 #'   components to \code{clime}:
@@ -72,7 +72,7 @@
 #'  covariance; 2 is coded for performing the transformation using package 'clime'
 #'   with build-in cross validation on the tuning parameter for estimating the
 #'  contempaneous correlations.
-#' @param control a list of control parameters. See ‘Details’.
+#' @param control A list of control parameters. See ‘Details’.
 #' @param permutation The method of permutation procedure to assign the
 #'   components of \eqn{\hat{\bf z}_t} to different groups [See Section 2.2.1 in
 #'   Chang, Guo and Yao (2018)]. Option is \code{'max'} (Maximum cross
@@ -84,9 +84,6 @@
 #'   option is \code{m = }10.
 #' @param beta The error rate used in the permutation procedure when
 #'   \code{permutation = 'fdr'}.
-#' @param just4pre Logical. If \code{TRUE}, the procedure outputs \eqn{\hat{\bf
-#'   z}_t}, otherwise outputs \eqn{\hat{\bf x}_t} (the permutated version of
-#'   \eqn{\hat{\bf z}_t}).
 #' @param verbose Logical. If \code{TRUE}, the main results of the permutation 
 #'   procedure will be output on the console. Otherwise, the result will not be 
 #'   output.
@@ -109,11 +106,11 @@
 #'   
 #'
 #'
-#' @references Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component
+#' @references Chang, J., Guo, B., & Yao, Q. (2018). \emph{Principal component
 #'   analysis for second-order stationary vector time series}, The Annals of
 #'   Statistics, Vol. 46, pp. 2094--2124.
 #'
-#'   Cai, T. & Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance
+#'   Cai, T., & Liu, W. (2011). \emph{Adaptive thresholding for sparse covariance
 #'   matrix estimation},  Journal of the American Statistical Association, Vol.
 #'   106, pp. 672--684.
 #'
@@ -126,7 +123,7 @@
 #' @importFrom Rcpp evalCpp
 #' @export
 #' @examples
-#' ## Example 1 (Example 5 of Chang Guo and Yao (2018)).
+#' ## Example 1 (Example 1 in the supplementary material of Chang Guo and Yao (2018)).
 #' ## p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.
 #'
 #' p <- 6;n <- 1500
@@ -156,7 +153,7 @@
 #' # The cross correlogram of z_t shows 3-2-1 block pattern
 #' acfZ <- acf(Z)
 #'
-#' ## Example 2 (Example 6 of Chang Guo and Yao (2018)).
+#' ## Example 2 (Example 2 in the supplementary material of Chang Guo and Yao (2018)).
 #' ## p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.
 #' p <- 20;n <- 3000
 #' # Generate x_t
@@ -201,10 +198,13 @@
 #' permutation <- res
 #' permutation$Groups  
 
-PCA_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5, 
-                    prewhiten=TRUE, opt=1 ,control=list(),
-                    permutation=c('max',"fdr"), m=NULL, beta, 
-                    just4pre=FALSE,verbose = FALSE)
+#old code
+# PCA_TS <- function(Y, lag.k=5, opt=1, thresh=FALSE, tuning.vec=NULL, K=5, 
+#                    permutation=c('max',"fdr"), prewhiten=TRUE, m=NULL,
+#                    beta, just4pre=FALSE, control=list(), verbose = FALSE)
+PCA_TS <- function(Y, lag.k = 5, opt = 1, thresh = FALSE, tuning.vec = NULL, K = 5, 
+                   permutation = c("max", "fdr"), prewhiten = TRUE, m = NULL,
+                   beta, control = list(), verbose = FALSE)
 {
   #for timeseries
   permutation <- match.arg(permutation)
@@ -213,17 +213,20 @@ PCA_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
                       thresh = thresh,
                       tuning.vec = tuning.vec,
                       opt,
-                      control,
+                      control = control,
                       K = K)
   Z=seglist$Z
   B=seglist$B
   METHOD = "Principal component analysis for time serise"
-  if(just4pre==TRUE){
-    METHOD = c(METHOD, "Only segment procedure")
-    Yt=structure(list(B=B, Z=Z, method = METHOD),
-                 class = "tspca")
-    return(Yt)
-  }
+  
+  # old code
+  # if(just4pre==TRUE){
+  #   METHOD = c(METHOD, "Only segment procedure")
+  #   Yt=structure(list(B=B, Z=Z, method = METHOD),
+  #                class = "tspca")
+  #   return(Yt)
+  # }
+  
   #permutation of MAX
   if(permutation == 'max')
   {
@@ -238,7 +241,7 @@ PCA_TS <- function(Y, lag.k=5, thresh=FALSE, tuning.vec=NULL, K=5,
   	#permutation of FDR
 	else if(permutation=='fdr'){
 	  METHOD = c(METHOD, "FDR based on multiple tests")
-	  out=permutationFDR(Z,prewhiten, beta, m, verbose)
+	  out=permutationFDR(Z, prewhiten, beta, m, verbose)
     output=structure(list(B=B, Z=Z, NoGroups=out$NoGroups, 
                           No_of_Members=out$No_of_Members, Groups=out$Groups,
                           method = METHOD),

@@ -6,12 +6,24 @@ print.factors <- function(x, digits = max(5, getOption("digits") - 5), prefix = 
   cat("\n")
   out <- character()
   if(!is.null(x$factor_num))
-    out <- c(out, paste(names(x$factor_num), "=",
-                        format(x$factor_num, digits = max(1L, digits - 2L))))
+    if(length(x$factor_num)<2){
+      out <- c(out, paste("The estimated number of factors", "=",
+                          format(x$factor_num[1], digits = max(1L, digits - 2L))))
+    }
+    else if(length(x$factor_num)==2){
+      out <- c(out, paste("The estimated number of factors in the first step", "=",
+                          format(x$factor_num[1], digits = max(1L, digits - 2L))))
+      out <- c(out, paste("The estimated number of factors in the second step", "=",
+                          format(x$factor_num[2], digits = max(1L, digits - 2L))))
+      out <- c(out, paste("The estimated number of factors", "=",
+                          format(sum(x$factor_num), digits = max(1L, digits - 2L))))
+    }
+      
   if(!is.null(x$lag.k))
     out <- c(out, paste(names(x$lag.k), "=",
                         format(x$lag.k, digits = max(1L, digits - 2L))))
-  cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
+  # cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
+  cat(strwrap(paste(out)), sep = "\n")
   invisible(x)
 }
 
@@ -21,11 +33,20 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
   cat(strwrap(x$method, prefix = prefix), sep = "\n")
   cat("\n")
   out <- character()
-  if(!is.null(x$statistic))
-    out <- c(out, paste(names(x$statistic), "=",
-                        format(x$statistic, digits = max(1L, digits - 2L))))
+  # if(!is.null(x$statistic))
+  #   out <- c(out, paste(names(x$statistic), "=",
+  #                       format(x$statistic, digits = max(1L, digits - 2L))))
+  # 输出统计量和p值在一起
+  if(!is.null(x$statistic) && !is.null(x$p.value)) {
+    for(i in seq_along(x$statistic)) {
+      out <- c(out, paste(names(x$statistic)[i], "=",
+                          format(x$statistic[i], digits = max(1L, digits - 2L)), 
+                          ", p-value =",
+                          format.pval(x$p.value[i], digits = max(1L, digits - 3L))))
+    }
+  }
   if(!is.null(x$MultiTest))
-    out <- c(out, paste("Resuls for multiple test", ":")
+    out <- c(out, paste("Resuls for multiple test", ":"), x$MultiTest
              )
   if(!is.null(x$lag.k))
     out <- c(out, paste(names(x$lag.k), "=",
@@ -33,11 +54,11 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
   if(!is.null(x$kernel))
     out <- c(out, paste(names(x$kernel), "=",
                         format(x$kernel, digits = max(1L, digits - 2L))))
-  if(!is.null(x$p.value)) {
-    fp <- format.pval(x$p.value, digits = max(1L, digits - 3L))
-    out <- c(out, paste("p-value",
-                        if(startsWith(fp, "<")) fp else paste("=",fp)))
-  }
+  # if(!is.null(x$p.value)) {
+  #   fp <- format.pval(x$p.value, digits = max(1L, digits - 3L))
+  #   out <- c(out, paste("p-value",
+  #                       if(all(startsWith(fp, "<"))) fp else paste("=",fp)))
+  # }
   if(!is.null(x$cri95)) {
     out <- c(out, paste(names(x$cri95), "=",
                         format(x$cri95, digits = max(1L, digits - 2L))))
@@ -64,9 +85,11 @@ print.hdtstest <- function(x, digits = max(5, getOption("digits") - 5), prefix =
   }
   
   
-  cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
-  if(!is.null(x$MultiTest))
-    cat(x$MultiTest)
+  # cat(strwrap(paste(out, collapse = "\n")), sep = "\n")
+  # if(!is.null(x$MultiTest))
+  #   cat(x$MultiTest)
+  cat(strwrap(paste(out)), sep = "\n")
+  
   invisible(x)
 }
 #'@method print tspca
@@ -110,7 +133,7 @@ print.mtscp <- function(x, digits = max(5, getOption("digits") - 5), prefix = "\
         sep = "\n")
         
   }
-  cat(strwrap("Use $A or $B or $f to access the corresponding data in the result list"), sep = "\n")
+  # cat(strwrap("Use $A or $B or $f to access the corresponding data in the result list"), sep = "\n")
   invisible(x)
 }
 

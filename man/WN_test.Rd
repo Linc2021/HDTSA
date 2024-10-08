@@ -8,15 +8,9 @@ WN_test(
   X,
   lag.k = 2,
   B = 1000,
-  method = c("CYZ", "CLL"),
   kernel.type = c("QS", "Par", "Bart"),
-  resampling = FALSE,
   pre = FALSE,
   alpha = 0.05,
-  k0 = 5,
-  thresh = FALSE,
-  tuning.vec = NULL,
-  opt = 1,
   control = list()
 )
 }
@@ -42,29 +36,13 @@ is\code{kernel.type = 'QS'}.}
 \item{pre}{Logical value which determines whether to performs preprocessing
 procedure on data matrix \code{X} or not, see Remark 1 in Chang, Yao and
 Zhou (2017) for more information. If \code{TRUE}, then the segment
-procedure will be performed to data \code{X} first. The three additional
-options including \code{thresh}, \code{tuning.vec} and \code{cv.num} are
-the same as those in \code{\link{PCA_TS}}.}
+procedure will be performed to data \code{X} first. The additional
+parameter which control the preprocessing procedure could be set 
+through parameter \code{control}.}
 
 \item{alpha}{The prescribed significance level. Default is 0.05.}
 
-\item{k0}{A positive integer specified to calculate \eqn{\widehat{{\bf
-W}}_y}. See parameter \code{lag.k} in \code{\link{PCA_TS}} for more
-information.}
-
-\item{thresh}{Logical. It determines whether to perform the threshold method
-to estimate \eqn{\widehat{{\bf W}}_y} or not. See parameter \code{thresh}
-in \code{\link{PCA_TS}} for more information.}
-
-\item{tuning.vec}{The value of thresholding tuning parameter \eqn{\lambda}.
-See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
-information.}
-
-\item{opt}{Method options for calculating ransformation matrix in preprocessing
-procedure on data matrix \code{X}. See parameter details in \link{PCA_TS}.
-Default options is \code{opt=1}}
-
-\item{control}{a list of control parameters. See ‘Details’ in \link{PCA_TS}.}
+\item{control}{A list of control parameters. See ‘Details’ and ‘Details’ in \link{PCA_TS}.}
 }
 \value{
 An object of class "hdtstest" is a list containing the following
@@ -83,6 +61,29 @@ An object of class "hdtstest" is a list containing the following
 \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf x}_t
 \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 }
+\details{
+The control argument is a list that can supply any of the following 
+  components to \code{PCA_TS()}:
+  \itemize{
+  \item \code{k0}: A positive integer specified to calculate \eqn{\widehat{{\bf
+  W}}_y}. See parameter \code{lag.k} in \code{\link{PCA_TS}} for more
+  information.
+  \item \code{thresh}: Logical. It determines whether to perform the threshold method
+  to estimate \eqn{\widehat{{\bf W}}_y} or not. See parameter \code{thresh}
+  in \code{\link{PCA_TS}} for more information.
+  \item \code{tuning.vec}: The value of thresholding tuning parameter \eqn{\lambda}.
+  See parameter \code{tuning.vec} in \code{\link{PCA_TS}} for more
+  information.
+  \item \code{standardize}: Whether the variables will be standardized to
+  have mean zero and unit standard deviation. Default \code{FALSE}.
+  \item \code{opt}: Method options for calculating ransformation matrix in preprocessing
+  procedure on data matrix \code{X}. See parameter details in \link{PCA_TS}.
+  Default options is \code{opt=1}.
+  \item \code{K}: The number of folders used in the cross validation for the
+  selection of \eqn{\lambda}, the default is 5. It is required when
+  \code{control(thresh = TRUE)}. See parameter details in \link{PCA_TS}.
+  }
+}
 \examples{
 n <- 200
 p <- 10
@@ -92,15 +93,15 @@ Pvalue <- res$p.value
 rej <- res$reject
 }
 \references{
-Chang, J., Yao, Q. & Zhou, W. (2017). \emph{Testing for
+Chang, J., Yao, Q., & Zhou, W. (2017). \emph{Testing for
   high-dimensional white noise using maximum cross-correlations}, Biometrika,
   Vol. 104, pp. 111–127.
 
-  Chang, J., Guo, B. & Yao, Q. (2018). \emph{Principal component analysis for
+  Chang, J., Guo, B., & Yao, Q. (2018). \emph{Principal component analysis for
   second-order stationary vector time series}, The Annals of Statistics, Vol.
   46, pp. 2094–2124.
 
-  Cai, T. and Liu, W. (2011). \emph{Adaptive thresholding for sparse
+  Cai, T., and Liu, W. (2011). \emph{Adaptive thresholding for sparse
   covariance matrix estimation},  Journal of the American Statistical
   Association, Vol. 106, pp. 672--684.
 }
