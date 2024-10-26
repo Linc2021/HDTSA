@@ -64,30 +64,37 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
   l.band <- ChooseLn(X, 2, 5) 
   X <- t(X)
   
-  
-  ## ------------------------------------
-  ##  Part II: computing Test distributions
-  ## ------------------------------------
-  GhatC <- CmpGammaC(X)  # List(n) : p*p 
-  T2 <- TestStatC(GhatC,n,p,r,K,cross.indices,J.set,l.band,flag_c)  
-  
-  
-  # ===================================================================
-  #  critical value for studentized test statistic based on C.hat
-  # ===================================================================
-  
-  n.tilde <- n - 2*l.band -1
-  T2.stars = TestStarC(X, GhatC, n.tilde, n, p, r, K, flag_c, cross.indices, 
-                       J.set, l.band, B, type=1)
-  
-  names(T2) <- "Statistic"
-  cri95=sort(T2.stars)[floor(.95*B)]
-  names(cri95) <- "the critical value of the test at the significance level 0.05"
-  METHOD = "Statistical inference for high-dimensional spectral density matrix"
-  structure(list(statistic=T2, p.value=sum(T2.stars>T2)/B, 
-               cri95=cri95,
-               method = METHOD),
-               class = "hdtstest")
+  if(n > 2*l.band+1){
+    ## ------------------------------------
+    ##  Part II: computing Test distributions
+    ## ------------------------------------
+    GhatC <- CmpGammaC(X)  # List(n) : p*p 
+    T2 <- TestStatC(GhatC,n,p,r,K,cross.indices,J.set,l.band,flag_c)  
+    
+    
+    # ===================================================================
+    #  critical value for studentized test statistic based on C.hat
+    # ===================================================================
+    
+    n.tilde <- n - 2*l.band -1
+    T2.stars = TestStarC(X, GhatC, n.tilde, n, p, r, K, flag_c, cross.indices, 
+                         J.set, l.band, B, type=1)
+    
+    names(T2) <- "Statistic"
+    cri95=sort(T2.stars)[floor(.95*B)]
+    names(cri95) <- "the critical value of the test at the significance level 0.05"
+    METHOD = "Statistical inference for high-dimensional spectral density matrix"
+    structure(list(statistic=T2, p.value=sum(T2.stars>T2)/B, 
+                 cri95=cri95,
+                 method = METHOD),
+                 class = "hdtstest")
+  }else{
+    warning("n<=2ln+1 which does not satisfy the requirement of this test.")
+    structure(list(statistic = NA, p.value = NA, 
+                   cri95 = NA,
+                   method = METHOD),
+              class = "hdtstest")
+  }
 }
 
 
