@@ -194,7 +194,7 @@ SpecMulTest <- function(Q, PVal, alpha=0.05, seq_len=0.01){
 ChooseLn <- function(x, cn, Kn){
   n <- nrow(x)
   p <- ncol(x)
-  gamma0 <- diag((diag(t(x) %*% x))^(-1/2) )
+  gamma0 <- diag((diag(t(x) %*% x))^(-1/2),nrow=p)
   rhoK <- rep(NA, Kn)
   for (k in 2:(Kn+1)) {
     rhoK[k-1] <- mean( abs( gamma0 %*% (t(x[(k+1):n,]) %*% x[1:(n-k),]) %*% gamma0 ) )
