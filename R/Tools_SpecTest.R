@@ -197,7 +197,8 @@ ChooseLn <- function(x, cn, Kn){
   gamma0 <- diag((diag(t(x) %*% x))^(-1/2),nrow=p)
   rhoK <- rep(NA, Kn)
   for (k in 2:(Kn+1)) {
-    rhoK[k-1] <- mean( abs( gamma0 %*% (t(x[(k+1):n,]) %*% x[1:(n-k),]) %*% gamma0 ) )
+    rhoK[k-1] <- mean( abs( gamma0 %*% (t(x[(k+1):n, , drop = FALSE]) %*%
+                                          x[1:(n-k), , drop = FALSE]) %*% gamma0 ) )
   }
   m <- 1
   if( all(rhoK <= cn*sqrt(log(n)/n)) ){
@@ -207,7 +208,8 @@ ChooseLn <- function(x, cn, Kn){
       m <- m+1
       tmpK <- rhoK
       rhoK[1:(Kn-1)] <- tmpK[2:Kn]
-      rhoK[Kn] <- mean( abs( gamma0 %*% (t(x[(k+1):n,]) %*% x[1:(n-k),]) %*% gamma0 ) )
+      rhoK[Kn] <- mean( abs( gamma0 %*% (t(x[(k+1):n, , drop = FALSE]) %*%
+                                           x[1:(n-k), , drop = FALSE]) %*% gamma0 ) )
       if( all(rhoK <= cn*sqrt(log(n)/n)) ){
         return(2*m)
         break
