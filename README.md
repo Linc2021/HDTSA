@@ -8,11 +8,10 @@ An introduction to `HDTSA`
 <!-- badges: start -->
 <!-- badges: end -->
 
-An implementation for high-dimensional time series analysis
-methods,including: factor model for vector time series proposed by Lam
-and Yao (2012)
-[\<doi:10.1214/12-AOS970\>](https://doi.org/10.1214/12-AOS970) and
-Chang, Guo and Yao (2015)
+An implementation for high-dimensional time series analysis methods,
+including: factor model for vector time series proposed by Lam and Yao
+(2012) [\<doi:10.1214/12-AOS970\>](https://doi.org/10.1214/12-AOS970)
+and Chang, Guo and Yao (2015)
 [\<doi:10.1016/j.jeconom.2015.03.024\>](https://doi.org/10.1016/j.jeconom.2015.03.024),
 martingale difference test proposed by Chang, Jiang and Shao (2022)
 [\<doi:10.1016/j.jeconom.2022.09.001\>](https://doi.org/10.1016/j.jeconom.2022.09.001),
