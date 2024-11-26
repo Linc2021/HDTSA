@@ -3,17 +3,22 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' 
-permutationFDR <- function(X, prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
+permutationFDR <- function(X, prewhiten=TRUE, beta, m=NULL) {
   # X: nxp data matrix
   # m: maximum lag used in multipe test for each pair components
   # beta: the error rate in FDR
   # R: upper bound of AR-order in prewhitenning
-
-  ## Step 0: prewhiten each columns of X
-  if(is.null(m)) m <- 10
-  #if(is.null(beta)) beta <- 10^(-8)
   p=ncol(X)
   n=nrow(X)
+  ## Step 0: prewhiten each columns of X
+  if(is.null(m)) m <- 10
+  # if(is.null(m))
+  # {
+  #   m=floor(10*log10(n/p))
+  # }
+  # if(is.null(beta)) beta <- 10^(-8)
+  # print(c(p, n, m))
+  
 
   if(prewhiten)
   {
@@ -121,14 +126,15 @@ permutationFDR <- function(X, prewhiten=TRUE, beta, m=NULL, verbose = FALSE) {
     else Group = as.matrix(Group[1:max(N),])
     q_block = K+N2
     Nosmem = c(N[N>0],rep(1,N2))
-    if(verbose){
-      cat("\n"); cat("Number of groups", q_block, "\n")
-      cat("Number of members in those groups:", Nosmem, "\n")
-      for(i in c(1:q_block)){
-        cat("Groups",i,": contains these columns index of the zt:", drop(Group[,i]), "\n")
-      }
-      cat("Omit groups that have only one member\n")
-    }
+    # if(verbose){
+    #   cat("\n"); cat("Number of groups", q_block, "\n")
+    #   cat("Number of members in those groups:", Nosmem, "\n")
+    #   for(i in c(1:q_block)){
+    #     cat("The indices of the components of xt belonging to",
+    #         paste("Group ", i, ":", sep = ""), drop(Group[,i][Group[,i]>0]), "\n")
+    #   }
+    #   cat("Omit groups that have only one member\n")
+    # }
     colnames(Group) <- paste("Group", c(1:q_block))
     output=list(NoGroups=q_block, No_of_Members=Nosmem, 
               Groups=Group)

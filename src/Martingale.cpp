@@ -44,11 +44,11 @@ Eigen::MatrixXd MartG_ftC(int n, int k, int p, int d, Eigen::MatrixXd X, Eigen::
 
 // [[Rcpp::export]]
 std::vector<double> MartG_bootc(const int n, const int k, const int p, const int d, const int B,
-                  double bn, int method, Eigen::MatrixXd ft){
+                  double bn, int method, Eigen::MatrixXd ft, Eigen::MatrixXd Xi_temp){
   
   int dim = p*d;
   // random samples follows a multivariate gaussian distribution N(0, Jn):B*kpd
-  Eigen::MatrixXd Xi= XiC(n, k, p, B, bn,method);  //Xi(B,n-k)
+  Eigen::MatrixXd Xi= XiC(n, k, p, B, bn, method, Xi_temp);  //Xi(B,n-k)
   Eigen::MatrixXd samples = Xi * ft.transpose()/sqrt(double(n-k));
   std::vector<double> GnStar(B);
   for(int b=0; b<B; b++){

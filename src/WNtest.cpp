@@ -53,20 +53,21 @@ Eigen::MatrixXd WN_ftC(int n, int k, int p, Eigen::MatrixXd X, Eigen::MatrixXd X
 
 
 // [[Rcpp::export]]
-std::vector<double> WN_bootc(const int n, const int k, const int p, const int B,  
-                                 double bn,int method,Eigen::MatrixXd ft, Eigen::MatrixXd X, Eigen::VectorXd sigma_zero){
+std::vector<double> WN_bootc(const int n, const int k, const int p, const int B,
+                             double bn,int method,Eigen::MatrixXd ft,
+                             Eigen::MatrixXd X, Eigen::VectorXd sigma_zero,
+                             Eigen::MatrixXd Xi_temp
+                                 ){
   
   // random samples follows a multivariate gaussian distribution N(0, Jn):B*kpd
-  Eigen::MatrixXd Xi= XiC(n, k, p, B, bn, method);  //Xi(B,n-k)
+  Eigen::MatrixXd Xi= XiC(n, k, p, B, bn, method, Xi_temp);  //Xi(B,n-k)
   Eigen::VectorXd Wk = kroneckerProduct(sigma_zero,sigma_zero);
   Eigen::VectorXd Ik = VectorXd::Ones(k);
   Eigen::VectorXd W = kroneckerProduct(Ik,Wk);
-  //Rcout<<2<<"\n";
   for(int i=0; i<n-k; i++){
     ft.col(i) = ft.col(i).array()*W.array();
   }
   Eigen::MatrixXd samples = Xi * ft.transpose()/sqrt(double(n-k));
-  
   std::vector<double> GnStar(B);
   for(int b=0; b<B; b++){
     

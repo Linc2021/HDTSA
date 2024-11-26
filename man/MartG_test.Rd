@@ -5,7 +5,7 @@
 \title{Testing for martingale difference hypothesis in high dimension}
 \usage{
 MartG_test(
-  X,
+  Y,
   lag.k = 2,
   B = 1000,
   type = c("Linear", "Quad"),
@@ -14,70 +14,88 @@ MartG_test(
 )
 }
 \arguments{
-\item{X}{\eqn{{\bf X} = \{{\bf x}_1, \dots , {\bf x}_n \}'}, an \eqn{n\times
-p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
-dimension of \eqn{{\bf x}_t}.}
+\item{Y}{An \eqn{n \times p} data matrix \eqn{{\bf Y} = ({\bf y}_1, \dots , {\bf y}_n )'},
+where \eqn{n} is the number of the observations of the \eqn{p \times 1}
+time series \eqn{\{{\bf y}_t\}_{t=1}^n}.}
 
-\item{lag.k}{Time lag \eqn{K}, a positive integer, used to calculate the test
-statistic. Default is \code{lag.k} \eqn{=2}.}
+\item{lag.k}{The time lag \eqn{K} used to calculate the test
+statistic [See (3) in Chang, Jiang and Shao (2023)]. The default is 2.}
 
-\item{B}{Bootstrap times for generating multivariate normal distributed 
-random vectors in calculating the critical value. 
-Default is \code{B} \eqn{=1000}.}
+\item{B}{The number of bootstrap replications for generating multivariate
+normally distributed random vectors when calculating the critical value. 
+The default is 1000.}
 
-\item{type}{String, a map is chosen by the \proglang{R} users, such as the
-default option is \code{'Linear'} means linear identity 
-map (\eqn{\boldsymbol \phi({\bf x})={\bf x}}). Also including another 
-option \code{'Quad'} (Both linear and quadratic terms 
-\eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}). Also the users
-can choose set the map themselves, use for example \code{expression(X, X^2)},
- \code{quote(X, X^2)}, \code{parse(X, X^2)}, \code{substitute(X, X^2)} or 
- just map without function (such as cbind(X, X^2)) to set their own map. 
-See Section 2.1 in Chang, Jiang and Shao (2023) for more information.}
+\item{type}{The map used for constructing the test statistic.
+Available options include: \code{"Linear"} (the default) for the linear identity 
+map and \code{"Quad"} for the map including both linear and quadratic terms.
+\code{type} can also be set by the users. See 'Details' and Section 2.1
+of Chang, Jiang and Shao (2023) for more information.}
 
-\item{alpha}{The prescribed significance level. Default is 0.05.}
+\item{alpha}{The significance level of the test. The default is 0.05.}
 
-\item{kernel.type}{String, an option for choosing the symmetric kernel 
-used in the estimation of long-run covariance matrix, 
-for example, \code{'QS'} (Quadratic spectral kernel), 
-\code{'Par'} (Parzen kernel) and \code{'Bart'} 
-(Bartlett kernel), see Andrews (1991) for more 
-information. Default option is \code{kernel.type = 'QS'}.}
+\item{kernel.type}{The option for choosing the symmetric kernel 
+used in the estimation of long-run covariance matrix. 
+Available choices include: \code{"QS"} (the default)  for the
+Quadratic spectral kernel, \code{"Par"} for the Parzen kernel,
+and \code{"Bart"}  for the Bartlett kernel [See Andrews (1991) for more 
+information].}
 }
 \value{
-An object of class "hdtstest" is a list containing the following
+An object of class \code{"hdtstest"}, which contains the following
   components:
-  \item{statistic}{The value of the test statistic.}
-  \item{p.value}{Numerical value which represents the p-value of the test.}
+  \item{statistic}{The test statistic of the test.}
+  \item{p.value}{The p-value of the test.}
   \item{lag.k}{The time lag used in function.}
-  \item{method}{A character string indicating what method was performed.}
-  \item{type}{A character string which map used on data matrix \code{X}.}
-  \item{kernel.type}{A character string indicating what kenel method was performed.}
+  \item{type}{The map used in function.}
+  \item{kernel.type}{The kernel used in function.}
 }
 \description{
 \code{MartG_test()} implements a new test proposed in
  Chang, Jiang and Shao (2023) for the following hypothesis testing problem: 
-\deqn{H_0:\{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:
-\{{\bf x}_t\}_{t=1}^n\mathrm{\ is\ not\ a\ MDS,} } where 
+\deqn{H_0:\{{\bf y}_t\}_{t=1}^n\mathrm{\ is\ a\ MDS\ \ versus\ \ }H_1:
+\{{\bf y}_t\}_{t=1}^n\mathrm{\ is\ not\ a\ MDS}\,, } where 
 MDS is the abbreviation of "martingale difference sequence".
 }
+\details{
+Write \eqn{{\bf x}= (x_1,\ldots,x_p)'}.
+When \code{type = "Linear"}, the linear identity map is defined
+as \eqn{\boldsymbol \phi({\bf x})={\bf x}}.
+
+When \code{type = "Quad"},
+\eqn{\boldsymbol \phi({\bf x})=\{{\bf x}',({\bf x}^2)'\}'}
+includes both linear and quadratic terms, where
+\eqn{{\bf x}^2 = (x_1^2,\ldots,x_p^2)'}.
+
+We can also choose \eqn{\boldsymbol \phi({\bf x}) = \cos({\bf x})} to capture
+certain type of nonlinear dependence, where
+\eqn{\cos({\bf x}) = (\cos x_1,\ldots,\cos x_p)'}.
+
+See 'Examples'.
+}
 \examples{
+# Example 1
 n <- 200
 p <- 10
 X <- matrix(rnorm(n*p),n,p)
+
 res <- MartG_test(X, type="Linear")
-res <- MartG_test(X, type=cbind(X, X^2)) #the same as Linear type
-res <- MartG_test(X, type=quote(cbind(X, X^2))) # expr using quote
-res <- MartG_test(X, type=substitute(cbind(X, X^2))) # expr using substitute
-res <- MartG_test(X, type=expression(cbind(X, X^2))) # expr using expression
-res <- MartG_test(X, type=parse(text="cbind(X, X^2)")) # expr using parse
-map_fun <- function(X) {X <- cbind(X,X^2); X}
+res <- MartG_test(X, type=cbind(X, X^2)) #the same as "Quad" type
+
+## map can also be defined as an expression in R.
+res <- MartG_test(X, type=quote(cbind(X, X^2))) # expr using quote()
+res <- MartG_test(X, type=substitute(cbind(X, X^2))) # expr using substitute()
+res <- MartG_test(X, type=expression(cbind(X, X^2))) # expr using expression()
+res <- MartG_test(X, type=parse(text="cbind(X, X^2)")) # expr using parse()
+
+## map can also be defined as a function in R.
+map_fun <- function(X) {X <- cbind(X, X^2); X}
+
 res <- MartG_test(X, type=map_fun)
 Pvalue <- res$p.value
 rej <- res$reject
 }
 \references{
-Chang, J., Jiang, Q., & Shao, X. (2023). \emph{Testing the
-  martingale difference hypothesis in high dimension}. Journal of 
-  Econometrics, Vol. 235(2), pp. 972--1000.
+Chang, J., Jiang, Q., & Shao, X. (2023). Testing the
+  martingale difference hypothesis in high dimension. \emph{Journal of 
+  Econometrics}, \strong{235}, 972--1000. \doi{doi:10.1016/j.jeconom.2022.09.001}.
 }

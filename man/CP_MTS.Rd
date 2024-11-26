@@ -10,86 +10,170 @@ CP_MTS(
   Rank = NULL,
   lag.k = 20,
   lag.ktilde = 10,
-  method = c("CP.Direct", "CP.Refined", "CP.Unified")
+  method = c("CP.Direct", "CP.Refined", "CP.Unified"),
+  thresh1 = FALSE,
+  thresh2 = FALSE,
+  thresh3 = FALSE,
+  delta1 = 2 * sqrt(log(dim(Y)[2] * dim(Y)[3])/dim(Y)[1]),
+  delta2 = delta1,
+  delta3 = delta1
 )
 }
 \arguments{
-\item{Y}{An \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
-is the dimension of \eqn{{\bf Y}_t}.}
+\item{Y}{An \eqn{n \times p \times q} array, where \eqn{n} is the number
+of observations of the \eqn{p \times q} matrix time series \eqn{\{{\bf Y}_t\}_{t=1}^n}.}
 
-\item{xi}{An \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
-is used to calculate the sample auto-covariance matrix. See Section 5.1 in Chang et al. (2023) for 
-more information. 
-\eqn{\widehat{\bf \Sigma}_{\bf Y, \xi}(k)}.}
+\item{xi}{An \eqn{n \times 1} vector \eqn{\boldsymbol{\xi} = (\xi_1,\ldots, \xi_n)'},
+where \eqn{\xi_t} represents a linear combination of \eqn{{\bf Y}_t}.
+If \code{xi = NULL} (the default), \eqn{\xi_{t}} is determined by the PCA
+method introduced in Section 5.1 of Chang et al. (2023). Otherwise, \code{xi}
+can be given by the users.}
 
-\item{Rank}{A list of the rank \eqn{d}, \eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.}
+\item{Rank}{A list containing the following components: \code{d} representing
+the number of columns of \eqn{{\bf A}} and \eqn{{\bf B}}, \code{d1} representing
+ the rank of \eqn{{\bf A}}, and \code{d2} representing the rank of \eqn{{\bf B}}.
+If set to \code{NULL} (default), \eqn{d}, \eqn{d_1}, and \eqn{d_2} will be estimated.
+ Otherwise, they can be given by the users.}
 
-\item{lag.k}{The time lag \eqn{K}, an integer, is utilized to compute the nonnegative definite 
-matrices \eqn{\widehat{\mathbf{M}}_1} and \eqn{\widehat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
+\item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definite 
+matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
  or \code{method = "CP.Unified"}:
- \deqn{\widehat{\mathbf{M}}_1\ =\
-  \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)',
-  }, \deqn{\widehat{\mathbf{M}}_2\ =\
-  \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)'\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k),
+ \deqn{\hat{\mathbf{M}}_1\ =\
+  \sum_{k=1}^{K} \hat{\bf \Sigma}_{k} \hat{\bf \Sigma}_{k}'\ \ {\rm and}
+  \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k},
   }
-  where \eqn{\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)} is the sample auto-covariance of
-  \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}.}
+  where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the autocovariance of
+  \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}. See 'Details'. The default is 20.}
 
-\item{lag.ktilde}{The time lag \eqn{\tilde K}, an integer, is utilized to compute the nonnegative definite 
-matrices \eqn{\widehat{\mathbf{M}}} when \code{method = "CP.Unified"}: \deqn{\widehat{\mathbf{M}} \ =\
-  \sum_{k=1}^{\tilde K}\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)'.
-  }}
+\item{lag.ktilde}{The time lag \eqn{\tilde K} involved in the unified
+estimation method, which is used when \code{method = "CP.Unified"}.
+Details can be found in Section 4.2 of Chang et al. (2024). The default is 10.}
 
-\item{method}{A character string indicating which method was performed, available methods include:
-\code{"CP.Direct"} and \code{"CP.Refined"}, corresponding to Chang et al. (2023)'s direct and refined estimation procedure;
- and \code{"CP.Unified"}, representing Chang et al. (2024+)'s unified estimation procedure.}
+\item{method}{A string indicating which CP-decomposition method is used. Available options include:
+\code{"CP.Direct"} (the default) for the direct estimation method
+[See Section 3.1 of Chang et al. (2023)], \code{"CP.Refined"} for the refined estimation
+method [See Section 3.2 of Chang et al. (2023)], and \code{"CP.Unified"} for the
+unified estimation method [See Section 4 of Chang et al. (2024)].
+The validity of methods \code{"CP.Direct"} and \code{"CP.Refined"} depends on the assumption
+\eqn{d_1=d_2=d}. When \eqn{d_1,d_2 \leq d}, the method \code{"CP.Unified"} can be applied.
+See Chang et al. (2024) for details.}
+
+\item{thresh1}{Logical. If \code{FALSE} (the default), no thresholding will
+ be applied in \eqn{\hat{\bf \Sigma}_{k}}, which indicates that the threshold level
+\eqn{\delta_1=0}. If \code{TRUE}, \eqn{\delta_1} will be set through \code{delta1}.
+ \code{thresh1} is used for all three methods. See 'Details'.}
+
+\item{thresh2}{Logical. If \code{FALSE} (the default), no thresholding will
+be applied in \eqn{\check{\bf \Sigma}_{k}}, which indicates that the threshold level
+\eqn{\delta_2=0}. If \code{TRUE}, \eqn{\delta_2} will be set through \code{delta2}.
+\code{thresh2} is used only when \code{method = "CP.Refined"}. See 'Details'.}
+
+\item{thresh3}{Logical. If \code{FALSE} (the default), no thresholding will
+be applied in \eqn{\vec{\bf \Sigma}_{k}}, which indicates that the threshold level
+\eqn{\delta_3=0}. If \code{TRUE}, \eqn{\delta_3} will be set through \code{delta3}.
+\code{thresh3} is used only when \code{method = "CP.Unified"}. See 'Details'.}
+
+\item{delta1}{The value of the threshold level \eqn{\delta_1}. The default is
+\eqn{ \delta_1 = 2 \sqrt{n^{-1}\log (pq)}}.}
+
+\item{delta2}{The value of the threshold level \eqn{\delta_2}. The default is
+\eqn{ \delta_2 = 2 \sqrt{n^{-1}\log (pq)}}.}
+
+\item{delta3}{The value of the threshold level \eqn{\delta_3}. The default is
+\eqn{ \delta_3 = 2 \sqrt{n^{-1}\log(pq)}}.}
 }
 \value{
-An object of class "mtscp" is a list containing the following
+An object of class "mtscp", which contains the following
   components:
-  \item{A}{The estimated \eqn{p \times d} left loading matrix \eqn{\widehat{\bf A}}.}
-  \item{B}{The estimated \eqn{q \times d} right loading matrix \eqn{\widehat{\bf B}}.}
-  \item{f}{The estimated latent process \eqn{(\hat{x}_{1,t},\ldots,\hat{x}_{d,t})}.}
-  \item{Rank}{The estimated rank \eqn{(\hat{d}_1,\hat{d}_2,\hat{d})} of the matrix CP-factor model.}
+  \item{A}{The estimated \eqn{p \times \hat{d}} left loading matrix \eqn{\hat{\bf A}}.}
+  \item{B}{The estimated \eqn{q \times \hat{d}} right loading matrix \eqn{\hat{\bf B}}.}
+  \item{f}{The estimated latent process \eqn{\hat{x}_{t,1},\ldots,\hat{x}_{t,\hat{d}}}.}
+  \item{Rank}{The estimated ranks \eqn{\hat{d}_1,\hat{d}_2}, and \eqn{\hat{d}}.}
+  \item{method}{A string indicating which method is used.}
 }
 \description{
-\code{CP_MTS()} deals with CP-decomposition for high-dimensional
- matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
-\times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
- is a \eqn{p \times q} matrix white noise process. This function aims to estimate the rank
- \eqn{d} and the coefficient matrices \eqn{{\bf A}} and \eqn{{\bf B}}.
+\code{CP_MTS()} deals with the estimation of the CP-factor model for matrix time series:
+\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
+{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = {\rm diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+unobservable diagonal matrix, \eqn{ {\boldsymbol{\epsilon}}_t }
+ is a \eqn{p \times q} matrix white noise, and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
+\times d} and \eqn{q \times d} unknown constant matrices. Let \eqn{{\rm rank}(\mathbf{A}) = d_1}
+and \eqn{{\rm rank}(\mathbf{B}) = d_2} with some unknown \eqn{d_1,d_2\leq d}.
+This function aims to estimate the rank \eqn{d, d_1, d_2} and the loading
+matrices \eqn{{\bf A}} and \eqn{{\bf B}} using the methods proposed by Chang
+et al. (2023) and Chang et al. (2024).
+}
+\details{
+All three CP-decomposition methods involve the estimation of the autocovariance of
+\eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}, which is defined as follows:
+\deqn{\hat{\bf \Sigma}_{k} = T_{\delta_1}\{\hat{\boldsymbol{\Sigma}}_{\mathbf{Y},
+ \xi}(k)\}\ \ {\rm with}\ \ \hat{\boldsymbol{\Sigma}}_{\mathbf{Y}, \xi}(k) = \frac{1}{n-k}
+\sum_{t=k+1}^n(\mathbf{Y}_t-\bar{\mathbf{Y}})(\xi_{t-k}-\bar{\xi})\,,}
+where \eqn{\bar{\bf Y} = n^{-1}\sum_{t=1}^n {\bf Y}_t}, \eqn{\bar{\xi}=n^{-1}\sum_{t=1}^n \xi_t}
+and \eqn{T_{\delta_1}(\cdot)} is a threshold operator defined as
+\eqn{T_{\delta_1}({\bf W}) = \{w_{i,j}1(|w_{i,j}|\geq \delta_1)\}} for any matrix
+\eqn{{\bf W}=(w_{i,j})}, with the threshold level \eqn{\delta_1 \geq 0} and \eqn{1(\cdot)}
+representing the indicator function. Chang et al. (2023) and Chang et al. (2024) suggest to choose
+\eqn{\delta_1 = 0} when \eqn{p, q} are fixed and \eqn{\delta_1>0} when \eqn{pq \gg n}.
+
+The refined estimation method involves
+\deqn{\check{\bf \Sigma}_{k} =
+T_{\delta_2}\{\hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)\}\ \ {\rm with}
+\ \ \hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)=\frac{1}{n-k}
+\sum_{t=k+1}^n(\mathbf{Y}_t-\bar{\mathbf{Y}}) \otimes {\rm vec}
+(\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\,,}
+where \eqn{T_{\delta_2}(\cdot)} is a threshold operator with the threshold level
+\eqn{\delta_2 \geq 0}.
+
+The unified estimation method involves
+\deqn{\vec{\bf \Sigma}_{k}=
+T_{\delta_3}\{\hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)\}
+\ \ {\rm with}\ \ \hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)=\frac{1}{n-k}
+\sum_{t=k+1}^n{\rm vec}({\mathbf{Y}}_t-\bar{\mathbf{Y}})\{{\rm vec}
+(\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\}'\,,}
+where \eqn{T_{\delta_3}(\cdot)} is a threshold operator with the threshold level
+\eqn{\delta_3 \geq 0}.
 }
 \examples{
-## Example 1.
+# Example 1.
 p <- 10
 q <- 10
 n <- 400
 d = d1 = d2 <- 3
-data <- DGP.CP(n,p,q,d1,d2,d)
+data <- DGP.CP(n, p, q, d, d1, d2)
 Y <- data$Y
-res1 <- CP_MTS(Y,method = "CP.Direct")
-res2 <- CP_MTS(Y,method = "CP.Refined")
-res3 <- CP_MTS(Y,method = "CP.Unified")
 
-## Example 2.
+## d is unknown
+res1 <- CP_MTS(Y, method = "CP.Direct")
+res2 <- CP_MTS(Y, method = "CP.Refined")
+res3 <- CP_MTS(Y, method = "CP.Unified")
+
+## d is known
+res4 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Direct")
+res5 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Refined")
+
+
+# Example 2.
 p <- 10
 q <- 10
 n <- 400
 d1 = d2 <- 2
 d <-3
-data <- DGP.CP(n,p,q,d1,d2,d)
+data <- DGP.CP(n, p, q, d, d1, d2)
 Y1 <- data$Y
-res <- CP_MTS(Y,method = "CP.Unified")
-res4 <- CP_MTS(Y1, Rank=list(d=3), method = "CP.Direct")
-res5 <- CP_MTS(Y1, Rank=list(d=3, d1=2, d2=2), method = "CP.Unified")
+
+## d, d1 and d2 are unknown
+res6 <- CP_MTS(Y1, method = "CP.Unified")
+## d, d1 and d2 are known
+res7 <- CP_MTS(Y1, Rank = list(d = 3, d1 = 2, d2 = 2), method = "CP.Unified")
 
 }
 \references{
-Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
-  Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
-  
-  Chang, J., Du, Y., Huang, G., & Yao, Q. (2024+). \emph{On the Identification and Unified Estimation
-  Procedure for the Matrix CP-factor Model}. Working paper.
+Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
+ estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
+ \doi{doi:10.48550/arXiv.2410.05634}.
+ 
+  Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
+  \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 
+  \doi{doi:10.1093/jrsssb/qkac011}.
 }

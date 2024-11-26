@@ -9,16 +9,16 @@ MartG_ftC <- function(n, k, p, d, X, Xj) {
     .Call('_HDTSA_MartG_ftC', PACKAGE = 'HDTSA', n, k, p, d, X, Xj)
 }
 
-MartG_bootc <- function(n, k, p, d, B, bn, method, ft) {
-    .Call('_HDTSA_MartG_bootc', PACKAGE = 'HDTSA', n, k, p, d, B, bn, method, ft)
+MartG_bootc <- function(n, k, p, d, B, bn, method, ft, Xi_temp) {
+    .Call('_HDTSA_MartG_bootc', PACKAGE = 'HDTSA', n, k, p, d, B, bn, method, ft, Xi_temp)
 }
 
 sigmak <- function(Y, Y_mean, k, n) {
     .Call('_HDTSA_sigmak', PACKAGE = 'HDTSA', Y, Y_mean, k, n)
 }
 
-thresh_C <- function(sigmaY, Y, Y_mean, k, n, p, deltafinal) {
-    .Call('_HDTSA_thresh_C', PACKAGE = 'HDTSA', sigmaY, Y, Y_mean, k, n, p, deltafinal)
+thresh_C <- function(mat, delta) {
+    .Call('_HDTSA_thresh_C', PACKAGE = 'HDTSA', mat, delta)
 }
 
 MatMult <- function(A, B) {
@@ -33,8 +33,8 @@ WN_ftC <- function(n, k, p, X, X_mean) {
     .Call('_HDTSA_WN_ftC', PACKAGE = 'HDTSA', n, k, p, X, X_mean)
 }
 
-WN_bootc <- function(n, k, p, B, bn, method, ft, X, sigma_zero) {
-    .Call('_HDTSA_WN_bootc', PACKAGE = 'HDTSA', n, k, p, B, bn, method, ft, X, sigma_zero)
+WN_bootc <- function(n, k, p, B, bn, method, ft, X, sigma_zero, Xi_temp) {
+    .Call('_HDTSA_WN_bootc', PACKAGE = 'HDTSA', n, k, p, B, bn, method, ft, X, sigma_zero, Xi_temp)
 }
 
 resampling <- function(X, n, p, B, tau) {

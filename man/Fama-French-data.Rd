@@ -3,19 +3,24 @@
 \docType{data}
 \name{FamaFrench}
 \alias{FamaFrench}
-\title{Fama-French 10*10 return series.}
+\title{Fama-French 10*10 return series}
 \format{
-A data frame with 100 rows and 3 variables:
-\describe{
-  \item{var1}{Description of var1}
-  \item{var2}{Description of var2}
-  \item{var3}{Description of var3}
+A data frame with 696 rows and 102 columns. The first column
+represents the month, and the second column named
+\code{MKT.RF} represents the monthly market returns. The rest of the columns
+represent the return series for different sizes and BE-ratios.
 }
+\source{
+\url{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}
 }
 \usage{
 data(FamaFrench)
 }
 \description{
-this is an example dataset for demonstration purposes.
+The portfolios are constructed by the intersections of 10 levels
+of size, denoted by \eqn{{\rm S}_{1}, \ldots, {\rm S}_{10}}, and 10 levels of the book
+equity to market equity ratio (BE), denoted by \eqn{{\rm BE}_1, \ldots,{\rm BE}_{10}}.
+The dataset consists of monthly returns from January 1964 to
+December 2021, which contains 69600 observations for 696 total months.
 }
 \keyword{data}

@@ -2,64 +2,90 @@
 % Please edit documentation in R/coint.R
 \name{Coint}
 \alias{Coint}
-\title{Identifying cointegration rank of given time series}
+\title{Identifying the cointegration rank of nonstationary vector time series}
 \usage{
 Coint(
   Y,
   lag.k = 5,
-  type = c("acf", "pptest", "Chang", "all"),
+  type = c("acf", "urtest", "both"),
   c0 = 0.3,
   m = 20,
   alpha = 0.01
 )
 }
 \arguments{
-\item{Y}{\eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix
-with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and
-\eqn{p} is the dimension of \eqn{{\bf y}_t}.}
+\item{Y}{An \eqn{n \times p} data matrix \eqn{{\bf Y} = ({\bf y}_1, \dots , {\bf y}_n )'},
+where \eqn{n} is the number of the 
+ observations of the \eqn{p \times 1} time series \eqn{\{{\bf y}_t\}_{t=1}^n}.}
 
-\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte
-matrix \eqn{\widehat{{\bf W}}_y}: \deqn{\widehat{\mathbf{W}}_y\ =\
-\sum_{k=0}^{k_0}\widehat{\mathbf{\Sigma}}_y(k)\widehat{\mathbf{\Sigma}}_y(k)'}
- where \eqn{\widehat{\bf \Sigma}_y(k)} is the sample autocovariance of
-\eqn{ \widehat{{\bf y}}_t} at lag \eqn{k}.}
+\item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definte
+matrix \eqn{\hat{{\bf W}}_y}: \deqn{\hat{\mathbf{W}}_y\ =\
+\sum_{k=0}^{K}\hat{\mathbf{\Sigma}}_y(k)\hat{\mathbf{\Sigma}}_y(k)'}
+ where \eqn{\hat{\bf \Sigma}_y(k)} is the sample autocovariance of
+\eqn{ {\bf y}_t} at lag \eqn{k}. The default is 5.}
 
-\item{type}{The method of identifying cointegration rank after segment 
-procedure. Option is \code{'acf'}, \code{'all'}, \code{'chang'} or \code{'pptest'}
-, the latter two methods use the unit-root test method to identify the 
-cointegration rank, and the option \code{type = 'all'} means use all three
-methods to identify the cointegration rank. Default is \code{type = 'acf'}.
- See Section 2.3 in Zhang, Robinson and Yao (2019) for more information.}
+\item{type}{The method used to identify the cointegration rank. Available
+options include: \code{"acf"} (the default) for the method based on the sample
+autocorrelations, \code{"urtest"} for the method based on the unit root tests,
+and \code{"both"} to apply these two methods. See Section 2.3 of Zhang, Robinson
+and Yao (2019) and 'Details' for more information.}
 
-\item{c0}{The prescribed constant for identifying 
-cointegration rank using \code{"acf"} method. Default is 0.3. See Section 2.3 in
-Zhang, Robinson and Yao (2019).}
+\item{c0}{The prescribed constant \eqn{c_0} for identifying cointegration rank
+when \code{type = "acf"} or \code{type = "both"}. See Section 2.3 of Zhang, Robinson
+and Yao (2019) and 'Details' for more information. The default is 0.3.}
 
-\item{m}{The prescribed constant for identifying 
-cointegration rank using \code{"acf"} method. Default is 20. See Section 2.3 in
-Zhang, Robinson and Yao (2019).}
+\item{m}{The prescribed constant \eqn{m} for identifying cointegration rank
+when \code{type = "acf"} or \code{type = "both"}. See Section 2.3 of Zhang, Robinson
+and Yao (2019) and 'Details' for more information. The default is 20.}
 
-\item{alpha}{The prescribed significance level for identifying 
-cointegration rank using \code{"pptest"}, \code{"Chang"} method. Default is 0.01.
-See Section 2.3 in Zhang, Robinson and Yao (2019).}
+\item{alpha}{The significance level \eqn{\alpha} of the unit root tests,
+which is used when \code{type = "urtest"} or \code{type = "both"}. The default is 0.01.
+See 'Details'.}
 }
 \value{
-An object of class "coint" is a list containing the following
+An object of class \code{"coint"}, which contains the following
   components:
-  \item{A}{The estimated \eqn{\widehat{\bf A}}. }
-  \item{coint_rank}{A \eqn{1 \times 1} matrix representing the cointegration rank.
-  If \code{type = 'all'}, then return a \eqn{1 \times 3} matrix representing
-   the cointegration rank of all three methods.}
-  \item{lag.k}{A prescribed positive integer which means the time lags used
-   to calculate the statistic.}
-  \item{method}{A character string indicating which method was performed.}
+  \item{A}{The estimated \eqn{\hat{\bf A}}. }
+  \item{coint_rank}{The estimated cointegration rank \eqn{\hat{r}}.}
+  \item{lag.k}{The time lag used in function.}
+  \item{method}{A string indicating which method is used to identify the
+  cointegration rank.}
 }
 \description{
-\code{Coint} seeks for a contemporaneous linear
-  transformation for a multivariate time series such that we can identifying 
-  cointegration rank from the transformed series.
+\code{Coint()} deals with cointegration analysis for high-dimensional
+vector time series proposed in Zhang Robinson and Yao (2019): \deqn{{\bf y}_t = {\bf Ax}_t\,,}
+where \eqn{{\bf A}} is a \eqn{p \times p} unknown and invertible constant matrix,
+ \eqn{{\bf x}_t = ({\bf x}'_{t,1}, {\bf x}'_{t,2})'} is a latent
+ \eqn{p \times 1} process, \eqn{{\bf x}_{t,2}} is an \eqn{r \times 1} \eqn{I(0)} process,
+ and \eqn{{\bf x}_{t,1}} is a process with nonstationary components.
+ This function aims to estimate the cointegration rank \eqn{r} and the invertible
+ constant matrix \eqn{{\bf A}}.
+}
+\details{
+Write \eqn{\hat{\bf x}_t=\hat{\bf A}'{\bf y}_t\equiv (\hat{x}_t^1,\ldots,\hat{x}_t^p)'}.
+When \code{type = "acf"}, \code{Coint()} estimates \eqn{r} by
+ \deqn{\hat{r}=\sum_{i=1}^{p}1\bigg\{\frac{S_i(m)}{m}<c_0 \bigg\}\,,} where
+\eqn{S_i(m)} is the sum of \eqn{m} sample autocorrelation functions of \eqn{\hat{x}_{t,i}},
+which specified in Section 2.3 of Zhang Robinson and Yao (2019).
+
+When \code{type = "urtest"}, \code{Coint()} estimate \eqn{r} by unit root
+tests. For \eqn{i= 1,\ldots, p}, consider the null hypothesis 
+\deqn{H_{0,i}:\hat{x}_t^{p-i+1} \sim I(0)\,.} The estimation procedure for
+\eqn{r} can be implemented as follows:
+\itemize{
+\item Step 1. Start with \eqn{i=1}. Perform the unit root test proposed
+by Chang, Cheng and Yao (2021) for \eqn{H_{0,i}}.
+\item Step 2. If the null hypothesis is not rejected at the significance
+level \eqn{\alpha}, increment \eqn{i} by 1 and repeat Step 1. Otherwise, stop
+the procedure and denote the value of \eqn{i} at termination as \eqn{i_0}.
+The cointegration rank is then estimated as \eqn{\hat{r}=i_0-1}.
+
+}
 }
 \examples{
+# Example 1 (Example 1 in Zhang, Robinson and Yao (2019))
+
+## Generation of yt
 p <- 10
 n <- 1000
 r <- 3
@@ -73,10 +99,15 @@ M1 <- matrix(c(1, 1, 0, 1/2, 0, 1, 0, 1, 0), ncol = 3, byrow = TRUE)
 A <- matrix(runif(p*p, -3, 3), ncol = p)
 A[1:3,1:3] <- M1
 Y <- t(A\%*\%X)
-Coint(Y, type = "all")
+
+Coint(Y, type = "both")
 }
 \references{
-Zhang, R., Robinson, P., & Yao, Q. (2019).  \emph{Identifying 
-Cointegration by Eigenanalysis}.  Journal of the American Statistical 
-Association, Vol. 114, pp. 916--927.
+Chang, J., Cheng, G., & Yao, Q. (2022).  Testing for unit
+roots based on sample autocovariances. \emph{Biometrika}, \strong{109}, 543--550.
+\doi{doi:10.1093/biomet/asab034}.
+
+Zhang, R., Robinson, P., & Yao, Q. (2019). Identifying cointegration by
+eigenanalysis. \emph{Journal of the American Statistical Association},
+\strong{114}, 916--927. \doi{doi:10.1080/01621459.2018.1458620}.
 }

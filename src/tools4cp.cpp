@@ -28,18 +28,17 @@ Eigen::VectorXd minor_P(Eigen::MatrixXd Wr, Eigen::MatrixXd Ws, int d1, int d2){
 
 // [[Rcpp::export]]
 Eigen::MatrixXd Vech2Mat_new(Eigen::VectorXd P, int d){
-
   Eigen::MatrixXd M  = Eigen::MatrixXd::Zero(d,d);
 
   int k = 0;
   for(int j = 0; j < d;j++){
     for(int i = j; i < d;i++){
-      M(i,j) = P(k)/2;
+      M(i,j) = P(k)/2.0;
       k++;
     }
   }
 
-  M = M + M.transpose();
+  M = M + M.transpose().eval();
 
   return M;
 

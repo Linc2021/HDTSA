@@ -43,8 +43,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // MartG_bootc
-std::vector<double> MartG_bootc(const int n, const int k, const int p, const int d, const int B, double bn, int method, Eigen::MatrixXd ft);
-RcppExport SEXP _HDTSA_MartG_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP dSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP) {
+std::vector<double> MartG_bootc(const int n, const int k, const int p, const int d, const int B, double bn, int method, Eigen::MatrixXd ft, Eigen::MatrixXd Xi_temp);
+RcppExport SEXP _HDTSA_MartG_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP dSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP, SEXP Xi_tempSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +56,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type bn(bnSEXP);
     Rcpp::traits::input_parameter< int >::type method(methodSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
-    rcpp_result_gen = Rcpp::wrap(MartG_bootc(n, k, p, d, B, bn, method, ft));
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Xi_temp(Xi_tempSEXP);
+    rcpp_result_gen = Rcpp::wrap(MartG_bootc(n, k, p, d, B, bn, method, ft, Xi_temp));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -75,19 +76,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // thresh_C
-Eigen::MatrixXd thresh_C(Eigen::MatrixXd sigmaY, Eigen::MatrixXd Y, Eigen::MatrixXd Y_mean, int k, int n, int p, double deltafinal);
-RcppExport SEXP _HDTSA_thresh_C(SEXP sigmaYSEXP, SEXP YSEXP, SEXP Y_meanSEXP, SEXP kSEXP, SEXP nSEXP, SEXP pSEXP, SEXP deltafinalSEXP) {
+Eigen::MatrixXd thresh_C(Eigen::MatrixXd mat, double delta);
+RcppExport SEXP _HDTSA_thresh_C(SEXP matSEXP, SEXP deltaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type sigmaY(sigmaYSEXP);
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y_mean(Y_meanSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< double >::type deltafinal(deltafinalSEXP);
-    rcpp_result_gen = Rcpp::wrap(thresh_C(sigmaY, Y, Y_mean, k, n, p, deltafinal));
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    rcpp_result_gen = Rcpp::wrap(thresh_C(mat, delta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -133,8 +129,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // WN_bootc
-std::vector<double> WN_bootc(const int n, const int k, const int p, const int B, double bn, int method, Eigen::MatrixXd ft, Eigen::MatrixXd X, Eigen::VectorXd sigma_zero);
-RcppExport SEXP _HDTSA_WN_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP, SEXP XSEXP, SEXP sigma_zeroSEXP) {
+std::vector<double> WN_bootc(const int n, const int k, const int p, const int B, double bn, int method, Eigen::MatrixXd ft, Eigen::MatrixXd X, Eigen::VectorXd sigma_zero, Eigen::MatrixXd Xi_temp);
+RcppExport SEXP _HDTSA_WN_bootc(SEXP nSEXP, SEXP kSEXP, SEXP pSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP ftSEXP, SEXP XSEXP, SEXP sigma_zeroSEXP, SEXP Xi_tempSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -147,7 +143,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type sigma_zero(sigma_zeroSEXP);
-    rcpp_result_gen = Rcpp::wrap(WN_bootc(n, k, p, B, bn, method, ft, X, sigma_zero));
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Xi_temp(Xi_tempSEXP);
+    rcpp_result_gen = Rcpp::wrap(WN_bootc(n, k, p, B, bn, method, ft, X, sigma_zero, Xi_temp));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -454,13 +451,13 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_HDTSA_MartG_TestStatC", (DL_FUNC) &_HDTSA_MartG_TestStatC, 4},
     {"_HDTSA_MartG_ftC", (DL_FUNC) &_HDTSA_MartG_ftC, 6},
-    {"_HDTSA_MartG_bootc", (DL_FUNC) &_HDTSA_MartG_bootc, 8},
+    {"_HDTSA_MartG_bootc", (DL_FUNC) &_HDTSA_MartG_bootc, 9},
     {"_HDTSA_sigmak", (DL_FUNC) &_HDTSA_sigmak, 4},
-    {"_HDTSA_thresh_C", (DL_FUNC) &_HDTSA_thresh_C, 7},
+    {"_HDTSA_thresh_C", (DL_FUNC) &_HDTSA_thresh_C, 2},
     {"_HDTSA_MatMult", (DL_FUNC) &_HDTSA_MatMult, 2},
     {"_HDTSA_WN_teststatC", (DL_FUNC) &_HDTSA_WN_teststatC, 4},
     {"_HDTSA_WN_ftC", (DL_FUNC) &_HDTSA_WN_ftC, 5},
-    {"_HDTSA_WN_bootc", (DL_FUNC) &_HDTSA_WN_bootc, 9},
+    {"_HDTSA_WN_bootc", (DL_FUNC) &_HDTSA_WN_bootc, 10},
     {"_HDTSA_resampling", (DL_FUNC) &_HDTSA_resampling, 5},
     {"_HDTSA_bandwith", (DL_FUNC) &_HDTSA_bandwith, 5},
     {"_HDTSA_TaperQsC", (DL_FUNC) &_HDTSA_TaperQsC, 1},

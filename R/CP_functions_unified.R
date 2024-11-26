@@ -1,225 +1,329 @@
 #' @title Estimation of matrix CP-factor model
-#' @description \code{CP_MTS()} deals with CP-decomposition for high-dimensional
-#'  matrix time series proposed in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-#' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
-#' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
-#'  is a \eqn{p \times q} matrix white noise process. This function aims to estimate the rank
-#'  \eqn{d} and the coefficient matrices \eqn{{\bf A}} and \eqn{{\bf B}}.
+#' @description \code{CP_MTS()} deals with the estimation of the CP-factor model for matrix time series:
+#' \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
+#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = {\rm diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+#' unobservable diagonal matrix, \eqn{ {\boldsymbol{\epsilon}}_t }
+#'  is a \eqn{p \times q} matrix white noise, and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
+#' \times d} and \eqn{q \times d} unknown constant matrices. Let \eqn{{\rm rank}(\mathbf{A}) = d_1}
+#' and \eqn{{\rm rank}(\mathbf{B}) = d_2} with some unknown \eqn{d_1,d_2\leq d}.
+#' This function aims to estimate the rank \eqn{d, d_1, d_2} and the loading
+#' matrices \eqn{{\bf A}} and \eqn{{\bf B}} using the methods proposed by Chang
+#' et al. (2023) and Chang et al. (2024).
+#' 
+#' @details 
+#' All three CP-decomposition methods involve the estimation of the autocovariance of
+#' \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}, which is defined as follows:
+#' \deqn{\hat{\bf \Sigma}_{k} = T_{\delta_1}\{\hat{\boldsymbol{\Sigma}}_{\mathbf{Y},
+#'  \xi}(k)\}\ \ {\rm with}\ \ \hat{\boldsymbol{\Sigma}}_{\mathbf{Y}, \xi}(k) = \frac{1}{n-k}
+#' \sum_{t=k+1}^n(\mathbf{Y}_t-\bar{\mathbf{Y}})(\xi_{t-k}-\bar{\xi})\,,}
+#' where \eqn{\bar{\bf Y} = n^{-1}\sum_{t=1}^n {\bf Y}_t}, \eqn{\bar{\xi}=n^{-1}\sum_{t=1}^n \xi_t}
+#' and \eqn{T_{\delta_1}(\cdot)} is a threshold operator defined as
+#' \eqn{T_{\delta_1}({\bf W}) = \{w_{i,j}1(|w_{i,j}|\geq \delta_1)\}} for any matrix
+#' \eqn{{\bf W}=(w_{i,j})}, with the threshold level \eqn{\delta_1 \geq 0} and \eqn{1(\cdot)}
+#' representing the indicator function. Chang et al. (2023) and Chang et al. (2024) suggest to choose
+#' \eqn{\delta_1 = 0} when \eqn{p, q} are fixed and \eqn{\delta_1>0} when \eqn{pq \gg n}.
+#' 
+#' The refined estimation method involves
+#' \deqn{\check{\bf \Sigma}_{k} =
+#' T_{\delta_2}\{\hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)\}\ \ {\rm with}
+#' \ \ \hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)=\frac{1}{n-k}
+#' \sum_{t=k+1}^n(\mathbf{Y}_t-\bar{\mathbf{Y}}) \otimes {\rm vec}
+#' (\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\,,}
+#' where \eqn{T_{\delta_2}(\cdot)} is a threshold operator with the threshold level
+#' \eqn{\delta_2 \geq 0}.
+#' 
+#' The unified estimation method involves
+#' \deqn{\vec{\bf \Sigma}_{k}=
+#' T_{\delta_3}\{\hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)\}
+#' \ \ {\rm with}\ \ \hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)=\frac{1}{n-k}
+#' \sum_{t=k+1}^n{\rm vec}({\mathbf{Y}}_t-\bar{\mathbf{Y}})\{{\rm vec}
+#' (\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\}'\,,}
+#' where \eqn{T_{\delta_3}(\cdot)} is a threshold operator with the threshold level
+#' \eqn{\delta_3 \geq 0}.
 #'
-#' @param Y An \eqn{n \times p \times q} data array, where \eqn{n} is the sample size and \eqn{(p,q)}
-#' is the dimension of \eqn{{\bf Y}_t}.
-#' @param xi An \eqn{n \times 1} vector. If \code{NULL} (the default), then a PCA-based \eqn{\xi_{t}}
-#' is used to calculate the sample auto-covariance matrix. See Section 5.1 in Chang et al. (2023) for 
-#' more information. 
-#' \eqn{\widehat{\bf \Sigma}_{\bf Y, \xi}(k)}.
-#' @param Rank A list of the rank \eqn{d}, \eqn{d_1} and \eqn{d_2}. Default to \code{NULL}.
-#' @param lag.k The time lag \eqn{K}, an integer, is utilized to compute the nonnegative definite 
-#' matrices \eqn{\widehat{\mathbf{M}}_1} and \eqn{\widehat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
+#'
+#' @param Y An \eqn{n \times p \times q} array, where \eqn{n} is the number
+#' of observations of the \eqn{p \times q} matrix time series \eqn{\{{\bf Y}_t\}_{t=1}^n}.
+#' @param xi An \eqn{n \times 1} vector \eqn{\boldsymbol{\xi} = (\xi_1,\ldots, \xi_n)'},
+#' where \eqn{\xi_t} represents a linear combination of \eqn{{\bf Y}_t}.
+#' If \code{xi = NULL} (the default), \eqn{\xi_{t}} is determined by the PCA
+#' method introduced in Section 5.1 of Chang et al. (2023). Otherwise, \code{xi}
+#' can be given by the users.
+#' @param Rank A list containing the following components: \code{d} representing
+#' the number of columns of \eqn{{\bf A}} and \eqn{{\bf B}}, \code{d1} representing
+#'  the rank of \eqn{{\bf A}}, and \code{d2} representing the rank of \eqn{{\bf B}}.
+#' If set to \code{NULL} (default), \eqn{d}, \eqn{d_1}, and \eqn{d_2} will be estimated.
+#'  Otherwise, they can be given by the users.
+#' @param lag.k The time lag \eqn{K} used to calculate the nonnegative definite 
+#' matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
 #'  or \code{method = "CP.Unified"}:
-#'  \deqn{\widehat{\mathbf{M}}_1\ =\
-#'   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)',
-#'   }, \deqn{\widehat{\mathbf{M}}_2\ =\
-#'   \sum_{k=1}^{K}\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)'\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k),
+#'  \deqn{\hat{\mathbf{M}}_1\ =\
+#'   \sum_{k=1}^{K} \hat{\bf \Sigma}_{k} \hat{\bf \Sigma}_{k}'\ \ {\rm and}
+#'   \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k},
 #'   }
-#'   where \eqn{\widehat{\mathbf{\Sigma}}_{\bf Y, \xi}(k)} is the sample auto-covariance of
-#'   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}.
-#' @param lag.ktilde The time lag \eqn{\tilde K}, an integer, is utilized to compute the nonnegative definite 
-#' matrices \eqn{\widehat{\mathbf{M}}} when \code{method = "CP.Unified"}: \deqn{\widehat{\mathbf{M}} \ =\
-#'   \sum_{k=1}^{\tilde K}\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)\widehat{\mathbf{\Sigma}}_{\tilde{\bf Z}}(k)'.
-#'   }
-#' @param method A character string indicating which method was performed, available methods include:
-#'  \code{"CP.Direct"} and \code{"CP.Refined"}, corresponding to Chang et al. (2023)'s direct and refined estimation procedure;
-#'   and \code{"CP.Unified"}, representing Chang et al. (2024+)'s unified estimation procedure.
-#'
-#' @return An object of class "mtscp" is a list containing the following
+#'   where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the autocovariance of
+#'   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}. See 'Details'. The default is 20.
+#' @param lag.ktilde The time lag \eqn{\tilde K} involved in the unified
+#' estimation method, which is used when \code{method = "CP.Unified"}.
+#' Details can be found in Section 4.2 of Chang et al. (2024). The default is 10.
+#' @param method A string indicating which CP-decomposition method is used. Available options include:
+#'  \code{"CP.Direct"} (the default) for the direct estimation method
+#'  [See Section 3.1 of Chang et al. (2023)], \code{"CP.Refined"} for the refined estimation
+#'  method [See Section 3.2 of Chang et al. (2023)], and \code{"CP.Unified"} for the
+#'  unified estimation method [See Section 4 of Chang et al. (2024)].
+#'  The validity of methods \code{"CP.Direct"} and \code{"CP.Refined"} depends on the assumption
+#'  \eqn{d_1=d_2=d}. When \eqn{d_1,d_2 \leq d}, the method \code{"CP.Unified"} can be applied.
+#'  See Chang et al. (2024) for details.
+#'  
+#' @param thresh1  Logical. If \code{FALSE} (the default), no thresholding will
+#'   be applied in \eqn{\hat{\bf \Sigma}_{k}}, which indicates that the threshold level
+#'  \eqn{\delta_1=0}. If \code{TRUE}, \eqn{\delta_1} will be set through \code{delta1}.
+#'   \code{thresh1} is used for all three methods. See 'Details'.
+#'   
+#' @param thresh2  Logical. If \code{FALSE} (the default), no thresholding will
+#'   be applied in \eqn{\check{\bf \Sigma}_{k}}, which indicates that the threshold level
+#'   \eqn{\delta_2=0}. If \code{TRUE}, \eqn{\delta_2} will be set through \code{delta2}.
+#'   \code{thresh2} is used only when \code{method = "CP.Refined"}. See 'Details'.
+#' @param thresh3  Logical. If \code{FALSE} (the default), no thresholding will
+#'   be applied in \eqn{\vec{\bf \Sigma}_{k}}, which indicates that the threshold level
+#'   \eqn{\delta_3=0}. If \code{TRUE}, \eqn{\delta_3} will be set through \code{delta3}.
+#'   \code{thresh3} is used only when \code{method = "CP.Unified"}. See 'Details'.
+#' @param delta1  The value of the threshold level \eqn{\delta_1}. The default is
+#'  \eqn{ \delta_1 = 2 \sqrt{n^{-1}\log (pq)}}.
+#' @param delta2  The value of the threshold level \eqn{\delta_2}. The default is
+#'  \eqn{ \delta_2 = 2 \sqrt{n^{-1}\log (pq)}}.
+#' @param delta3  The value of the threshold level \eqn{\delta_3}. The default is
+#'  \eqn{ \delta_3 = 2 \sqrt{n^{-1}\log(pq)}}.
+#'   
+#' @return An object of class "mtscp", which contains the following
 #'   components:
-#'   \item{A}{The estimated \eqn{p \times d} left loading matrix \eqn{\widehat{\bf A}}.}
-#'   \item{B}{The estimated \eqn{q \times d} right loading matrix \eqn{\widehat{\bf B}}.}
-#'   \item{f}{The estimated latent process \eqn{(\hat{x}_{1,t},\ldots,\hat{x}_{d,t})}.}
-#'   \item{Rank}{The estimated rank \eqn{(\hat{d}_1,\hat{d}_2,\hat{d})} of the matrix CP-factor model.}
+#'   \item{A}{The estimated \eqn{p \times \hat{d}} left loading matrix \eqn{\hat{\bf A}}.}
+#'   \item{B}{The estimated \eqn{q \times \hat{d}} right loading matrix \eqn{\hat{\bf B}}.}
+#'   \item{f}{The estimated latent process \eqn{\hat{x}_{t,1},\ldots,\hat{x}_{t,\hat{d}}}.}
+#'   \item{Rank}{The estimated ranks \eqn{\hat{d}_1,\hat{d}_2}, and \eqn{\hat{d}}.}
+#'   \item{method}{A string indicating which method is used.}
 #'
 #'
 #' @references
-#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
-#'   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
+#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
+#'  estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
+#'  \doi{doi:10.48550/arXiv.2410.05634}.
+#'  
+#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
+#'   \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 
+#'   \doi{doi:10.1093/jrsssb/qkac011}.
 #'   
-#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024+). \emph{On the Identification and Unified Estimation
-#'   Procedure for the Matrix CP-factor Model}. Working paper.
 #'
 #' @examples
-#' ## Example 1.
+#' # Example 1.
 #' p <- 10
 #' q <- 10
 #' n <- 400
 #' d = d1 = d2 <- 3
-#' data <- DGP.CP(n,p,q,d1,d2,d)
+#' data <- DGP.CP(n, p, q, d, d1, d2)
 #' Y <- data$Y
-#' res1 <- CP_MTS(Y,method = "CP.Direct")
-#' res2 <- CP_MTS(Y,method = "CP.Refined")
-#' res3 <- CP_MTS(Y,method = "CP.Unified")
 #' 
-#' ## Example 2.
+#' ## d is unknown
+#' res1 <- CP_MTS(Y, method = "CP.Direct")
+#' res2 <- CP_MTS(Y, method = "CP.Refined")
+#' res3 <- CP_MTS(Y, method = "CP.Unified")
+#' 
+#' ## d is known
+#' res4 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Direct")
+#' res5 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Refined")
+#' 
+#' 
+#' # Example 2.
 #' p <- 10
 #' q <- 10
 #' n <- 400
 #' d1 = d2 <- 2
 #' d <-3
-#' data <- DGP.CP(n,p,q,d1,d2,d)
+#' data <- DGP.CP(n, p, q, d, d1, d2)
 #' Y1 <- data$Y
-#' res <- CP_MTS(Y,method = "CP.Unified")
-#' res4 <- CP_MTS(Y1, Rank=list(d=3), method = "CP.Direct")
-#' res5 <- CP_MTS(Y1, Rank=list(d=3, d1=2, d2=2), method = "CP.Unified")
+#' 
+#' ## d, d1 and d2 are unknown
+#' res6 <- CP_MTS(Y1, method = "CP.Unified")
+#' ## d, d1 and d2 are known
+#' res7 <- CP_MTS(Y1, Rank = list(d = 3, d1 = 2, d2 = 2), method = "CP.Unified")
 #' 
 #' @export
 #' @useDynLib HDTSA
 #' @importFrom stats arima.sim rnorm runif
 
-CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde =  10, method = c("CP.Direct","CP.Refined","CP.Unified")){
-  n = dim(Y)[1]; p = dim(Y)[2]; q = dim(Y)[3];
+CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
+                  method = c("CP.Direct","CP.Refined","CP.Unified"),
+                  thresh1 = FALSE, thresh2 = FALSE, thresh3 = FALSE,
+                  delta1 = 2 * sqrt(log(dim(Y)[2] * dim(Y)[3]) / dim(Y)[1]),
+                  delta2 = delta1, delta3 = delta1){
+  n <- dim(Y)[1]; p <- dim(Y)[2]; q <- dim(Y)[3];
   if(is.null(xi)){
-    xi = est.xi(Y)
+    xi <- est.xi(Y)$xi
   }
   method <- match.arg(method)
   if(method == "CP.Direct"){
-    S_yxi_1 = Autocov_xi_Y(Y,xi,lag.k = 1)
-    S_yxi_2 = Autocov_xi_Y(Y,xi,lag.k = 2)
+    S_yxi_1 <- Autocov_xi_Y(Y, xi, lag.k = 1, thresh = thresh1, delta = delta1)
+    S_yxi_2 <- Autocov_xi_Y(Y, xi, lag.k = 2, thresh = thresh1, delta = delta1)
     if(p > q){
       ##(1) estimation of d
-      K1 = t(S_yxi_1)%*%S_yxi_1
-      eg1 = eigen(K1)
-      w = eg1$values
-      ww = w[-1]/w[-length(w)]
-      d = which(ww==min(ww[1:floor(0.75*q)]))
-
-      if (d > 1){
-        K1 = eg1$vectors[,1:d]%*%diag(eg1$values[1:d])%*%t(eg1$vectors[,1:d]);
-      }else{
-        K1 = eg1$vectors[,1]%*%diag(eg1$values[1],1)%*%t(eg1$vectors[,1]);
+      K1 <- t(S_yxi_1) %*% S_yxi_1
+      eg1 <- eigen(K1)
+      w <- eg1$values
+      ww <- w[-1] / w[-length(w)]
+      d <- which(ww == min(ww[1:floor(0.75 * q)]))
+      if(!is.null(Rank)){
+        if(!is.null(Rank$d)){
+          d <- Rank$d
+        }
+        else{stop("List Rank without d, use Rank=list(d=?)")}
       }
-        K2 = t(S_yxi_1)%*%S_yxi_2;
+      if (d > 1){
+        K1 <- eg1$vectors[, 1:d]%*%diag(eg1$values[1:d])%*%t(eg1$vectors[, 1:d]);
+      }else{
+        K1 <- eg1$vectors[, 1]%*%diag(eg1$values[1], 1)%*%t(eg1$vectors[, 1]);
+      }
+        K2 <- t(S_yxi_1) %*% S_yxi_2;
 
       ##(2) estimation of A and B
-      Geg = geigen::geigen(K2,K1);
-      evalues = Geg$values[which(Mod(Geg$values)<=10^5&Geg$values!=0)]
+      Geg <- geigen::geigen(K2, K1);
+      evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values != 0)]
 
-      Bl = Geg$vectors[,which(Geg$values %in% evalues)]
-      A = apply(S_yxi_1%*%Bl,2,l2s)
-      Al = t(MASS::ginv(A))
-      B = apply(t(S_yxi_1)%*%Al,2,l2s)
+      Bl <- Geg$vectors[, which(Geg$values %in% evalues)]
+      A <- apply(S_yxi_1 %*% Bl, 2, l2s)
+      Al <- t(MASS::ginv(A))
+      B <- apply(t(S_yxi_1) %*% Al, 2, l2s)
     }else{
 
       ##(1) estimation of d
-      K1 = S_yxi_1%*%t(S_yxi_1)
-      eg1 = eigen(K1)
-      w = eg1$values
-      ww = w[-1]/w[-length(w)]
-      d = which(ww==min(ww[1:floor(0.75*p)]))
+      K1 <- S_yxi_1 %*% t(S_yxi_1)
+      eg1 <- eigen(K1)
+      w <- eg1$values
+      ww <- w[-1] / w[-length(w)]
+      d <- which(ww == min(ww[1:floor(0.75 * p)]))
+      if(!is.null(Rank)){
+        if(!is.null(Rank$d)){
+          d <- Rank$d
+        }
+        else{stop("List Rank without d, use Rank=list(d=?)")}
+      }
 
       if (d > 1){
-        K1 = eg1$vectors[,1:d]%*%diag(eg1$values[1:d])%*%t(eg1$vectors[,1:d]);
+        K1 <- eg1$vectors[, 1:d] %*% diag(eg1$values[1:d]) %*% t(eg1$vectors[, 1:d]);
       }else{
-        K1 = eg1$vectors[,1]%*%diag(eg1$values[1],1)%*%t(eg1$vectors[,1]);
+        K1 <- eg1$vectors[, 1] %*% diag(eg1$values[1], 1) %*% t(eg1$vectors[, 1]);
       }
-      K2 = S_yxi_1%*%t(S_yxi_2);
+      K2 <- S_yxi_1 %*% t(S_yxi_2);
       ##(2) estimation of A and B
-      Geg = geigen::geigen(K2,K1);
-      evalues = Geg$values[which(Mod(Geg$values)<=10^5&Geg$values!=0)]
-      Al = Geg$vectors[,which(Geg$values %in% evalues)]
-      B = apply(t(S_yxi_1)%*%Al,2,l2s)
-      Bl = t(MASS::ginv(B))
-      A = apply(S_yxi_1%*%Bl,2,l2s)
+      Geg <- geigen::geigen(K2, K1);
+      evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values!=0)]
+      Al <- Geg$vectors[, which(Geg$values %in% evalues)]
+      B <- apply(t(S_yxi_1) %*% Al, 2, l2s)
+      Bl <- t(MASS::ginv(B))
+      A <- apply(S_yxi_1 %*% Bl, 2, l2s)
     }
     ##(3) estimation of Xt
-    H = matrix(NA,p*q,d)
+    H <- matrix(NA, p * q, d)
     for (ii in 1:d) {
-      H[,ii] = B[,ii] %x% A[,ii]
+      H[, ii] <- B[, ii] %x% A[, ii]
     }
-    f = Vec.tensor(Y)%*%H%*%MASS::ginv(t(H)%*%H)
+    f <- Vec.tensor(Y) %*% H %*% MASS::ginv(t(H) %*% H)
 
     if(is.complex(A) == T || is.complex(B) == T ){
-      A = Complex2Real(A)
-      B = Complex2Real(B)
-      f = Complex2Real(f)
+      A <- Complex2Real(A)
+      B <- Complex2Real(B)
+      f <- Complex2Real(f)
     }
-    METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-    names(d) <- "The estimated number of factors d"
-    con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
+    # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:", method))
+    con <- structure(list(A = A,B = B,f = f,Rank = list(d = d), method = method),
                     class = "mtscp")
     return(con)
   }
   if(method == "CP.Refined"){
     ##(1) estimation of P,Q and d
-    M1 = M2 = 0
-    dmax = round(min(p,q)*0.75)
+    M1 = M2 <- 0
+    dmax <- round(min(p, q) * 0.75)
 
     for (kk in 1:lag.k){
-      S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk)
-      M1 = M1 + S_yxi_k%*%t(S_yxi_k)
-      M2 = M2 + t(S_yxi_k)%*%S_yxi_k
+      S_yxi_k <- Autocov_xi_Y(Y, xi, lag.k = kk, thresh = thresh1, delta = delta1)
+      M1 <- M1 + S_yxi_k %*% t(S_yxi_k)
+      M2 <- M2 + t(S_yxi_k) %*% S_yxi_k
     }
-    ev_M1 = eigen(M1)
-    ev_M2 = eigen(M2)
+    ev_M1 <- eigen(M1)
+    ev_M2 <- eigen(M2)
 
-    d1 =  which.max(ev_M1$values[1:dmax]/ev_M1$values[2:(dmax+1)])
-    d2 =  which.max(ev_M2$values[1:dmax]/ev_M2$values[2:(dmax+1)])
+    d1 <-  which.max(ev_M1$values[1:dmax] / ev_M1$values[2:(dmax + 1)])
+    d2 <-  which.max(ev_M2$values[1:dmax] / ev_M2$values[2:(dmax + 1)])
 
-    d   = ifelse(p>q,d1,d2)
+    d <- ifelse(p > q, d1, d2)
 
     if(!is.null(Rank)){
-      d = Rank
+      if(!is.null(Rank$d)){
+        d <- Rank$d
+      }
+      else{stop("List Rank without d, use Rank=list(d=?)")}
     }
-      P = ev_M1$vectors[,1:d]
-      Q = ev_M2$vectors[,1:d]
+    P <- ev_M1$vectors[, 1:d]
+    Q <- ev_M2$vectors[, 1:d]
 
     if(d == 1){
-      A = as.matrix(P)
-      B = as.matrix(Q)
+      A <- as.matrix(P)
+      B <- as.matrix(Q)
 
-      f = vector()
+      f <- vector()
       for (tt in 1:n) {
-        f[tt] = t(A)%*%Y[tt,,]%*%B
+        f[tt] <- t(A) %*% Y[tt, , ] %*% B
       }
-      f = as.matrix(f)
+      f <- as.matrix(f)
 
     }else{
       ##(2) estimation of U and V
-      Z = array(NA,dim = c(n,d,d))
+      Z <- array(NA, dim = c(n, d, d))
       for (tt in 1:n) {
-        Z[tt,,] = t(P)%*%Y[tt,,]%*%Q
+        Z[tt, , ] <- t(P) %*% Y[tt, , ] %*% Q
       }
-      xi =  est.xi(Z)
-      S_Zxi_1 = Autocov_xi_Y(Z,xi,lag.k = 1)
-      S_Zxi_2 = Autocov_xi_Y(Z,xi,lag.k = 2)
+      xi <- est.xi(Z)
+      if(thresh2){
+        w_hat <- xi$w_hat
+        Xi <- kronecker(diag(1, p), kronecker(Q, P) %*% as.matrix(w_hat))
+        sigma_ycheck_1 <- Sigma_Ycheck(Y, 1)
+        sigma_ycheck_1 <- thresh_C(sigma_ycheck_1, delta2)
+        sigma_ycheck_2 <- Sigma_Ycheck(Y, 2)
+        sigma_ycheck_2 <- thresh_C(sigma_ycheck_2, delta2)
+        S_Zxi_1 <- t(P) %*% t(Xi) %*% sigma_ycheck_1 %*% Q
+        S_Zxi_2 <- t(P) %*% t(Xi) %*% sigma_ycheck_2 %*% Q
+      }
+      else{
+        S_Zxi_1 <- Autocov_xi_Y(Z, xi$xi, lag.k = 1)
+        S_Zxi_2 <- Autocov_xi_Y(Z, xi$xi, lag.k = 2)
+      }
 
-      vl = eigen(MASS::ginv(t(S_Zxi_1)%*%S_Zxi_1)%*%t(S_Zxi_1)%*%S_Zxi_2)$vectors ##MASS
-      ul = eigen(MASS::ginv(S_Zxi_1%*%t(S_Zxi_1))%*%S_Zxi_1%*%t(S_Zxi_2))$vectors
+      vl <- eigen(MASS::ginv(t(S_Zxi_1) %*% S_Zxi_1) %*% t(S_Zxi_1) %*% S_Zxi_2)$vectors ##MASS
+      ul <- eigen(MASS::ginv(S_Zxi_1 %*% t(S_Zxi_1)) %*% S_Zxi_1 %*% t(S_Zxi_2))$vectors
 
-      U = apply(S_Zxi_1%*%vl,2,l2s)
-      V = apply(t(S_Zxi_1)%*%ul,2,l2s)
+      U <- apply(S_Zxi_1 %*% vl, 2, l2s)
+      V <- apply(t(S_Zxi_1) %*% ul, 2, l2s)
 
       ##(3) estimation of A and B
-      A = P%*%U
-      B = Q%*%V
+      A <- P %*% U
+      B <- Q %*% V
 
       ##(4) estimation of Xt
-      W = matrix(NA,d^2,d)
+      W <- matrix(NA, d^2, d)
 
       for (ii in 1:d) {
-        W[,ii] = V[,ii]%x%U[,ii]
+        W[, ii] <- V[, ii] %x% U[, ii]
       }
 
-      f = Vec.tensor(Z)%*%W%*%solve(t(W)%*%W)
+      f <- Vec.tensor(Z) %*% W %*% solve(t(W) %*% W)
 
       if(is.complex(A) == T || is.complex(B) == T ){
-        A = Complex2Real(A)
-        B = Complex2Real(B)
-        f = Complex2Real(f)
+        A <- Complex2Real(A)
+        B <- Complex2Real(B)
+        f <- Complex2Real(f)
       }
     }
-      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-      names(d) <- "The estimated number of factors d"
-    con = structure(list(A = A,B = B,f = f,Rank = d, method = METHOD),
+    # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:", method))
+    con <- structure(list(A = A,B = B,f = f,Rank = list(d = d), method = method),
                     class = "mtscp")
     return(con)
   }
@@ -227,100 +331,94 @@ CP_MTS = function(Y,xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde =  10, method
     ##(1) estimation of P,Q and d1,d2
     if(is.null(Rank)){
 
-      PQ_hat_tol = est.d1d2.PQ(Y,xi,K = lag.k)
+      PQ_hat_tol <- est.d1d2.PQ(Y, xi, K = lag.k, thresh = thresh1, delta = delta1)
 
-      d1  = PQ_hat_tol$d1_hat
-      d2  = PQ_hat_tol$d2_hat
-      d   = NULL
-      P   = PQ_hat_tol$P_hat
-      Q   = PQ_hat_tol$Q_hat
+      d1 <- PQ_hat_tol$d1_hat
+      d2 <- PQ_hat_tol$d2_hat
+      d  <- NULL
+      P  <- PQ_hat_tol$P_hat
+      Q  <- PQ_hat_tol$Q_hat
 
-      if(d1 == 1 || d2 == 1){d = d1*d2}
+      if(d1 == 1 || d2 == 1){d <- d1 * d2}
 
     }else{
+      if(all(!is.null(Rank$d1), !is.null(Rank$d1), !is.null(Rank$d2))){
+        d  <- Rank$d
+        d1 <- Rank$d1
+        d2 <- Rank$d2
+      }
+      else{stop("List Rank without d, d1 and d2, use Rank=list(d=?, d1=?, d2=?)")}
 
-      d   = Rank$d
-      d1  = Rank$d1
-      d2  = Rank$d2
+      PQ_hat_tol <- est.PQ(Y, xi, d1, d2, K = lag.k, thresh = thresh1, delta = delta1)
 
-      PQ_hat_tol = est.PQ(Y,xi,d1,d2,K = lag.k)
-
-      P   = PQ_hat_tol$P_hat
-      Q   = PQ_hat_tol$Q_hat
+      P   <- PQ_hat_tol$P_hat
+      Q   <- PQ_hat_tol$Q_hat
 
     }
     ##(2) estimation of W* = (v1*u1,v2*u2,...,vd*ud)H = WH
     if(d1 == 1 & d2 == 1){
-      d = 1
-      f = vector()
+      d <- 1
+      f <- vector()
       for (tt in 1:n) {
-        f[tt] = t(P)%*%Y[tt,,]%*%Q
+        f[tt] = t(P) %*% Y[tt, , ] %*% Q
       }
-      A = P
-      B = Q
+      A <- P
+      B <- Q
 
-      # con = list(A = A,B = B,f = f,Rank = list(d=d,d1=d1,d2=d2))
-      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-      rank <- list(d=d,d1=d1,d2=d2)
-      names(rank) <- c("The estimated number of factors d",
-                       "The estimated rank of the left loading matrix d1",
-                       "The estimated rank of the right loading matrix d2")
-      con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
+      # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+      rank <- list(d = d, d1 = d1, d2 = d2)
+      con <- structure(list(A = A,B = B,f = f,Rank = rank, method = method),
                       class = "mtscp")
 
       return(con)
     }else{
-
       if(is.null(d)){
-        W_hat_tol  =  est.d.Wf(Y,P,Q,Ktilde =  lag.ktilde)
-        d          =  W_hat_tol$d_hat
-        W          =  W_hat_tol$W_hat
-        f          =  W_hat_tol$f_hat
+        W_hat_tol  <-  est.d.Wf(Y, P, Q, Ktilde = lag.ktilde, thresh = thresh3, delta = delta3)
+        d          <-  W_hat_tol$d_hat
+        W          <-  W_hat_tol$W_hat
+        f          <-  W_hat_tol$f_hat
       }else{
-        d          =  d
-        W_hat_tol  =  est.Wf(Y,P,Q,d,Ktilde = lag.ktilde)
-        W          =  W_hat_tol$W_hat
-        f          =  W_hat_tol$f_hat
+        d          <-  d
+        W_hat_tol  <-  est.Wf(Y, P, Q, d, Ktilde = lag.ktilde, thresh = thresh3, delta = delta3)
+        W          <-  W_hat_tol$W_hat
+        f          <-  W_hat_tol$f_hat
       }
 
       ##(3) estimation of U and V
       if(d1 == 1 || d2 == 1){
-        Theta = NULL
+        Theta <- NULL
         if(d1 == 1){
-          U = 1;
-          V = W;
-          warning("d1 equal to 1, V cannot be identified uniquely!")
+          U <- 1;
+          V <- W;
+          stop("d1 equal to 1, V cannot be identified uniquely!")
         }
         if(d2 == 1){
-          U = W;
-          V = 1;
-          warning("d2 equal to 1, U cannot be identified uniquely!")
+          U <- W;
+          V <- 1;
+          stop("d2 equal to 1, U cannot be identified uniquely!")
         }
         if(d1 == 1 & d2 == 1){
-          U = 1;
-          V = 1;
+          U <- 1;
+          V <- 1;
         }
-        U = as.matrix(U)
-        V = as.matrix(V)
+        U <- as.matrix(U)
+        V <- as.matrix(V)
       }else{
 
-        UV_hat_tol = est.UV.JAD(W,d1,d2,d)
+        UV_hat_tol <- est.UV.JAD(W, d1, d2, d)
 
-        U          = UV_hat_tol$U
-        V          = UV_hat_tol$V
-        Theta      = UV_hat_tol$Theta
+        U          <- UV_hat_tol$U
+        V          <- UV_hat_tol$V
+        Theta      <- UV_hat_tol$Theta
       }
 
 
       ##(4) estimation of A and B
-      A = P%*%U
-      B = Q%*%V
-      METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
-      rank <- list(d=d,d1=d1,d2=d2)
-      names(rank) <- c("The estimated number of factors d",
-                       "The estimated rank of the left loading matrix d1",
-                       "The estimated rank of the right loading matrix d2")
-      con = structure(list(A = A,B = B,f = f,Rank = rank, method = METHOD),
+      A <- P %*% U
+      B <- Q %*% V
+      # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
+      rank <- list(d = d, d1 = d1, d2 = d2)
+      con <- structure(list(A = A,B = B,f = f,Rank = rank, method = method),
                       class = "mtscp")
 
       return(con)
@@ -388,39 +486,42 @@ Vec.tensor = function(Y){
 }
 
 
-#' @title Data generate process of matrix CP-factor model
-#' @description \code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-#' {\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-#' latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
-#' \times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
-#'  is a \eqn{p \times q} matrix white noise process.
+#' @title Generating simulated data for the example in Chang et al. (2024)
+#' @description \code{DGP.CP()} function generates simulated data following the 
+#' data generating process described in Section 7.1 of Chang et al. (2024). 
+#'  
 #'
-#' @param n  Integer. Sample size of \eqn{\bf Y_t}, \eqn{t=1,\ldots,n}.
-#' @param p  Integer. Number of rows of \eqn{\bf Y_t}.
-#' @param q  Integer. Number of columns of \eqn{\bf Y_t}.
-#' @param d1  Integer. Rank of \eqn{\bf A}.
-#' @param d2  Integer. Rank of \eqn{\bf B}.
-#' @param d  Integer. Number of columns of \eqn{\bf A} and \eqn{\bf B}.
+#' @param n  Integer. The number of observations of the \eqn{p \times q} matrix 
+#' time series \eqn{{\bf Y}_t}.
+#' @param p  Integer. The number of rows of \eqn{{\bf Y}_t}.
+#' @param q  Integer. The number of columns of \eqn{{\bf Y}_t}.
+#' @param d  Integer. The number of columns of the factor loading matrices \eqn{\bf A} 
+#' and \eqn{\bf B}.
+#' @param d1  Integer. The rank of the \eqn{p \times d} matrix \eqn{\bf A}.
+#' @param d2  Integer. The rank of the \eqn{q \times d} matrix \eqn{\bf B}.
 #'
 #' @seealso \code{\link{CP_MTS}}.
 #' @return A list containing the following
 #'   components:
-#'   \item{Y}{An \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
-#'   \item{S}{An \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
-#'   \item{A}{A \eqn{p \times d} coefficient matrix.}
-#'   \item{B}{A \eqn{q \times d} coefficient matrix.}
-#'   \item{X}{An \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
-#'   \item{P}{A \eqn{p \times d_1} orthogonal matrix such that \eqn{\bf A = \bf P \bf U}.}
-#'   \item{Q}{A \eqn{q \times d_2} orthogonal matrix such that \eqn{\bf B = \bf Q \bf V}.}
-#'   \item{U}{A \eqn{d_1 \times d} matrix such that \eqn{\bf A = \bf P \bf U}.}
-#'   \item{V}{A \eqn{d_2 \times d} matrix such that \eqn{\bf B = \bf Q \bf V}.}
-#'   \item{W}{A \eqn{d_1 d_2 \times d} matrix such that \eqn{\bf W = (\bf v_1 \otimes \bf u_1,\ldots,\bf v_d \otimes \bf u_d)}.}
-#'   \item{Ws}{A \eqn{d_1 d_2 \times d} matrix. An orthogonal basis of \eqn{\bf W}.}
-#'   \item{Xmat}{An \eqn{n \times d} data matrix of \eqn{\rm{diag}(\bf X_t)}.}
-#'   \item{Smat}{An \eqn{n \times pq} data matrix of \eqn{\rm{vec}(\bf S_t)}.}
+#'   \item{Y}{An \eqn{n \times p \times q} array.}
+#'   \item{A}{The \eqn{p \times d} left loading matrix \eqn{\bf A}.}
+#'   \item{B}{The \eqn{q \times d} right loading matrix \eqn{\bf B}.}
+#'   \item{X}{An \eqn{n \times d \times d} array.}
 #' @references
-#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
-#'   Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
+#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
+#'  estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
+#'  \doi{doi:10.48550/arXiv.2410.05634}.
+#'  
+#' @details We generate
+#' \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' + {\boldsymbol{\epsilon}}_t }
+#' for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)} 
+#' with \eqn{{\bf x}_t = (x_{t,1},\ldots,x_{t,d})'} being a \eqn{d \times 1} time series,
+#' \eqn{ {\boldsymbol{\epsilon}}_t } is a \eqn{p \times q} matrix white noise,
+#' and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and 
+#' \eqn{q \times d} factor loading matrices. \eqn{\bf A}, \eqn{{\bf X}_t}, and \eqn{\bf B}
+#' are generated based on the data generating process described in Section 7.1 of 
+#' Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and 
+#' \eqn{{\rm rank}({\bf B})=d_2}, \eqn{1 \le d_1, d_2 \le d}.
 #'
 #' @examples
 #' p <- 10
@@ -429,8 +530,11 @@ Vec.tensor = function(Y){
 #' d = d1 = d2 <- 3
 #' data <- DGP.CP(n,p,q,d1,d2,d)
 #' Y <- data$Y
+#' 
+#' ## The first observation: Y_1
+#' Y[1, , ]
 #' @export
-DGP.CP = function(n,p,q,d1,d2,d){
+DGP.CP = function(n,p,q,d,d1,d2){
 
   par_A = c(-3,3)
   par_B = c(-3,3)
@@ -490,43 +594,39 @@ DGP.CP = function(n,p,q,d1,d2,d){
   }
 
   return(list(Y      =  Y,
-              S      =  S,
               A      =  A_s,
               B      =  B_s,
-              X      =  X,
-              P      =  P,
-              Q      =  Q,
-              U      =  U,
-              V      =  V,
-              W      =  W,
-              Ws     =  W_star,
-              Xmat    =  X_m,
-              Smat    =  S_m,
-              Input  =  Input
+              X      =  X
   ))
 
 }
 
 
-Autocov_xi_Y = function(Y,xi,lag.k = k){
+Autocov_xi_Y = function(Y,xi,lag.k = k, thresh = FALSE, delta = NULL){
 
-  n = dim(Y)[1]
-  k = lag.k
+  n <- dim(Y)[1]
+  p <- dim(Y)[2]
+  q <- dim(Y)[3]
+  k <- lag.k
 
-  Y_mean = 0
-  xi_mean = 0
+  Y_mean <- 0
+  xi_mean <- 0
   for (ii in 1:n) {
-    Y_mean = Y_mean + Y[ii,,]
-    xi_mean = xi_mean + xi[ii]
+    Y_mean <- Y_mean + Y[ii,,]
+    xi_mean <- xi_mean + xi[ii]
   }
-  Y_mean   = Y_mean/n
-  xi_mean = xi_mean/n
+  Y_mean  <- Y_mean/n
+  xi_mean <- xi_mean/n
 
-  Sigma_Y_xi_k = 0
+  Sigma_Y_xi_k <- 0
   for (ii in (k+1):n) {
-    Sigma_Y_xi_k = Sigma_Y_xi_k + (Y[ii,,] - Y_mean)*(xi[ii-k] - xi_mean)
+    Sigma_Y_xi_k <- Sigma_Y_xi_k + (Y[ii,,] - Y_mean)*(xi[ii-k] - xi_mean)
   }
-  return(Sigma_Y_xi_k/(n-k))
+  Sigma_Y_xi_k <- Sigma_Y_xi_k/(n-k)
+  if(thresh){
+    Sigma_Y_xi_k <- thresh_C(Sigma_Y_xi_k, delta)
+  }
+  return(Sigma_Y_xi_k)
 }
 
 est.xi  = function(Y, thresh_per = 0.99, d_max = 20){
@@ -549,14 +649,16 @@ est.xi  = function(Y, thresh_per = 0.99, d_max = 20){
     d_hat = min(which(cfr > thresh_per))
     d_fin = min(d_max,d_hat)
     xi.f1 = as.matrix(eig_xi.mat$vectors[,1:d_fin])
-    weight = sqrt(eig_xi.mat$values[1:d_hat])
+    weight = sqrt(eig_xi.mat$values[1:d_fin])
     xi.f1 = xi.f1%*%diag(weight)
     xi = rowMeans(xi.f1)
+    w_hat = as.matrix(t(t(xi.f1)%*%xi.mat))
+    w_hat = rowMeans(w_hat)
   }
-  return(xi)
+  return(list(xi=xi, w_hat = w_hat))
 }
 
-est.d1d2.PQ = function(Y,xi,K = 10){
+est.d1d2.PQ = function(Y,xi,K = 10, thresh = FALSE, delta = NULL){
   n = dim(Y)[1];p = dim(Y)[2];q = dim(Y)[3];
 
   d2_list = d1_list =vector()
@@ -565,7 +667,7 @@ est.d1d2.PQ = function(Y,xi,K = 10){
   P_list = Q_list = list()
   for (kk in 1:K){
 
-    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk)
+    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk, thresh = thresh, delta = delta)
 
     M1 = M1 + S_yxi_k%*%t(S_yxi_k)
     M2 = M2 + t(S_yxi_k)%*%S_yxi_k
@@ -600,7 +702,7 @@ est.d1d2.PQ = function(Y,xi,K = 10){
               Q_list  = Q_list))
 }
 
-est.PQ = function(Y,xi,d1,d2,K = 20){
+est.PQ = function(Y,xi,d1,d2,K = 20, thresh = FALSE, delta = NULL){
   n = dim(Y)[1];p = dim(Y)[2];q = dim(Y)[3];
 
   M1 = M2 = 0
@@ -608,7 +710,7 @@ est.PQ = function(Y,xi,d1,d2,K = 20){
   P_list = Q_list = list()
   for (kk in 1:K){
 
-    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk)
+    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk, thresh = thresh, delta = delta)
 
     M1 = M1 + S_yxi_k%*%t(S_yxi_k)
     M2 = M2 + t(S_yxi_k)%*%S_yxi_k
@@ -631,7 +733,7 @@ est.PQ = function(Y,xi,d1,d2,K = 20){
 }
 
 
-est.d.Wf = function(Y,P,Q, Ktilde = 10){
+est.d.Wf = function(Y,P,Q, Ktilde = 10, thresh = FALSE, delta = NULL){
   n = dim(Y)[1];p = dim(Y)[2];q = dim(Y)[3];
   d1 = NCOL(P);d2 = NCOL(Q);
 
@@ -649,8 +751,16 @@ est.d.Wf = function(Y,P,Q, Ktilde = 10){
   dstar = max(d1,d2)
 
   for (kk in 1:Ktilde) {
-
-    S_ztilde_k = sigmak(t(Z_tilde),as.matrix(colMeans(Z_tilde)),n = n, k= kk)
+    
+    # if(thresh){
+    #   Y_2d <- Vec.tensor(Y)
+    #   S_ytilde_k <- sigmak(t(Y_2d), as.matrix(colMeans(Y_2d)), n = n, k = kk)
+    #   S_ytilde_k <- thresh_C(S_ytilde_k, delta)
+    #   S_ztilde_k <- MatMult(MatMult(kronecker(t(Q), t(P)), S_ytilde_k), kronecker(Q, P))
+    # }
+    # else{
+      S_ztilde_k = sigmak(t(Z_tilde), as.matrix(colMeans(Z_tilde)),n = n, k= kk)
+      # }
 
     M = M + S_ztilde_k%*%t(S_ztilde_k)
 
@@ -725,7 +835,7 @@ est.d.Wf.nPQ = function(Z, Ktilde = 10){
 }
 
 
-est.Wf = function(Y,P,Q,d,Ktilde = 10){
+est.Wf = function(Y,P,Q,d,Ktilde = 10, thresh = FALSE, delta = NULL){
   n = dim(Y)[1];p = dim(Y)[2];q = dim(Y)[3];
   d1 = NCOL(P);d2 = NCOL(Q);
 
@@ -743,7 +853,13 @@ est.Wf = function(Y,P,Q,d,Ktilde = 10){
   W_list = f_list = list()
 
   for (kk in 1:Ktilde){
-    S_ztilde_k = sigmak(t(Z_tilde),as.matrix(colMeans(Z_tilde)),n = n, k= kk)
+    if(thresh){
+      Y_2d <- Vec.tensor(Y)
+      S_ytilde_k <- sigmak(t(Y_2d), as.matrix(colMeans(Y_2d)), n = n, k = kk)
+      S_ytilde_k <- thresh_C(S_ytilde_k, delta)
+      S_ztilde_k <- MatMult(MatMult(kronecker(t(Q), t(P)), S_ytilde_k), kronecker(Q, P))
+    }
+    else{S_ztilde_k = sigmak(t(Z_tilde),as.matrix(colMeans(Z_tilde)),n = n, k= kk)}
 
     M = M + S_ztilde_k%*%t(S_ztilde_k)
 
@@ -794,7 +910,7 @@ est.UV.JAD = function(W,d1,d2,d){
   M_tensor = array(NA,dim = c(d,d,d))
   eigen_gap = vector()
   for (ii in 1:d) {
-    M_tensor[,,ii] = Vech2Mat_new(M[,ii],d)
+    M_tensor[,,ii] = Vech2Mat_new(M[,ii], d)
     eigen_gap[ii] = min(abs(eigen(M_tensor[,,ii])$values))
   }
 
@@ -929,4 +1045,24 @@ est.UV.EVD = function(W,d1,d2,d){
 
   return(list(U = U,V = V,Theta = Theta))
 
+}
+
+Sigma_Ycheck <- function(Y, k){
+  n <- dim(Y)[1]
+  p <- dim(Y)[2]
+  q <- dim(Y)[3]
+  sigmaYk <- matrix(0, nrow = p^2 * q, ncol = q)
+  Y_mean <- apply(Y, c(2, 3), mean)
+  for (t in (k + 1):n) {
+    A <- Y[t, , ] - Y_mean # Y_t - Y_bar (p x q)
+    B <- Y[t - k, , ] - Y_mean # Y_{t-k} - Y_bar (p x q)
+    
+    # vec(B): 将 B 转换为列向量
+    B_vec <- as.vector(B)
+    
+    # Kronecker product
+    kron_prod <- kronecker(A, B_vec) #  (p*q) x (p*q)
+    sigmaYk <- sigmaYk + kron_prod
+  }
+  return(sigmaYk/(n-k))
 }

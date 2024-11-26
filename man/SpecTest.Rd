@@ -2,52 +2,49 @@
 % Please edit documentation in R/Tools_SpecTest.R
 \name{SpecTest}
 \alias{SpecTest}
-\title{Statistical inference for high-dimensional spectral density matrix}
+\title{Global testing for spectral density matrix}
 \usage{
 SpecTest(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 }
 \arguments{
-\item{X}{\eqn{{\bf X} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{n\times
-p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
-dimension of \eqn{{\bf x}_t}.}
+\item{X}{An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x_1}, \dots , {\bf x}_n)'},
+where \eqn{n} is the number of observations of the \eqn{p\times 1} time
+series \eqn{{\bf x}_t}.}
 
-\item{J.set}{The set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.}
+\item{J.set}{A vector of length \eqn{K} representing the set \eqn{\mathcal{J}}
+for frequencies, which is used to calculate the test statistic.}
 
-\item{cross.indices}{The set \eqn{\mathcal{I}} for \eqn{(i,j)} is a matrix with two columns,
-employed in calculating the test statistic.}
+\item{cross.indices}{A \eqn{r \times 2} matrix representing the set
+\eqn{\mathcal{I}} with cardinality \eqn{r}, where each row represents an index pair.}
 
-\item{B}{The bootstrap times for generating multivariate normal distributed 
-random vectors in calculating the critical value. Default is \code{B} \eqn{=2000}.}
+\item{B}{The number of bootstrap replications for generating multivariate normally
+distributed random vectors when calculating the critical value. The default is 2000.}
 
 \item{flag_c}{The bandwidth \eqn{c} of the flat-top kernel for estimating 
-\eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. Default is \code{flag_c} \eqn{=0.8}.}
+\eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. The default is 0.8.}
 }
 \value{
-An object of class "hdtstest" is a list containing the following
+An object of class "hdtstest" which contains the following
   components:
 
-  \item{Stat}{Numerical value which represents the value of test statistic.}
-  \item{pval}{Numerical value which represents the p-value of the test.}
-  \item{cri95}{Numerical value which represents the critical value of the test
+  \item{Stat}{The test statistic of the test.}
+  \item{pval}{The p-value of the test.}
+  \item{cri95}{The critical value of the test
   at the significance level 0.05.}
-  \item{method}{A character string indicating what method was performed.}
 }
 \description{
 \code{SpecTest()} implements a new global test proposed in 
-Chang et al. (2023) for the following hypothesis testing problem: 
-\deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in\mathcal{I}\mathrm{\ and\ }
-\omega \in \mathcal{J}\mathrm{\ \ versus\ \ H_1:H_0\ is\ not\ true.} }
+Chang et al. (2022) for the following hypothesis testing problem: 
+\deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in \mathcal{I}\mathrm{\ and\ }
+\omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true. }}
 Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-components \eqn{i} and \eqn{j} of a multivariate time series at frequency 
-\eqn{\omega}. The set \eqn{\mathcal{I}} refers to the pairs of indices of 
-interest (i.e., those under investigation for potential cross-spectral 
-relationships), while \eqn{\mathcal{J}} represents the frequency domain over 
-which the test is performed. The null hypothesis \eqn{H_0} posits that the 
-cross-spectral density is zero for all specified pairs \eqn{(i,j)\in \mathcal{I}} and 
-frequencies \eqn{\omega \in \mathcal{J}}, implying no linear relationship between these 
-components across the frequency domain.
+\eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
+the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}. \eqn{\mathcal{I}} is the set of index pairs of interest, and
+\eqn{\mathcal{J}} is the set of frequencies.
 }
 \examples{
+# Example 1
+## generate xt
 n <- 200
 p <- 10
 flag_c <- 0.8
@@ -59,14 +56,16 @@ x.sim <- phi.mat \%*\% z.sim[,(burn+1):(burn+n)]
 x <- x.sim - rowMeans(x.sim)
 cross.indices <- matrix(c(1,2), ncol=2)
 J.set <- 2*pi*seq(0,3)/4 - pi
+
 res <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 Stat <- res$statistic
 Pvalue <- res$p.value
 CriVal <- res$cri95
 }
 \references{
-Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2023). 
-\emph{Statistical inference for high-dimensional spectral density matrix}. arXiv preprint arXiv:2212.13686.
+Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+Statistical inference for high-dimensional spectral density matrix.
+\emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
 }
 \seealso{
 \code{\link{SpecMulTest}}

@@ -1,44 +1,44 @@
 #' @name SpecTest
-#' @title Statistical inference for high-dimensional spectral density matrix
-#' @description \code{SpecTest()} implements a new global test proposed in 
-#' Chang et al. (2023) for the following hypothesis testing problem: 
-#' \deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in\mathcal{I}\mathrm{\ and\ }
-#' \omega \in \mathcal{J}\mathrm{\ \ versus\ \ H_1:H_0\ is\ not\ true.} }
+#' @title Global testing for spectral density matrix
+#' @description 
+#' \code{SpecTest()} implements a new global test proposed in 
+#' Chang et al. (2022) for the following hypothesis testing problem: 
+#' \deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in \mathcal{I}\mathrm{\ and\ }
+#' \omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true. }}
 #' Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-#' components \eqn{i} and \eqn{j} of a multivariate time series at frequency 
-#' \eqn{\omega}. The set \eqn{\mathcal{I}} refers to the pairs of indices of 
-#' interest (i.e., those under investigation for potential cross-spectral 
-#' relationships), while \eqn{\mathcal{J}} represents the frequency domain over 
-#' which the test is performed. The null hypothesis \eqn{H_0} posits that the 
-#' cross-spectral density is zero for all specified pairs \eqn{(i,j)\in \mathcal{I}} and 
-#' frequencies \eqn{\omega \in \mathcal{J}}, implying no linear relationship between these 
-#' components across the frequency domain.
+#' \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
+#' the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}. \eqn{\mathcal{I}} is the set of index pairs of interest, and
+#' \eqn{\mathcal{J}} is the set of frequencies. 
 #' 
 #' 
-#' @param X \eqn{{\bf X} = \{{\bf x_1}, \dots , {\bf x}_n \}}, a \eqn{n\times
-#'   p} sample matrix, where \eqn{n} is the sample size and \eqn{p} is the 
-#'   dimension of \eqn{{\bf x}_t}.
-#' @param B The bootstrap times for generating multivariate normal distributed 
-#' random vectors in calculating the critical value. Default is \code{B} \eqn{=2000}.
+#' 
+#' @param X An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x_1}, \dots , {\bf x}_n)'},
+#' where \eqn{n} is the number of observations of the \eqn{p\times 1} time
+#' series \eqn{{\bf x}_t}.
+#' @param B The number of bootstrap replications for generating multivariate normally
+#' distributed random vectors when calculating the critical value. The default is 2000.
 #' @param flag_c The bandwidth \eqn{c} of the flat-top kernel for estimating 
-#' \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. Default is \code{flag_c} \eqn{=0.8}.
-#' @param J.set The set \eqn{\mathcal{J}} for frequencies, a vector, used to calculate the test statistic.
-#' @param cross.indices The set \eqn{\mathcal{I}} for \eqn{(i,j)} is a matrix with two columns,
-#'  employed in calculating the test statistic.
+#' \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. The default is 0.8.
+#' @param J.set A vector of length \eqn{K} representing the set \eqn{\mathcal{J}}
+#' for frequencies, which is used to calculate the test statistic.
+#' @param cross.indices A \eqn{r \times 2} matrix representing the set
+#' \eqn{\mathcal{I}} with cardinality \eqn{r}, where each row represents an index pair.
 #' @seealso \code{\link{SpecMulTest}}
 #' 
-#' @return An object of class "hdtstest" is a list containing the following
+#' @return An object of class "hdtstest" which contains the following
 #'   components:
 #'
-#'   \item{Stat}{Numerical value which represents the value of test statistic.}
-#'   \item{pval}{Numerical value which represents the p-value of the test.}
-#'   \item{cri95}{Numerical value which represents the critical value of the test
+#'   \item{Stat}{The test statistic of the test.}
+#'   \item{pval}{The p-value of the test.}
+#'   \item{cri95}{The critical value of the test
 #'   at the significance level 0.05.}
-#'   \item{method}{A character string indicating what method was performed.}
-#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2023). 
-#' \emph{Statistical inference for high-dimensional spectral density matrix}. arXiv preprint arXiv:2212.13686.
+#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+#' Statistical inference for high-dimensional spectral density matrix.
+#' \emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
 #' 
 #' @examples
+#' # Example 1
+#' ## generate xt
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
@@ -50,6 +50,7 @@
 #' x <- x.sim - rowMeans(x.sim)
 #' cross.indices <- matrix(c(1,2), ncol=2)
 #' J.set <- 2*pi*seq(0,3)/4 - pi
+#' 
 #' res <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 #' Stat <- res$statistic
 #' Pvalue <- res$p.value
@@ -83,16 +84,14 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
     names(T2) <- "Statistic"
     cri95=sort(T2.stars)[floor(.95*B)]
     names(cri95) <- "the critical value of the test at the significance level 0.05"
-    METHOD = "Statistical inference for high-dimensional spectral density matrix"
+    # METHOD = "Statistical inference for high-dimensional spectral density matrix"
     structure(list(statistic=T2, p.value=sum(T2.stars>T2)/B, 
-                 cri95=cri95,
-                 method = METHOD),
+                 cri95=cri95),
                  class = "hdtstest")
   }else{
     warning("n<=2ln+1 which does not satisfy the requirement of this test.")
     structure(list(statistic = NA, p.value = NA, 
-                   cri95 = NA,
-                   method = METHOD),
+                   cri95 = NA),
               class = "hdtstest")
   }
 }
@@ -100,37 +99,40 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 
 
 #' @name SpecMulTest
-#' @title Statistical inference for high-dimensional spectral density matrix
-#' @description \code{SpecMulTest()} implements a new multiple test proposed in
-#'  Chang et al. (2023) for the \eqn{Q} hypothesis testing problems: 
+#' @title Multiple testing with FDR control for spectral density matrix
+#' @description 
+#' \code{SpecMulTest()} implements a new multiple test proposed in
+#'  Chang et al. (2022) for the \eqn{Q} hypothesis testing problems: 
 #' \deqn{H_{0,q}:f_{i,j}(\omega)=0\mathrm{\ for\ any\ }(i,j)\in\mathcal{I}^{(q)}\mathrm{\ and\ }
 #' \omega\in\mathcal{J}^{(q)}\mathrm{\ \ versus\ \ }
 #' H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true.} }
 #' for \eqn{q\in\{1,\dots,Q\}}. 
 #' Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-#' components \eqn{i} and \eqn{j} at frequency \eqn{\omega}. The sets 
-#' \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to the index pairs 
-#' and frequency domain associated with the \eqn{q}-th test. The goal is to 
-#' simultaneously test multiple hypotheses regarding the nullity of cross-spectral 
-#' densities across different pairs and frequencies.
+#' \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
+#' the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t},
+#' and the sets \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
+#' the index pairs and frequencies, respectively, associated with the \eqn{q}-th test.
 #' 
 #' 
 #' @param Q The number of the hypothesis tests. 
-#' @param PVal A vector of length \code{Q} representing P-values for the \code{Q} hypothesis tests.
-#' @param alpha The prescribed significance level. Default is 0.05.
-#' @param seq_len Length used to take discrete points between 0 and 
-#' \eqn{\sqrt{(2\times\log(Q)-2\times\log(\log(Q))}}. Default is 0.01.
+#' @param PVal A vector of length \code{Q} representing p-values for the \code{Q} hypothesis tests.
+#' @param alpha The false discovery rate of the multiple test. The default is 0.05.
+#' @param seq_len The step size for generating a sequence from 0 to
+#' \eqn{\sqrt{(2\times\log Q-2\times\log(\log Q )}}. The default is 0.01.
 #' @seealso \code{\link{SpecTest}}
 #' 
-#' @return An object of class "hdtstest" is a list containing the following
-#'   components:
-#'   \item{MultiTest}{Logical vector with length Q. If the element is \code{TRUE}, 
-#'   it means rejecting the corresponding sub-null hypothesis, otherwise it means 
-#'   not rejecting the corresponding sub-null hypothesis.}
+#' @return An object of class \code{"hdtstest"}, which contains the following
+#'   component:
+#'   \item{MultiTest}{Logical vector of length Q. If its \eqn{q}-th element is \code{TRUE}, 
+#'   it indicates that \eqn{H_{0,q}} should be rejected.}
 #'   
-#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2023). 
-#' \emph{Statistical inference for high-dimensional spectral density matrix}. arXiv preprint arXiv:2212.13686.
+#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+#' Statistical inference for high-dimensional spectral density matrix.
+#' \emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
 #' @examples
+#' # Example 1
+#' 
+#' ## generating xt
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
@@ -147,13 +149,16 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #' ISET[[3]] <- matrix(c(1,4),ncol=2)
 #' ISET[[4]] <- matrix(c(1,5),ncol=2)
 #' JSET <- as.list(2*pi*seq(0,3)/4 - pi)
+#' 
+#' ## caculate Q p-value
 #' PVal <- rep(NA,Q)
 #' for (q in 1:Q) {
 #'   cross.indices <- ISET[[q]]
 #'   J.set <- JSET[[q]]
 #'   temp.q <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 #'   PVal[q] <- temp.q$p.value
-#' }  # Q
+#' }
+#' 
 #' res <- SpecMulTest(Q, PVal)
 #' res
 #' 
@@ -164,7 +169,7 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #' @export
 SpecMulTest <- function(Q, PVal, alpha=0.05, seq_len=0.01){
   
-  Tseq = seq(0,sqrt(2*log(Q)-2*log(log(Q))),seq_len)
+  Tseq = seq(0,sqrt(2*log(Q)-2*log(log(Q))), seq_len)
   
   Temp <- matrix(NA, Q, length(Tseq))
   for (kk in 1:length(Tseq)) {
@@ -181,10 +186,9 @@ SpecMulTest <- function(Q, PVal, alpha=0.05, seq_len=0.01){
   # compute FDR
   MultiTest <- (qnorm(1-PVal) >= t_FDR) # Q
   
-  METHOD = "Statistical inference for high-dimensional spectral density matrix"
+  # METHOD = "Statistical inference for high-dimensional spectral density matrix"
   
-  structure(list(MultiTest=MultiTest,
-                         method = METHOD),
+  structure(list(MultiTest=MultiTest),
                     class = "hdtstest")
 }
 

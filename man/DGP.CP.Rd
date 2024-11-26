@@ -2,46 +2,48 @@
 % Please edit documentation in R/CP_functions_unified.R
 \name{DGP.CP}
 \alias{DGP.CP}
-\title{Data generate process of matrix CP-factor model}
+\title{Generating simulated data for the example in Chang et al. (2024)}
 \usage{
-DGP.CP(n, p, q, d1, d2, d)
+DGP.CP(n, p, q, d, d1, d2)
 }
 \arguments{
-\item{n}{Integer. Sample size of \eqn{\bf Y_t}, \eqn{t=1,\ldots,n}.}
+\item{n}{Integer. The number of observations of the \eqn{p \times q} matrix 
+time series \eqn{{\bf Y}_t}.}
 
-\item{p}{Integer. Number of rows of \eqn{\bf Y_t}.}
+\item{p}{Integer. The number of rows of \eqn{{\bf Y}_t}.}
 
-\item{q}{Integer. Number of columns of \eqn{\bf Y_t}.}
+\item{q}{Integer. The number of columns of \eqn{{\bf Y}_t}.}
 
-\item{d1}{Integer. Rank of \eqn{\bf A}.}
+\item{d}{Integer. The number of columns of the factor loading matrices \eqn{\bf A} 
+and \eqn{\bf B}.}
 
-\item{d2}{Integer. Rank of \eqn{\bf B}.}
+\item{d1}{Integer. The rank of the \eqn{p \times d} matrix \eqn{\bf A}.}
 
-\item{d}{Integer. Number of columns of \eqn{\bf A} and \eqn{\bf B}.}
+\item{d2}{Integer. The rank of the \eqn{q \times d} matrix \eqn{\bf B}.}
 }
 \value{
 A list containing the following
   components:
-  \item{Y}{An \eqn{n \times p \times q} data array of \eqn{\bf Y_t}.}
-  \item{S}{An \eqn{n \times p \times q} data array of \eqn{\bf S_t = \bf A \bf X_t \bf B'}.}
-  \item{A}{A \eqn{p \times d} coefficient matrix.}
-  \item{B}{A \eqn{q \times d} coefficient matrix.}
-  \item{X}{An \eqn{n \times d \times d} data array of \eqn{\bf X_t}.}
-  \item{P}{A \eqn{p \times d_1} orthogonal matrix such that \eqn{\bf A = \bf P \bf U}.}
-  \item{Q}{A \eqn{q \times d_2} orthogonal matrix such that \eqn{\bf B = \bf Q \bf V}.}
-  \item{U}{A \eqn{d_1 \times d} matrix such that \eqn{\bf A = \bf P \bf U}.}
-  \item{V}{A \eqn{d_2 \times d} matrix such that \eqn{\bf B = \bf Q \bf V}.}
-  \item{W}{A \eqn{d_1 d_2 \times d} matrix such that \eqn{\bf W = (\bf v_1 \otimes \bf u_1,\ldots,\bf v_d \otimes \bf u_d)}.}
-  \item{Ws}{A \eqn{d_1 d_2 \times d} matrix. An orthogonal basis of \eqn{\bf W}.}
-  \item{Xmat}{An \eqn{n \times d} data matrix of \eqn{\rm{diag}(\bf X_t)}.}
-  \item{Smat}{An \eqn{n \times pq} data matrix of \eqn{\rm{vec}(\bf S_t)}.}
+  \item{Y}{An \eqn{n \times p \times q} array.}
+  \item{A}{The \eqn{p \times d} left loading matrix \eqn{\bf A}.}
+  \item{B}{The \eqn{q \times d} right loading matrix \eqn{\bf B}.}
+  \item{X}{An \eqn{n \times d \times d} array.}
 }
 \description{
-\code{DGP.CP()} function generate the matrix time series described in Chang et al. (2023):\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}^{'} +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = \rm{diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
-latent process, \eqn{{\bf A}} and \eqn{{\bf B}} are , respectively, \eqn{p
-\times d} and \eqn{q \times d} unknown constant matrix, and \eqn{ {\boldsymbol{\epsilon}}_t }
- is a \eqn{p \times q} matrix white noise process.
+\code{DGP.CP()} function generates simulated data following the 
+data generating process described in Section 7.1 of Chang et al. (2024).
+}
+\details{
+We generate
+\deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' + {\boldsymbol{\epsilon}}_t }
+for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)} 
+with \eqn{{\bf x}_t = (x_{t,1},\ldots,x_{t,d})'} being a \eqn{d \times 1} time series,
+\eqn{ {\boldsymbol{\epsilon}}_t } is a \eqn{p \times q} matrix white noise,
+and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and 
+\eqn{q \times d} factor loading matrices. \eqn{\bf A}, \eqn{{\bf X}_t}, and \eqn{\bf B}
+are generated based on the data generating process described in Section 7.1 of 
+Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and 
+\eqn{{\rm rank}({\bf B})=d_2}, \eqn{1 \le d_1, d_2 \le d}.
 }
 \examples{
 p <- 10
@@ -50,10 +52,14 @@ n <- 400
 d = d1 = d2 <- 3
 data <- DGP.CP(n,p,q,d1,d2,d)
 Y <- data$Y
+
+## The first observation: Y_1
+Y[1, , ]
 }
 \references{
-Chang, J., He, J., Yang, L., & Yao, Q. (2023). \emph{Modelling matrix time series via a tensor CP-decomposition}.
-  Journal of the Royal Statistical Society Series B: Statistical Methodology, Vol. 85(1), pp.127--148.
+Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
+ estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
+ \doi{doi:10.48550/arXiv.2410.05634}.
 }
 \seealso{
 \code{\link{CP_MTS}}.

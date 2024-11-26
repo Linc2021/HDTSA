@@ -2,101 +2,124 @@
 % Please edit documentation in R/HDSreg.R
 \name{HDSReg}
 \alias{HDSReg}
-\title{High dimensional stochastic regression with latent factors}
+\title{Factor analysis with observed regressors for vector time series.}
 \usage{
-HDSReg(Y, Z, D = NULL, lag.k = 1, twostep = FALSE)
+HDSReg(
+  Y,
+  Z,
+  D = NULL,
+  lag.k = 5,
+  thresh = FALSE,
+  delta = 2 * sqrt(log(ncol(Y))/nrow(Y)),
+  twostep = FALSE
+)
 }
 \arguments{
-\item{Y}{\eqn{{\bf Y} = \{{\bf y}_1, \dots , {\bf y}_n \}'}, a data matrix
-with \eqn{n} rows and \eqn{p} columns, where \eqn{n} is the sample size and
-\eqn{p} is the dimension of \eqn{{\bf y}_t}.}
+\item{Y}{An \eqn{n \times p} data matrix \eqn{{\bf Y} = ({\bf y}_1, \dots , {\bf y}_n )'},
+where \eqn{n} is the number of the observations of the \eqn{p \times 1} time
+series \eqn{\{{\bf y}_t\}_{t=1}^n}.}
 
-\item{Z}{\eqn{{\bf Z} = \{{\bf z}_1, \dots , {\bf z}_n \}'}, a data matrix
-representing some observed regressors with \eqn{n} rows and \eqn{m}
-columns, where \eqn{n} is the sample size and \eqn{m} is the dimension of
-\eqn{{\bf z}_t}.}
+\item{Z}{An \eqn{n \times m} data matrix \eqn{{\bf Z} = ({\bf z}_1, \dots , {\bf z}_n )'}
+consisting of the observed regressors.}
 
-\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\widetilde{\bf
+\item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\tilde{\bf
 D}}. If \code{D = NULL} (the default), our procedure will estimate
-\eqn{{\bf D}} first and let \eqn{\widetilde{\bf D}} be the estimate of
+\eqn{{\bf D}} first and let \eqn{\tilde{\bf D}} be the estimate of
 \eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then
-\eqn{\widetilde{\bf D}={\bf D}}.}
+\eqn{\tilde{\bf D}={\bf D}}.}
 
-\item{lag.k}{Time lag \eqn{k_0} used to calculate the nonnegative definte
-matrix \eqn{ \widehat{\mathbf{M}}}: \deqn{\widehat{\mathbf{M}}\ =\
-\sum_{k=1}^{k_0}\widehat{\mathbf{\Sigma}}_{\eta}(k)\widehat{\mathbf{\Sigma}}_{\eta}(k)',
-} where \eqn{\widehat{\bf \Sigma}_{\eta}(k)} is the sample autocovariance
-of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - \widetilde{\bf D}{\bf z}_t}
-at lag \eqn{k}.}
+\item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definte
+matrix \eqn{ \hat{\mathbf{M}}_{\eta}}: \deqn{\hat{\mathbf{M}}_{\eta}\ =\
+\sum_{k=1}^{K} T_\delta\{\hat{\mathbf{\Sigma}}_{\eta}(k)\} T_\delta\{\hat{\mathbf{\Sigma}}_{\eta}(k)\}',
+} where \eqn{\hat{\bf \Sigma}_{\eta}(k)} is the sample autocovariance
+of \eqn{ {\boldsymbol {\eta}}_t = {\bf y}_t - \tilde{\bf D}{\bf z}_t}
+at lag \eqn{k} and \eqn{T_\delta(\cdot)}
+is a threshold operator with the threshold level \eqn{\delta \geq 0}. See 'Details'.
+The default is 5.}
 
-\item{twostep}{Logical. If \code{FALSE} (the default), then standard
-procedures (see \code{\link{Factors}}) will be implemented to estimate
-\eqn{r} and \eqn{{\bf A}}. If \code{TRUE}, then a two step estimation
-procedure (see \code{\link{Factors}}) will be implemented to estimate
-\eqn{r} and \eqn{{\bf A}}.}
+\item{thresh}{Logical. If \code{thresh = FALSE} (the default), no thresholding will
+be applied to estimate \eqn{\hat{\mathbf{M}}_{\eta}}. If \code{thresh = TRUE}, the
+argument \code{delta} is used to specify the threshold level \eqn{\delta}.
+See 'Details'.}
+
+\item{delta}{The value of the threshold level \eqn{\delta}. The default is
+\eqn{ \delta = 2 \sqrt{n^{-1}\log p}}.}
+
+\item{twostep}{Logical. The same as the argument \code{twostep} in \code{\link{Factors}}.}
 }
 \value{
-An object of class "factors" is a list containing the following
+An object of class "factors", which contains the following
   components:
 
   \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
   \item{reg.coff.mat}{The estimated \eqn{p \times m} regression coefficient
-  matrix \eqn{\widetilde{\bf D}} if \code{D} is not given.}
-  \item{loading.mat}{The estimated \eqn{p \times m} factor loading matrix
-  \eqn{{\bf \widehat{A}}}.}
-  \item{lag.k}{the time lag used in function.}
-  \item{method}{a character string indicating what method was performed.}
+  matrix \eqn{\tilde{\bf D}}.}
+  \item{loading.mat}{The estimated \eqn{p \times \hat{r}} factor loading matrix
+  \eqn{{\bf \hat{A}}}.}
+  \item{X}{The \eqn{n\times \hat{r}} matrix
+  \eqn{\hat{\bf X}=(\hat{\bf x}_1,\dots,\hat{\bf x}_n)'} with
+  \eqn{\hat{\mathbf{x}}_t=\hat{\mathbf{A}}'(\mathbf{y}_t-\hat{\mathbf{D}} \mathbf{z}_t)}}
+  \item{lag.k}{The time lag used in function.}
 }
 \description{
 \code{HDSReg()} considers a multivariate time series model which
-represents a high dimensional vector process as a sum of three terms: a
+represents a high-dimensional vector process as a sum of three terms: a
 linear regression of some observed regressors, a linear combination of some
 latent and serially correlated factors, and a vector white noise:\deqn{{\bf
 y}_t = {\bf Dz}_t + {\bf Ax}_t + {\boldsymbol {\epsilon}}_t,} where \eqn{{\bf
 y}_t} and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and
 \eqn{m \times 1} time series, \eqn{{\bf x}_t} is an \eqn{r \times 1} latent
-factor process, \eqn{{\boldsymbol{\epsilon}}_t \sim
-\mathrm{WN}({\boldsymbol{0}},{\bf \Sigma}_{\epsilon}) } is a white noise with
-zero mean and covariance matrix \eqn{{\bf \Sigma}_{\epsilon}} and
-\eqn{{\boldsymbol{\epsilon}}_t} is uncorrelated with \eqn{({\bf z}_t, {\bf
-x}_t)}, \eqn{{\bf D}} is an unknown regression coefficient matrix, and
+factor process, \eqn{{\boldsymbol{\epsilon}}_t} is a vector white noise process,
+\eqn{{\bf D}} is an unknown regression coefficient matrix, and
 \eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in
 Chang, Guo and Yao (2015) aims to estimate the unknown regression coefficient
 matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading
 matrix \eqn{{\bf A}}.
 }
+\details{
+The threshold operator \eqn{T_\delta(\cdot)} is defined as
+\eqn{T_\delta({\bf W}) = \{w_{i,j}1(|w_{i,j}|\geq \delta)\}} for any matrix
+\eqn{{\bf W}=(w_{i,j})}, with the threshold level \eqn{\delta \geq 0} and \eqn{1(\cdot)}
+representing the indicator function. We recommend to choose
+  \eqn{\delta=0} when \eqn{p} is fixed and \eqn{\delta>0} when \eqn{p \gg n}.
+}
 \examples{
+# Example 1 (Example 1 in Chang Guo and Yao (2015)).
+## generate xt
 n <- 400
 p <- 200
 m <- 2
 r <- 3
 X <- mat.or.vec(n,r)
-x1 <- arima.sim(model=list(ar=c(0.6)),n=n)
-x2 <- arima.sim(model=list(ar=c(-0.5)),n=n)
-x3 <- arima.sim(model=list(ar=c(0.3)),n=n)
-X <- cbind(x1,x2,x3)
+x1 <- arima.sim(model = list(ar = c(0.6)), n = n)
+x2 <- arima.sim(model = list(ar = c(-0.5)), n = n)
+x3 <- arima.sim(model = list(ar = c(0.3)), n = n)
+X <- cbind(x1, x2, x3)
 X <- t(X)
 
+## generate yt
 Z <- mat.or.vec(m,n)
-S1 <- matrix(c(5/8,1/8,1/8,5/8),2,2)
+S1 <- matrix(c(5/8, 1/8, 1/8, 5/8), 2, 2)
 Z[,1] <- c(rnorm(m))
 for(i in c(2:n)){
   Z[,i] <- S1\%*\%Z[, i-1] + c(rnorm(m))
 }
-D <- matrix(runif(p*m, -2, 2), ncol=m)
-A <- matrix(runif(p*r, -2, 2), ncol=r)
+D <- matrix(runif(p*m, -2, 2), ncol = m)
+A <- matrix(runif(p*r, -2, 2), ncol = r)
 eps <- mat.or.vec(n, p)
 eps <- matrix(rnorm(n*p), p, n)
 Y <- D \%*\% Z + A \%*\% X + eps
 Y <- t(Y)
 Z <- t(Z)
-res1 <- HDSReg(Y,Z,D,lag.k=2)
-res2 <- HDSReg(Y,Z,lag.k=2)
+
+res1 <- HDSReg(Y, Z, D, lag.k = 2)
+res2 <- HDSReg(Y, Z, lag.k = 2)
 }
 \references{
-Chang, J., Guo, B., & Yao, Q. (2015).  \emph{High dimensional
-  stochastic regression with latent factors, endogeneity and nonlinearity}.
-  Journal of Econometrics, Vol. 189, pp. 297–312.
+Chang, J., Guo, B., & Yao, Q. (2015). High dimensional
+stochastic regression with latent factors, endogeneity and nonlinearity.
+\emph{Journal of Econometrics}, \strong{189}, 297-–312.
+\doi{doi:10.1016/j.jeconom.2015.03.024}.
 }
 \seealso{
 \code{\link{Factors}}.

@@ -12,15 +12,20 @@ using namespace std;
 using namespace Eigen;
 using namespace Rcpp;
 
-Eigen::MatrixXd XiC(int n, int k,int p, int B, double bn, int ken_sign){
+Eigen::MatrixXd XiC(int n, int k,int p, int B, double bn, int ken_sign,
+                    Eigen::MatrixXd Xi_temp){
   Eigen::MatrixXd kenel = Eigen::MatrixXd::Ones(n-k,n-k);
   if(ken_sign==1){
     for(int i=0; i<n-k; i++){
-      for(int j=0; j<n-k; j++){
-        if(i!=j){
-          double temp =double(i-j)/bn;
-          kenel(i,j) = 25/(12*M_PI*M_PI*temp*temp) * (sin(6*M_PI*temp/5)/(6*M_PI*temp/5) - cos(6*M_PI*temp/5));
-        }
+      for(int j=i+1; j<n-k; j++){
+        // if(i!=j){
+        //   double temp =double(i-j)/bn;
+        //   kenel(i,j) = 25/(12*M_PI*M_PI*temp*temp) * (sin(6*M_PI*temp/5)/(6*M_PI*temp/5) - cos(6*M_PI*temp/5));
+        // }
+        double temp = double(i - j) / bn;
+        double value = 25/(12*M_PI*M_PI*temp*temp) * (sin(6*M_PI*temp/5)/(6*M_PI*temp/5) - cos(6*M_PI*temp/5));
+        kenel(i,j) = value;
+        kenel(j,i) = value;
       }
     }
   }
@@ -48,15 +53,8 @@ Eigen::MatrixXd XiC(int n, int k,int p, int B, double bn, int ken_sign){
       }
     }
   }
-  static default_random_engine e(time(0));
-  static normal_distribution<double> normal(0.0,1.0);
-  Eigen::MatrixXd Xi_temp=Eigen::MatrixXd::Zero(B,n-k);
-  for(int i=0; i<B; i++){
-    for(int j=0; j<n-k; j++){
-      Xi_temp(i,j) = normal(e);    
-    }
-  }
-  EigenSolver<MatrixXd> eig(kenel);
+  // EigenSolver<MatrixXd> eig(kenel);
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(kenel);
   Eigen::VectorXd EigenValue =  eig.eigenvalues().real().array();
   for(int i=0;i<n-k;i++){
     if(EigenValue(i)<0)EigenValue(i)=log(double(p))/double(n);

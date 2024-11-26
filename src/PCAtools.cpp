@@ -17,25 +17,16 @@ Eigen::MatrixXd sigmak(Eigen::MatrixXd Y, Eigen::MatrixXd Y_mean, int k ,int n){
   return Cov_lagk;
 }
 // [[Rcpp::export]]
-Eigen::MatrixXd thresh_C(Eigen::MatrixXd sigmaY, Eigen::MatrixXd Y, Eigen::MatrixXd Y_mean, int k, int n, int p, double deltafinal){
-  double theta;
-  double lambda;
-  double nn=n;
-  double pp=p;
-  Eigen::MatrixXd lam=Eigen::MatrixXd::Zero(p,p);
-  for(int i=0;i<p;i++){
-    for(int j=0;j<p;j++){
-      theta=0;
-      for(int t=0;t<n-k;t++)
-        theta = theta+pow(((Y(i,t+k)-Y_mean(i,0))*(Y(j,t)-Y_mean(j,0))-sigmaY(i,j)),2);
-      theta = theta/(nn);
-      lambda = deltafinal*sqrt(theta*log(pp)/nn);
-      lam(i,j)=lambda;
-      if(abs(sigmaY(i,j))<lambda)
-        sigmaY(i,j)=0;
+Eigen::MatrixXd thresh_C(Eigen::MatrixXd mat, double delta){
+  //double threshold = lambda * sqrt(log(p) / n);
+  for (int i = 0; i < mat.rows(); i++) {
+    for (int j = 0; j < mat.cols(); j++) {
+      if (mat(i, j) < delta) {
+        mat(i, j) = 0;
+      }
     }
   }
-  return sigmaY;
+  return mat;
 }
 
 

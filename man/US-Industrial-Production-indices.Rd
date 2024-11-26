@@ -5,17 +5,26 @@
 \alias{IPindices}
 \title{US Industrial Production indices}
 \format{
-A data frame with 100 rows and 3 variables:
+A data frame with 924 rows and 8 variables:
 \describe{
-  \item{var1}{Description of var1}
-  \item{var2}{Description of var2}
-  \item{var3}{Description of var3}
+  \item{DATE}{The observation date}
+  \item{INDPRO}{The total index}
+  \item{IPB54000S}{Nonindustrial supplies}
+  \item{IPFINAL}{Final products}
+  \item{IPMANSICS}{Manufacturing}
+  \item{IPMAT}{Materials}
+  \item{IPMINE}{Mining}
+  \item{IPUTIL}{Utilities}
 }
 }
 \usage{
 data(IPindices)
 }
 \description{
-this is an example dataset for demonstration purposes.
+The dataset consists of 7 monthly U.S. Industrial
+Production indices, namely \emph{the total index}, \emph{nonindustrial supplies},
+\emph{final products}, \emph{manufacturing}, \emph{materials}, \emph{mining},
+and \emph{utilities}, from January 1947 to December 2023 published by the U.S.
+Federal Reserve.
 }
 \keyword{data}

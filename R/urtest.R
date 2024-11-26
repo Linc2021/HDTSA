@@ -1,38 +1,41 @@
 #' @name UR_test
 #' @title Testing for unit roots based on sample autocovariances
 #'
-#' @description The test proposed in Chang, Cheng and Yao (2022) for the following hypothesis
-#' testing problems: \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
-#' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2.}
-#' @param Y \eqn{Y = \{y_1, \dots , y_n \}}, the observations of a univariate
-#'   time series used for the test.
-#' @param lagk.vec Time lag \eqn{K_0} used to calculate the test statistic, see
-#'   Section 2.1 in Chang, Cheng and Yao (2022). It can be a vector containing
-#'   more than one time lag. If it is a vector, the procedure will output all
-#'   the test results based on the different \eqn{K_0} in the vector
-#'   \code{lagk.vec}. If \code{lagk.vec} is missing, the default value we choose
-#'   lagk.vec=c(0,1,2,3,4).
-#' @param con_vec Constant \eqn{c_\kappa}, see (5) in Chang, Cheng and Yao
-#'   (2022). It also can be a vector. If missing, the default value we use 0.55.
-#' @param alpha The prescribed significance level. Default is 0.05.
+#' @description The test implements the test proposed in Chang, Cheng and Yao (2022)
+#' for the following hypothesis testing problems:
+#' \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
+#' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2\,,} where \eqn{\{Y_t\}_{t=1}^n} is
+#' a univariate time series.
+#' @param Y A vector \eqn{Y = (y_1, \dots , y_n )}, where \eqn{n} is the number
+#' of the observations.
+#' @param lagk.vec A vector of length \eqn{d} with each element representing a
+#' specified time lag \eqn{K_0} used to calculate the test statistic
+#' [See Section 2.1 of Chang, Cheng and Yao (2022)].
+#' The procedure outputs all test results corresponding to the specified \eqn{d} lags.
+#' The default is \code{c(0, 1, 2, 3, 4)}.
+#' @param con_vec A vector of length \eqn{m} with each element representing a
+#' specified constant \eqn{c_\kappa} [See (5) of Chang, Cheng and Yao (2022)]. 
+#' The procedure outputs all test results corresponding to \eqn{m} values of \eqn{c_\kappa}.
+#' The default is \code{c(0.55)}.
+#' @param alpha The significance level of the test. Default is 0.05.
 
-#' @return An object of class "urtest" is a list containing the following
+#' @return An object of class \code{"urtest"}, which contains the following
 #'   components:
 #'
-#'   \item{statistic}{A vector which represents the value of the test statistic,
-#'    the length of this vector is the same as \code{lag.vec}.}
-#'   \item{reject}{A data matrix containing result with different arguments,
-#'    each column represents the results of different \eqn{c_\kappa} calculations, and 
-#'    each column is a vector representing the results of different time lag
-#'     \eqn{K_0} calculations. \code{'1'} means we reject the null hypothesis and \code{'0'}
-#'   means we do not reject the null hypothesis.}
+#'   \item{statistic}{A vector of length \eqn{d} with each element representing
+#'   the value of a test statistic corresponding to one of the \eqn{d} time lags.}
+#'   \item{reject}{An \eqn{m \times d} data matrix containing test results for
+#'   various parameter (\eqn{c_\kappa,K_0}) combinations. Each row
+#'    corresponds to a specific value of \eqn{c_\kappa} and 
+#'    each column represents a specific time lag \eqn{K_0},  A value of
+#'    \code{'1'} indicates rejection of the null hypothesis,
+#'    while \code{'0'} indicates non-rejection.}
 #'   \item{lag.vec}{The time lag used in function.}
-#'   \item{method}{A character string indicating what method was performed.}
-#'   \item{type}{A character string which map used on data matrix \code{X}.}
 #'   
 #'
-#' @references Chang, J., Cheng, G., & Yao, Q. (2022).  \emph{Testing for unit
-#'   roots based on sample autocovariances}. Biometrika, Vol. 109(2), pp. 543-550.
+#' @references Chang, J., Cheng, G., & Yao, Q. (2022). Testing for Unit
+#'   Roots Based on Sample Autocovariances. \emph{Biometrika}, \strong{109},
+#'   543--550. \doi{doi:10.1093/biomet/asab034}
 #'   
 #' @export
 #' @importFrom sandwich lrvar
@@ -42,12 +45,15 @@
 #' @importFrom stats qnorm
 #' @importFrom Rcpp evalCpp
 #' @examples
-#' N=100
-#' Y=arima.sim(list(ar=c(0.9)), n = 2*N, sd=sqrt(1))
-#' con_vec=c(0.45,0.55,0.65)
-#' lagk.vec=c(0,1,2)
-#' UR_test(Y,lagk.vec=lagk.vec, con_vec=con_vec,alpha=0.05)
-#' UR_test(Y,alpha=0.05)
+#' # Example 1
+#' ## generate yt
+#' N <- 100
+#' Y <-arima.sim(list(ar = c(0.9)), n = 2*N, sd = sqrt(1))
+#' con_vec <- c(0.45, 0.55, 0.65)
+#' lagk.vec <- c(0, 1, 2)
+#' 
+#' UR_test(Y, lagk.vec = lagk.vec, con_vec = con_vec, alpha = 0.05)
+#' UR_test(Y, alpha = 0.05)
 
 
 UR_test <- function(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05) {
@@ -144,9 +150,9 @@ UR_test <- function(Y, lagk.vec = NULL, con_vec = NULL, alpha = 0.05) {
   colnames(res.table) <- colnm
   # statistic_vec <- matrix(as.numeric(statistic_vec), length(lagk.vec))
   # colnames(statistic_vec) <- "statistic"
-  METHOD <- "Testing for unit roots based on sample autocovariances"
+  # METHOD <- "Testing for unit roots based on sample autocovariances"
   # return(list(result=res.table))
   structure(list(statistic = statistic_vec, reject = res.table,
-                 lag.k = lagk.vec, method = METHOD), class = "urtest")
+                 lag.k = lagk.vec), class = "urtest")
   
 }

@@ -5,7 +5,7 @@
 
 
 
-permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
+permutationMax <- function(X, prewhiten=TRUE, m=NULL) {
   #
   # X: nxp data matrix
   # m: maximum lag used in calculating cross correlation coefficients
@@ -117,16 +117,17 @@ permutationMax <- function(X, prewhiten=TRUE, m=NULL, verbose = FALSE) {
   q_block <- K+N2
   Nosmem <- c(N[N>0],rep(1,N2))
   
-  if(verbose){
-    #cat("\n"); cat("Number of groups", K, "\n") #todo
-    cat("\n"); cat("Number of groups:", q_block, "\n") #q_block
-    # cat("Number of members in those groups:", N[N>0], "\n") #todo
-    cat("\n"); cat("Number of members in those groups:", Nosmem, "\n") #q_block
-    for(i in c(1:K)){
-      cat("Group",i,": contains these columns index of the zt:", drop(Group[,i][Group[,i]>0]), "\n")
-    }
-    cat("Omit groups that have only one member\n")
-  }
+  # if(verbose){
+  #   #cat("\n"); cat("Number of groups", K, "\n") #todo
+  #   cat("\n"); cat("Number of groups:", q_block, "\n") #q_block
+  #   # cat("Number of members in those groups:", N[N>0], "\n") #todo
+  #   cat("\n"); cat("Number of members in those groups:", Nosmem, "\n") #q_block
+  #   for(i in c(1:K)){
+  #     cat("The indices of the components of xt belonging to",
+  #         paste("Group ", i, ":", sep = ""), drop(Group[,i][Group[,i]>0]), "\n")
+  #   }
+  #   cat("Omit groups that have only one member\n")
+  # }
   #to do 
   #result include too many useless output
   colnames(Group) <- paste("Group", c(1:q_block))
