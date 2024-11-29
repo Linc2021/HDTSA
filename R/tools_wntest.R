@@ -1,7 +1,7 @@
 #' @name WN_test
 #' @title Testing for white noise hypothesis in high dimension
 #' @description \code{WN_test()} implements the test proposed in Chang, Yao and Zhou
-#' (2017) for the following hypothesis testing problems: \deqn{H_0:\{{\bf y}_t
+#' (2017) for the following hypothesis testing problem: \deqn{H_0:\{{\bf y}_t
 #' \}_{t=1}^n\mathrm{\ is\ white\ noise\ \ versus\ \ }H_1:\{{\bf y}_t
 #' \}_{t=1}^n\mathrm{\ is\ not\ white\ noise.} }
 #'
@@ -20,15 +20,15 @@
 #' the function \code{\link{PCA_TS}} with the arguments passed by \code{control.PCA}.
 #' @param alpha The significance level of the test. The default is 0.05.
 #' @param kernel.type The option for choosing the symmetric kernel used
-#'   in the estimation of long-run covariance matrix, Available options include:
+#'   in the estimation of long-run covariance matrix. Available options include:
 #'   \code{"QS"} (the default) for the Quadratic spectral kernel, \code{"Par"}
-#'   for the Parzen kernel, and \code{"Bart"} for the Bartlett kernel
-#'   [see Andrews (1991) for more information].
+#'   for the Parzen kernel, and \code{"Bart"} for the Bartlett kernel.
+#'   See Chang, Yao and Zhou (2017) for more information.
 #'   
 #' @param control.PCA A list of control arguments passed to the function
 #' \code{PCA_TS()}, including \code{lag.k}, \code{opt}, \code{thresh},
-#' \code{delta} and the associated arguments passed to the \code{clime} module
-#' in \code{PCA_TS()} when \code{control.PCA = list(opt = 2)}. See 'Details’
+#' \code{delta} and the associated arguments passed to the \code{clime} function
+#' involved in \code{PCA_TS()} when \code{control.PCA = list(opt = 2)}. See 'Details’
 #' in \code{\link{PCA_TS}}.
 #' 
 #' @seealso \code{\link{PCA_TS}}
@@ -45,17 +45,16 @@
 #'   
 #' @references 
 #'   Chang, J., Guo, B., & Yao, Q. (2018). Principal component analysis for
-#'   second-order stationary vector time series, \emph{The Annals of Statistics},
-#'   \strong{46}, 2094–-2124. \doi{doi:10.1214/17-AOS1613}.
+#'   second-order stationary vector time series. \emph{The Annals of Statistics},
+#'   \strong{46}, 2094--2124. \doi{doi:10.1214/17-AOS1613}.
 #'
 #'   Chang, J., Yao, Q., & Zhou, W. (2017). Testing for
-#'   High-dimensional white noise using maximum cross-correlations, \emph{Biometrika},
+#'   high-dimensional white noise using maximum cross-correlations. \emph{Biometrika},
 #'   \strong{104}, 111--127. \doi{doi:10.1093/biomet/asw066}.
 #'
 #' @examples
 #' #Example 1
-#' 
-#' ## generate xt
+#' ## Generate xt
 #' n <- 200
 #' p <- 10
 #' Y <- matrix(rnorm(n * p), n, p)

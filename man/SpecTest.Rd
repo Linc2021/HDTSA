@@ -7,24 +7,24 @@
 SpecTest(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 }
 \arguments{
-\item{X}{An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x_1}, \dots , {\bf x}_n)'},
+\item{X}{An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x}_1, \dots , {\bf x}_n)'},
 where \eqn{n} is the number of observations of the \eqn{p\times 1} time
-series \eqn{{\bf x}_t}.}
+series \eqn{\{{\bf x}_t\}_{t=1}^n}.}
 
-\item{J.set}{A vector of length \eqn{K} representing the set \eqn{\mathcal{J}}
-for frequencies, which is used to calculate the test statistic.}
+\item{J.set}{A vector representing the set \eqn{\mathcal{J}}
+of frequencies.}
 
-\item{cross.indices}{A \eqn{r \times 2} matrix representing the set
-\eqn{\mathcal{I}} with cardinality \eqn{r}, where each row represents an index pair.}
+\item{cross.indices}{An \eqn{r \times 2} matrix representing the set
+\eqn{\mathcal{I}} of \eqn{r} index pairs, where each row represents an index pair.}
 
 \item{B}{The number of bootstrap replications for generating multivariate normally
 distributed random vectors when calculating the critical value. The default is 2000.}
 
-\item{flag_c}{The bandwidth \eqn{c} of the flat-top kernel for estimating 
-\eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. The default is 0.8.}
+\item{flag_c}{The bandwidth \eqn{c\in(0,1]} of the flat-top kernel for estimating 
+\eqn{f_{i,j}(\omega)} [See (2) in Chang et al. (2022)]. The default is 0.8.}
 }
 \value{
-An object of class "hdtstest" which contains the following
+An object of class \code{"hdtstest"} which contains the following
   components:
 
   \item{Stat}{The test statistic of the test.}
@@ -36,15 +36,16 @@ An object of class "hdtstest" which contains the following
 \code{SpecTest()} implements a new global test proposed in 
 Chang et al. (2022) for the following hypothesis testing problem: 
 \deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in \mathcal{I}\mathrm{\ and\ }
-\omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true. }}
-Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
+\omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true }\,,}
+where \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
 \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
-the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}. \eqn{\mathcal{I}} is the set of index pairs of interest, and
+the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}.
+Here, \eqn{\mathcal{I}} is the set of index pairs of interest, and
 \eqn{\mathcal{J}} is the set of frequencies.
 }
 \examples{
 # Example 1
-## generate xt
+## Generate xt
 n <- 200
 p <- 10
 flag_c <- 0.8
@@ -54,6 +55,8 @@ z.sim <- matrix(rnorm((n+burn)*p),p,n+burn)
 phi.mat <- 0.4*diag(p)
 x.sim <- phi.mat \%*\% z.sim[,(burn+1):(burn+n)]
 x <- x.sim - rowMeans(x.sim)
+
+## Generate the sets I and J
 cross.indices <- matrix(c(1,2), ncol=2)
 J.set <- 2*pi*seq(0,3)/4 - pi
 

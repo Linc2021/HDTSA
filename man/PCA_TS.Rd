@@ -74,7 +74,8 @@ An object of class \code{"tspca"}, which contains the following
 components: 
   \item{B}{The \eqn{p\times p} transformation matrix
   \eqn{\hat{\bf B}=\hat{\bf \Gamma}_y'\hat{{\bf V}}^{-1/2}}, where
-  \eqn{\hat{\bf \Gamma}_y} is specified in (2.5) of Chang Guo and Yao (2018).}
+  \eqn{\hat{\bf \Gamma}_y} is a \eqn{p \times p} orthogonal matrix with the
+  columns being the eigenvectors of \eqn{\hat{\bf W}_y}.}
   \item{X}{The \eqn{n \times p} matrix
   \eqn{\hat{\bf X}=(\hat{\bf x}_1,\dots,\hat{\bf x}_n)'} with
   \eqn{\hat{\bf x}_t = \hat{\bf B}{\bf y}_t}.}
@@ -121,10 +122,10 @@ The threshold operator \eqn{T_\delta(\cdot)} is defined as
   }
 }
 \examples{
-## Example 1 (Example 1 in the supplementary material of Chang Guo and Yao (2018)).
-## p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.
+# Example 1 (Example 1 in the supplementary material of Chang Guo and Yao (2018)).
+# p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.
 
-# Generate x_t
+## Generate x_t
 p <- 6;n <- 1500
 X <- mat.or.vec(p,n)
 x <- arima.sim(model = list(ar = c(0.5, 0.3), ma = c(-0.9, 0.3, 1.2,1.3)),
@@ -135,21 +136,21 @@ for(i in 4:5) X[i,] <- x[(i-3):(n+i-4)]
 x <- arima.sim(model = list(ar = c(-0.7, -0.5), ma = c(-1, -0.8)), n = n, sd = 1)
 X[6,] <- x
 
-# Generate y_t
+## Generate y_t
 A <- matrix(runif(p*p, -3, 3), ncol = p)
 Y <- A\%*\%X
 Y <- t(Y)
 
-# permutation = "max" or permutation = "fdr"
+## permutation = "max" or permutation = "fdr"
 res <- PCA_TS(Y, lag.k = 5,permutation = "max")
 res1 <- PCA_TS(Y, lag.k = 5,permutation = "fdr", beta = 10^(-10))
 Z <- res$X
 
 
-## Example 2 (Example 2 in the supplementary material of Chang Guo and Yao (2018)).
-## p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.
+# Example 2 (Example 2 in the supplementary material of Chang Guo and Yao (2018)).
+# p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.
 
-# Generate x_t
+## Generate x_t
 p <- 20;n <- 3000
 X <- mat.or.vec(p,n)
 x <- arima.sim(model = list(ar = c(0.5, 0.3), ma = c(-0.9, 0.3, 1.2, 1.3)), 
@@ -168,12 +169,12 @@ x <- arima.sim(model = list(ar = c(-0.7, -0.5), ma = c(-1, -0.8)),
 n.start = 500,n = n+1,sd = 1)
 for(i in 19:20) X[i,] <- x[(i-18):(n+i-19)]
 
-# Generate y_t
+## Generate y_t
 A <- matrix(runif(p*p, -3, 3), ncol =p)
 Y <- A\%*\%X
 Y <- t(Y)
 
-# permutation = "max" or permutation = "fdr"
+## permutation = "max" or permutation = "fdr"
 res <- PCA_TS(Y, lag.k = 5,permutation = "max")
 res1 <- PCA_TS(Y, lag.k = 5,permutation = "fdr",beta = 10^(-200))
 Z <- res$X
@@ -181,10 +182,10 @@ Z <- res$X
 }
 \references{
 Chang, J., Guo, B., & Yao, Q. (2018). Principal component
-  analysis for second-order stationary vector time series, \emph{The Annals of
+  analysis for second-order stationary vector time series. \emph{The Annals of
   Statistics}, \strong{46}, 2094--2124. \doi{doi:10.1214/17-AOS1613}.
 
   Cai, T., Liu, W., & Luo, X. (2011). A constrained L1 minimization
-  approach for sparse precision matrix estimation, \emph{Journal of the American
+  approach for sparse precision matrix estimation. \emph{Journal of the American
   Statistical Association}, \strong{106}, 594--607. \doi{doi:10.1198/jasa.2011.tm10155}.
 }

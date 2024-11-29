@@ -2,7 +2,7 @@
 % Please edit documentation in R/CP_functions_unified.R
 \name{CP_MTS}
 \alias{CP_MTS}
-\title{Estimation of matrix CP-factor model}
+\title{Estimating the matrix time series CP-factor model}
 \usage{
 CP_MTS(
   Y,
@@ -46,8 +46,8 @@ matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method
   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}. See 'Details'. The default is 20.}
 
 \item{lag.ktilde}{The time lag \eqn{\tilde K} involved in the unified
-estimation method, which is used when \code{method = "CP.Unified"}.
-Details can be found in Section 4.2 of Chang et al. (2024). The default is 10.}
+estimation method [See (16) in Chang et al. (2024)], which is used
+when \code{method = "CP.Unified"}. The default is 10.}
 
 \item{method}{A string indicating which CP-decomposition method is used. Available options include:
 \code{"CP.Direct"} (the default) for the direct estimation method
@@ -83,24 +83,26 @@ be applied in \eqn{\vec{\bf \Sigma}_{k}}, which indicates that the threshold lev
 \eqn{ \delta_3 = 2 \sqrt{n^{-1}\log(pq)}}.}
 }
 \value{
-An object of class "mtscp", which contains the following
+An object of class \code{"mtscp"}, which contains the following
   components:
   \item{A}{The estimated \eqn{p \times \hat{d}} left loading matrix \eqn{\hat{\bf A}}.}
   \item{B}{The estimated \eqn{q \times \hat{d}} right loading matrix \eqn{\hat{\bf B}}.}
   \item{f}{The estimated latent process \eqn{\hat{x}_{t,1},\ldots,\hat{x}_{t,\hat{d}}}.}
-  \item{Rank}{The estimated ranks \eqn{\hat{d}_1,\hat{d}_2}, and \eqn{\hat{d}}.}
-  \item{method}{A string indicating which method is used.}
+  \item{Rank}{The estimated \eqn{\hat{d}_1,\hat{d}_2}, and \eqn{\hat{d}}.}
+  \item{method}{A string indicating which CP-decomposition method is used.}
 }
 \description{
 \code{CP_MTS()} deals with the estimation of the CP-factor model for matrix time series:
 \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' +
-{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = {\rm diag}(x_{t,1},\ldots,x_{t,d})} is an \eqn{d \times d}
+{\boldsymbol{\epsilon}}_t, } where \eqn{{\bf X}_t = {\rm diag}(x_{t,1},\ldots,x_{t,d})} is a \eqn{d \times d}
 unobservable diagonal matrix, \eqn{ {\boldsymbol{\epsilon}}_t }
- is a \eqn{p \times q} matrix white noise, and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
-\times d} and \eqn{q \times d} unknown constant matrices. Let \eqn{{\rm rank}(\mathbf{A}) = d_1}
+ is a \eqn{p \times q} matrix white noise, \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p
+\times d} and \eqn{q \times d} unknown constant matrices with their columns being
+unit vectors, and \eqn{1\leq d < \min(p,q)} is an unknown integer.
+Let \eqn{{\rm rank}(\mathbf{A}) = d_1}
 and \eqn{{\rm rank}(\mathbf{B}) = d_2} with some unknown \eqn{d_1,d_2\leq d}.
-This function aims to estimate the rank \eqn{d, d_1, d_2} and the loading
-matrices \eqn{{\bf A}} and \eqn{{\bf B}} using the methods proposed by Chang
+This function aims to estimate \eqn{d, d_1, d_2} and the loading
+matrices \eqn{{\bf A}} and \eqn{{\bf B}} using the methods proposed in Chang
 et al. (2023) and Chang et al. (2024).
 }
 \details{
@@ -123,7 +125,10 @@ T_{\delta_2}\{\hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)\}\ \ {\rm with}
 \sum_{t=k+1}^n(\mathbf{Y}_t-\bar{\mathbf{Y}}) \otimes {\rm vec}
 (\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\,,}
 where \eqn{T_{\delta_2}(\cdot)} is a threshold operator with the threshold level
-\eqn{\delta_2 \geq 0}.
+\eqn{\delta_2 \geq 0}, and \eqn{{\rm vec}(\cdot)} is a vecterization operator
+with \eqn{{\rm vec}({\bf H})} being the \eqn{(m_1m_2)\times 1} vector obtained by stacking
+the columns of the \eqn{m_1 \times m_2} matrix \eqn{{\bf H}}. See Section 3.2.2 of Chang
+et al. (2023) for details.
 
 The unified estimation method involves
 \deqn{\vec{\bf \Sigma}_{k}=
@@ -132,7 +137,7 @@ T_{\delta_3}\{\hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)\}
 \sum_{t=k+1}^n{\rm vec}({\mathbf{Y}}_t-\bar{\mathbf{Y}})\{{\rm vec}
 (\mathbf{Y}_{t-k}-\bar{\mathbf{Y}})\}'\,,}
 where \eqn{T_{\delta_3}(\cdot)} is a threshold operator with the threshold level
-\eqn{\delta_3 \geq 0}.
+\eqn{\delta_3 \geq 0}. See Section 4.2 of Chang et al. (2024) for details.
 }
 \examples{
 # Example 1.
@@ -140,6 +145,7 @@ p <- 10
 q <- 10
 n <- 400
 d = d1 = d2 <- 3
+## DGP.CP() generates simulated data for the example in Chang et al. (2024).
 data <- DGP.CP(n, p, q, d, d1, d2)
 Y <- data$Y
 

@@ -7,7 +7,7 @@ Authors@R: c(person("Jinyuan", "Chang", role = "aut",
     person("Jing", "He", role = c("aut"), email = "he_jing@swufe.edu.cn"),
     person("Chen", "Lin", role = c("aut", "cre"), email = "linchen@smail.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2024-11-14
+Date: 2024-11-20
 Author: Jinyuan Chang [aut],
    Jing He [aut],
    Chen Lin [aut, cre], 
@@ -33,7 +33,7 @@ LinkingTo: RcppArmadillo, RcppEigen, Rcpp
 Suggests: 
     knitr
 NeedsCompilation: yes
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 URL: https://github.com/Linc2021/HDTSA
 BugReports: https://github.com/Linc2021/HDTSA/issues

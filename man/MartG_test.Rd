@@ -79,7 +79,7 @@ p <- 10
 X <- matrix(rnorm(n*p),n,p)
 
 res <- MartG_test(X, type="Linear")
-res <- MartG_test(X, type=cbind(X, X^2)) #the same as "Quad" type
+res <- MartG_test(X, type=cbind(X, X^2)) #the same as type = "Quad"
 
 ## map can also be defined as an expression in R.
 res <- MartG_test(X, type=quote(cbind(X, X^2))) # expr using quote()

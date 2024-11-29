@@ -30,7 +30,7 @@ to labor economics, can be found in Hyatt and McElroy (2019).
 Abowd, J. M., Stephens, B. E., Vilhuber, L., Andersson, F., McKinney, K. L., Roemer,
 M., and Woodcock, S. (2009). The LEHD infrastructure files and the creation of the
 quarterly workforce indicators. In \emph{Producer dynamics: New evidence from micro data},
-pages 149--230. University of Chicago Press.\doi{10.7208/chicago/9780226172576.003.0006}.
+pages 149--230. University of Chicago Press. \doi{10.7208/chicago/9780226172576.003.0006}.
 
 Hyatt, H. R. and McElroy, T. S. (2019). Labor reallocation, employment,
  and earnings: Vector autoregression evidence. \emph{Labour}, \strong{33}, 463--487.

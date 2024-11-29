@@ -4,28 +4,29 @@
 #' \code{SpecTest()} implements a new global test proposed in 
 #' Chang et al. (2022) for the following hypothesis testing problem: 
 #' \deqn{H_0:f_{i,j}(\omega)=0 \mathrm{\ for\ any\ }(i,j)\in \mathcal{I}\mathrm{\ and\ }
-#' \omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true. }}
-#' Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
+#' \omega \in \mathcal{J}\mathrm{\ \ versus\ \ }H_1:H_0\mathrm{\ is\ not\ true }\,,}
+#' where \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
 #' \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
-#' the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}. \eqn{\mathcal{I}} is the set of index pairs of interest, and
+#' the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t}.
+#' Here, \eqn{\mathcal{I}} is the set of index pairs of interest, and
 #' \eqn{\mathcal{J}} is the set of frequencies. 
 #' 
 #' 
 #' 
-#' @param X An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x_1}, \dots , {\bf x}_n)'},
+#' @param X An \eqn{n\times p} data matrix \eqn{{\bf X} = ({\bf x}_1, \dots , {\bf x}_n)'},
 #' where \eqn{n} is the number of observations of the \eqn{p\times 1} time
-#' series \eqn{{\bf x}_t}.
+#' series \eqn{\{{\bf x}_t\}_{t=1}^n}.
 #' @param B The number of bootstrap replications for generating multivariate normally
 #' distributed random vectors when calculating the critical value. The default is 2000.
-#' @param flag_c The bandwidth \eqn{c} of the flat-top kernel for estimating 
-#' \eqn{f_{i,j}(\omega)}, where \eqn{c\in(0,1]}. The default is 0.8.
-#' @param J.set A vector of length \eqn{K} representing the set \eqn{\mathcal{J}}
-#' for frequencies, which is used to calculate the test statistic.
-#' @param cross.indices A \eqn{r \times 2} matrix representing the set
-#' \eqn{\mathcal{I}} with cardinality \eqn{r}, where each row represents an index pair.
+#' @param flag_c The bandwidth \eqn{c\in(0,1]} of the flat-top kernel for estimating 
+#' \eqn{f_{i,j}(\omega)} [See (2) in Chang et al. (2022)]. The default is 0.8. 
+#' @param J.set A vector representing the set \eqn{\mathcal{J}}
+#' of frequencies.
+#' @param cross.indices An \eqn{r \times 2} matrix representing the set
+#' \eqn{\mathcal{I}} of \eqn{r} index pairs, where each row represents an index pair.
 #' @seealso \code{\link{SpecMulTest}}
 #' 
-#' @return An object of class "hdtstest" which contains the following
+#' @return An object of class \code{"hdtstest"} which contains the following
 #'   components:
 #'
 #'   \item{Stat}{The test statistic of the test.}
@@ -38,7 +39,7 @@
 #' 
 #' @examples
 #' # Example 1
-#' ## generate xt
+#' ## Generate xt
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
@@ -48,6 +49,8 @@
 #' phi.mat <- 0.4*diag(p)
 #' x.sim <- phi.mat %*% z.sim[,(burn+1):(burn+n)]
 #' x <- x.sim - rowMeans(x.sim)
+#' 
+#' ## Generate the sets I and J
 #' cross.indices <- matrix(c(1,2), ncol=2)
 #' J.set <- 2*pi*seq(0,3)/4 - pi
 #' 
@@ -101,38 +104,39 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #' @name SpecMulTest
 #' @title Multiple testing with FDR control for spectral density matrix
 #' @description 
-#' \code{SpecMulTest()} implements a new multiple test proposed in
-#'  Chang et al. (2022) for the \eqn{Q} hypothesis testing problems: 
+#' \code{SpecMulTest()} implements a new multiple testing procedure proposed in
+#'  Chang et al. (2022) for the following \eqn{Q} hypothesis testing problems: 
 #' \deqn{H_{0,q}:f_{i,j}(\omega)=0\mathrm{\ for\ any\ }(i,j)\in\mathcal{I}^{(q)}\mathrm{\ and\ }
 #' \omega\in\mathcal{J}^{(q)}\mathrm{\ \ versus\ \ }
 #' H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true.} }
-#' for \eqn{q\in\{1,\dots,Q\}}. 
+#' for \eqn{q=1,\dots,Q}. 
 #' Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-#' \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
+#' \eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega}, where \eqn{x_{t,i}} is 
 #' the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t},
-#' and the sets \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
-#' the index pairs and frequencies, respectively, associated with the \eqn{q}-th test.
+#' and \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
+#' the set of index pairs and the set of frequencies associated with the
+#' \eqn{q}-th test, respectively.
 #' 
 #' 
 #' @param Q The number of the hypothesis tests. 
-#' @param PVal A vector of length \code{Q} representing p-values for the \code{Q} hypothesis tests.
-#' @param alpha The false discovery rate of the multiple test. The default is 0.05.
+#' @param PVal A vector of length \eqn{Q} representing p-values of the \eqn{Q} hypothesis tests.
+#' @param alpha The prescribed level for the FDR control. The default is 0.05.
 #' @param seq_len The step size for generating a sequence from 0 to
-#' \eqn{\sqrt{(2\times\log Q-2\times\log(\log Q )}}. The default is 0.01.
+#' \eqn{\sqrt{2\times\log Q-2\times\log(\log Q )}}. The default is 0.01.
 #' @seealso \code{\link{SpecTest}}
 #' 
 #' @return An object of class \code{"hdtstest"}, which contains the following
 #'   component:
-#'   \item{MultiTest}{Logical vector of length Q. If its \eqn{q}-th element is \code{TRUE}, 
-#'   it indicates that \eqn{H_{0,q}} should be rejected.}
+#'   \item{MultiTest}{A logical vector of length \eqn{Q}. If its \eqn{q}-th element is \code{TRUE}, 
+#'   it indicates that \eqn{H_{0,q}} should be rejected; Otherwise,
+#'   \eqn{H_{0,q}} should not be rejected.}
 #'   
 #' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
 #' Statistical inference for high-dimensional spectral density matrix.
 #' \emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
 #' @examples
 #' # Example 1
-#' 
-#' ## generating xt
+#' ## Generate xt
 #' n <- 200
 #' p <- 10
 #' flag_c <- 0.8
@@ -143,6 +147,8 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #' x.sim <- phi.mat %*% z.sim[,(burn+1):(burn+n)]
 #' x <- x.sim - rowMeans(x.sim)
 #' Q <- 4
+#' 
+#' ## Generate the sets Iq and Jq
 #' ISET <- list()
 #' ISET[[1]] <- matrix(c(1,2),ncol=2)
 #' ISET[[2]] <- matrix(c(1,3),ncol=2)
@@ -150,7 +156,7 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #' ISET[[4]] <- matrix(c(1,5),ncol=2)
 #' JSET <- as.list(2*pi*seq(0,3)/4 - pi)
 #' 
-#' ## caculate Q p-value
+#' ## Calculate Q p-values
 #' PVal <- rep(NA,Q)
 #' for (q in 1:Q) {
 #'   cross.indices <- ISET[[q]]
@@ -158,7 +164,6 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #'   temp.q <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
 #'   PVal[q] <- temp.q$p.value
 #' }
-#' 
 #' res <- SpecMulTest(Q, PVal)
 #' res
 #' 
@@ -198,11 +203,11 @@ SpecMulTest <- function(Q, PVal, alpha=0.05, seq_len=0.01){
 ChooseLn <- function(x, cn, Kn){
   n <- nrow(x)
   p <- ncol(x)
-  gamma0 <- diag((diag(t(x) %*% x))^(-1/2),nrow=p)
+  gamma0 <- diag((diag(MatMult(t(x), x)))^(-1/2),nrow=p)
   rhoK <- rep(NA, Kn)
   for (k in 2:(Kn+1)) {
-    rhoK[k-1] <- mean( abs( gamma0 %*% (t(x[(k+1):n, , drop = FALSE]) %*%
-                                          x[1:(n-k), , drop = FALSE]) %*% gamma0 ) )
+    rhoK[k-1] <- mean( abs( MatMult(MatMult(gamma0, MatMult(t(x[(k+1):n, , drop = FALSE]),
+                                          x[1:(n-k), , drop = FALSE])), gamma0) ) )
   }
   m <- 1
   if( all(rhoK <= cn*sqrt(log(n)/n)) ){
@@ -212,8 +217,8 @@ ChooseLn <- function(x, cn, Kn){
       m <- m+1
       tmpK <- rhoK
       rhoK[1:(Kn-1)] <- tmpK[2:Kn]
-      rhoK[Kn] <- mean( abs( gamma0 %*% (t(x[(k+1):n, , drop = FALSE]) %*%
-                                           x[1:(n-k), , drop = FALSE]) %*% gamma0 ) )
+      rhoK[Kn] <- mean( abs( MatMult(MatMult(gamma0, MatMult(t(x[(k+1):n, , drop = FALSE]),
+                                           x[1:(n-k), , drop = FALSE])), gamma0) ) )
       if( all(rhoK <= cn*sqrt(log(n)/n)) ){
         return(2*m)
         break

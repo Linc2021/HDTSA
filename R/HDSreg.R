@@ -1,5 +1,5 @@
 #' @name HDSReg
-#' @title Factor analysis with observed regressors for vector time series.
+#' @title Factor analysis with observed regressors for vector time series
 #' @description \code{HDSReg()} considers a multivariate time series model which
 #' represents a high-dimensional vector process as a sum of three terms: a
 #' linear regression of some observed regressors, a linear combination of some
@@ -10,7 +10,7 @@
 #' factor process, \eqn{{\boldsymbol{\epsilon}}_t} is a vector white noise process,
 #' \eqn{{\bf D}} is an unknown regression coefficient matrix, and
 #' \eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in
-#' Chang, Guo and Yao (2015) aims to estimate the unknown regression coefficient
+#' Chang, Guo and Yao (2015) aims to estimate the regression coefficient
 #' matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading
 #' matrix \eqn{{\bf A}}.
 #' 
@@ -42,8 +42,8 @@
 #'   The default is 5.
 #' @param twostep Logical. The same as the argument \code{twostep} in \code{\link{Factors}}.
 #' @param thresh  Logical. If \code{thresh = FALSE} (the default), no thresholding will
-#'   be applied to estimate \eqn{\hat{\mathbf{M}}_{\eta}}. If \code{thresh = TRUE}, the
-#'   argument \code{delta} is used to specify the threshold level \eqn{\delta}.
+#'   be applied to estimate \eqn{\hat{\mathbf{M}}_{\eta}}. If \code{thresh = TRUE},
+#'   \eqn{\delta} will be set through \code{delta}.
 #'   See 'Details'.
 #' @param delta  The value of the threshold level \eqn{\delta}. The default is
 #'  \eqn{ \delta = 2 \sqrt{n^{-1}\log p}}.
@@ -60,17 +60,17 @@
 #'   \eqn{{\bf \hat{A}}}.}
 #'   \item{X}{The \eqn{n\times \hat{r}} matrix
 #'   \eqn{\hat{\bf X}=(\hat{\bf x}_1,\dots,\hat{\bf x}_n)'} with
-#'   \eqn{\hat{\mathbf{x}}_t=\hat{\mathbf{A}}'(\mathbf{y}_t-\hat{\mathbf{D}} \mathbf{z}_t)}}
+#'   \eqn{\hat{\mathbf{x}}_t=\hat{\mathbf{A}}'(\mathbf{y}_t-\tilde{\mathbf{D}} \mathbf{z}_t)}.}
 #'   \item{lag.k}{The time lag used in function.}
 #'   
 #' @references
 #' Chang, J., Guo, B., & Yao, Q. (2015). High dimensional
 #' stochastic regression with latent factors, endogeneity and nonlinearity.
-#' \emph{Journal of Econometrics}, \strong{189}, 297-–312.
+#' \emph{Journal of Econometrics}, \strong{189}, 297--312.
 #' \doi{doi:10.1016/j.jeconom.2015.03.024}.
 #' @examples
 #' # Example 1 (Example 1 in Chang Guo and Yao (2015)).
-#' ## generate xt
+#' ## Generate xt
 #' n <- 400
 #' p <- 200
 #' m <- 2
@@ -82,7 +82,7 @@
 #' X <- cbind(x1, x2, x3)
 #' X <- t(X)
 #'
-#' ## generate yt
+#' ## Generate yt
 #' Z <- mat.or.vec(m,n)
 #' S1 <- matrix(c(5/8, 1/8, 1/8, 5/8), 2, 2)
 #' Z[,1] <- c(rnorm(m))
@@ -130,7 +130,7 @@ HDSReg <- function(Y, Z, D = NULL, lag.k = 5, thresh = FALSE,
                          delta = delta, twostep = twostep)
   r <- factor_list$factor_num
   loading.mat <- factor_list$loading.mat
-  X <- eta %*% loading.mat
+  X <- MatMult(eta, loading.mat)
   # METHOD <- "High dimensional stochastic regression with latent factors"
   #outlist <- list(reg.coff.mat=D, factor_num=r, loading.mat=loading.mat)
   #class(outlist) <- c("HDSReg")

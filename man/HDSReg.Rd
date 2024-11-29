@@ -2,7 +2,7 @@
 % Please edit documentation in R/HDSreg.R
 \name{HDSReg}
 \alias{HDSReg}
-\title{Factor analysis with observed regressors for vector time series.}
+\title{Factor analysis with observed regressors for vector time series}
 \usage{
 HDSReg(
   Y,
@@ -38,8 +38,8 @@ is a threshold operator with the threshold level \eqn{\delta \geq 0}. See 'Detai
 The default is 5.}
 
 \item{thresh}{Logical. If \code{thresh = FALSE} (the default), no thresholding will
-be applied to estimate \eqn{\hat{\mathbf{M}}_{\eta}}. If \code{thresh = TRUE}, the
-argument \code{delta} is used to specify the threshold level \eqn{\delta}.
+be applied to estimate \eqn{\hat{\mathbf{M}}_{\eta}}. If \code{thresh = TRUE},
+\eqn{\delta} will be set through \code{delta}.
 See 'Details'.}
 
 \item{delta}{The value of the threshold level \eqn{\delta}. The default is
@@ -58,7 +58,7 @@ An object of class "factors", which contains the following
   \eqn{{\bf \hat{A}}}.}
   \item{X}{The \eqn{n\times \hat{r}} matrix
   \eqn{\hat{\bf X}=(\hat{\bf x}_1,\dots,\hat{\bf x}_n)'} with
-  \eqn{\hat{\mathbf{x}}_t=\hat{\mathbf{A}}'(\mathbf{y}_t-\hat{\mathbf{D}} \mathbf{z}_t)}}
+  \eqn{\hat{\mathbf{x}}_t=\hat{\mathbf{A}}'(\mathbf{y}_t-\tilde{\mathbf{D}} \mathbf{z}_t)}.}
   \item{lag.k}{The time lag used in function.}
 }
 \description{
@@ -72,7 +72,7 @@ y}_t} and \eqn{{\bf z}_t} are, respectively, observable \eqn{p\times 1} and
 factor process, \eqn{{\boldsymbol{\epsilon}}_t} is a vector white noise process,
 \eqn{{\bf D}} is an unknown regression coefficient matrix, and
 \eqn{{\bf A}} is an unknown factor loading matrix. This procedure proposed in
-Chang, Guo and Yao (2015) aims to estimate the unknown regression coefficient
+Chang, Guo and Yao (2015) aims to estimate the regression coefficient
 matrix \eqn{{\bf D}}, the number of factors \eqn{r} and the factor loading
 matrix \eqn{{\bf A}}.
 }
@@ -85,7 +85,7 @@ representing the indicator function. We recommend to choose
 }
 \examples{
 # Example 1 (Example 1 in Chang Guo and Yao (2015)).
-## generate xt
+## Generate xt
 n <- 400
 p <- 200
 m <- 2
@@ -97,7 +97,7 @@ x3 <- arima.sim(model = list(ar = c(0.3)), n = n)
 X <- cbind(x1, x2, x3)
 X <- t(X)
 
-## generate yt
+## Generate yt
 Z <- mat.or.vec(m,n)
 S1 <- matrix(c(5/8, 1/8, 1/8, 5/8), 2, 2)
 Z[,1] <- c(rnorm(m))
@@ -118,7 +118,7 @@ res2 <- HDSReg(Y, Z, lag.k = 2)
 \references{
 Chang, J., Guo, B., & Yao, Q. (2015). High dimensional
 stochastic regression with latent factors, endogeneity and nonlinearity.
-\emph{Journal of Econometrics}, \strong{189}, 297-–312.
+\emph{Journal of Econometrics}, \strong{189}, 297--312.
 \doi{doi:10.1016/j.jeconom.2015.03.024}.
 }
 \seealso{

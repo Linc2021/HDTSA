@@ -29,14 +29,14 @@
 #'   \eqn{ {\bf y}_t} at lag \eqn{k} and \eqn{T_\delta(\cdot)}
 #'   is a threshold operator with the threshold level \eqn{\delta \geq 0}. See 'Details'.
 #'   The default is 5.
-#' @param twostep Logical. If \code{twostep = FALSE} (the default), The standard
-#'   procedures [See Section 2.2 in Lam and Yao (2012)] for estimating \eqn{r}
-#'   and \eqn{{\bf A}} will be implemented. If \code{twostep = TRUE}, then a two step
+#' @param twostep Logical. If \code{twostep = FALSE} (the default), the standard
+#'   procedure [See Section 2.2 in Lam and Yao (2012)] for estimating \eqn{r}
+#'   and \eqn{{\bf A}} will be implemented. If \code{twostep = TRUE}, the two-step
 #'   estimation procedure [See Section 4 in Lam and Yao (2012)]
 #'   for estimating \eqn{r} and \eqn{{\bf A}} will be implemented.
 #' @param thresh  Logical. If \code{thresh = FALSE} (the default), no thresholding will
-#'   be applied to estimate \eqn{\hat{\mathbf{M}}}. If \code{thresh = TRUE}, the
-#'   argument \code{delta} is used to specify the threshold level \eqn{\delta}.
+#'   be applied to estimate \eqn{\hat{\mathbf{M}}}. If \code{thresh = TRUE},
+#'   \eqn{\delta} will be set through \code{delta}.
 #' @param delta  The value of the threshold level \eqn{\delta}. The default is
 #'  \eqn{ \delta = 2 \sqrt{n^{-1}\log p}}.
 
@@ -54,11 +54,10 @@
 #'  
 
 #' @references Lam, C., & Yao, Q. (2012). Factor modelling for
-#'   high-dimensional time series: Inference for the number of factors, \emph{The
+#'   high-dimensional time series: Inference for the number of factors. \emph{The
 #'   Annals of Statistics}, \strong{40}, 694--726. \doi{doi:10.1214/12-AOS970}.
 #' @examples
-#' # Example 1 (Example from Section 3.3 of lam and Yao 2012)
-#' 
+#' # Example 1 (Example in Section 3.3 of lam and Yao 2012)
 #' ## Generate y_t
 #' p <- 200
 #' n <- 400
@@ -126,14 +125,14 @@ Factors <- function (Y, lag.k = 5, thresh = FALSE, delta = 2 * sqrt(log(ncol(Y))
     if(time == 1){
       final_vector <- G[,c(1:r[time]), drop = FALSE]
       if(twostep){
-        Y <- Y - final_vector %*% t(final_vector) %*% Y
+        Y <- Y - MatMult(MatMult(final_vector, t(final_vector)), Y)
       }
     }
     else{
       final_vector <- cbind(final_vector, G[, c(1:r[time])])
     }
   }
-  X <- Y1 %*% final_vector
+  X <- MatMult(Y1, final_vector)
   
   # METHOD <- "Inference for the number of factors"
   names(lag.k) <-"Time lag"

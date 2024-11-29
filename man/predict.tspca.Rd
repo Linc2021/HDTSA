@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.tspca}
 \alias{predict.tspca}
-\title{Make predictions from a \code{"tspca"} object.}
+\title{Make predictions from a \code{"tspca"} object}
 \usage{
 \method{predict}{tspca}(
   object,
@@ -16,16 +16,16 @@
 \arguments{
 \item{object}{An object of class \code{"tspca"} constructed by \code{\link{PCA_TS}}.}
 
-\item{newdata}{A new data matrix to predict from (optional).}
+\item{newdata}{Optional. A new data matrix to predict from.}
 
-\item{n.ahead}{An integer specifying the number of steps ahead to predict.}
+\item{n.ahead}{An integer specifying the number of steps ahead for prediction.}
 
 \item{control_ARIMA}{A list of arguments passed to the function
-\code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-See 'Details'. The default is \code{list(max.d = 0, max.q = 0, ic = "aic")}.}
+\code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+The default is \code{list(max.d = 0, max.q = 0, ic = "aic")}.}
 
 \item{control_VAR}{A list of arguments passed to the function
-\code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+\code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.}
 
 \item{...}{Currently not used.}
@@ -42,7 +42,7 @@ segmented into \eqn{q} uncorrelated subseries
 \eqn{\hat{\bf x}_t^{(1)},\ldots,\hat{\bf x}_t^{(q)}}, the forecasting for \eqn{{\bf y}_t}
 can be performed in two steps:
 
-\emph{Step 1}. Get the \eqn{h}-step-ahead forecast \eqn{\hat{\bf x}_{n+h}^{(j)}} \eqn{(j=1,\ldots,q)}
+\emph{Step 1}. Get the \eqn{h}-step ahead forecast \eqn{\hat{\bf x}_{n+h}^{(j)}} \eqn{(j=1,\ldots,q)}
  by using a VAR model (if the dimension of \eqn{\hat{\bf x}_t^{(j)}} is larger than 1) 
  or an ARIMA model (if the dimension of \eqn{\hat{\bf x}_t^{(j)}} is 1). The orders 
  of VAR and ARIMA models are determined by AIC by default. Otherwise, they 
@@ -51,6 +51,19 @@ can be performed in two steps:
 \emph{Step 2}. Let \eqn{\hat{\bf x}_{n+h} = (\{\hat{\bf x}_{n+h}^{(1)}\}',\ldots,\{\hat{\bf x}_{n+h}^{(q)}\}')'}.
 The forecasted value for \eqn{{\bf y}_t} is obtained by
  \eqn{\hat{\bf y}_{n+h}= \hat{\bf B}^{-1}\hat{\bf x}_{n+h}}.
+}
+\examples{
+library(HDTSA)
+data(FamaFrench, package = "HDTSA")
+
+## Remove the market effects
+reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+Y_2d = reg$residuals
+
+res_pca <- PCA_TS(Y_2d, lag.k = 5, thresh = TRUE)
+pred_pca_Y <- predict(res_pca, n.ahead = 1)
+
+
 }
 \seealso{
 \code{\link{PCA_TS}}

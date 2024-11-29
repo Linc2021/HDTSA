@@ -3,7 +3,7 @@
 \docType{data}
 \name{IPindices}
 \alias{IPindices}
-\title{US Industrial Production indices}
+\title{U.S. Industrial Production indices}
 \format{
 A data frame with 924 rows and 8 variables:
 \describe{
@@ -16,6 +16,9 @@ A data frame with 924 rows and 8 variables:
   \item{IPMINE}{Mining}
   \item{IPUTIL}{Utilities}
 }
+}
+\source{
+\url{https://fred.stlouisfed.org/release/tables?rid=13&eid=49670}
 }
 \usage{
 data(IPindices)

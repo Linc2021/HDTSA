@@ -1,15 +1,17 @@
-#' Make predictions from a \code{"factors"} object.
+#' Make predictions from a \code{"factors"} object
 #'
 #' This function makes predictions from a \code{"factors"} object.
 #' 
 #' @details
 #' Forecasting for \eqn{{\bf y}_t} can be implemented in two steps:
 #' 
-#' \emph{Step 1}. Get the \eqn{h}-step-ahead forecast of the \eqn{\hat{r} \times 1} 
-#' time series \eqn{\hat{\bf x}_t} [See \code{\link{Factors}}] by using a VAR model 
-#' (if \eqn{\hat{r} > 1}) with the order determined by AIC or an ARIMA model (if \eqn{\hat{r} = 1}) with the order 
-#' determined by AIC. The orders of VAR and ARIMA models can also be specified by 
-#' users through the arguments \code{control_VAR} and \code{control_ARIMA}, respectively.
+#' \emph{Step 1}. Get the \eqn{h}-step ahead forecast of the \eqn{\hat{r} \times 1} 
+#' time series \eqn{\hat{\bf x}_t} [See \code{\link{Factors}}], denoted by
+#' \eqn{\hat{\bf x}_{n+h}}, using a VAR model 
+#' (if \eqn{\hat{r} > 1}) or an ARIMA model (if \eqn{\hat{r} = 1}). The orders 
+#' of VAR and ARIMA models are determined by AIC by default. Otherwise, they 
+#'  can also be specified by users through the arguments \code{control_VAR}
+#'  and \code{control_ARIMA}, respectively.
 #' 
 #' \emph{Step 2}. The forecasted value for \eqn{{\bf y}_t} is obtained by
 #'  \eqn{\hat{\bf y}_{n+h}= \hat{\bf A}\hat{\bf x}_{n+h}}.
@@ -17,18 +19,29 @@
 #' 
 #'
 #' @param object An object of class \code{"factors"} constructed by \code{\link{Factors}}.
-#' @param newdata A new data matrix to predict from (optional).
+#' @param newdata Optional. A new data matrix to predict from.
 #' @param ... Currently not used.
 #' @param control_ARIMA A list of arguments passed to the function
-#' \code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-#' See 'Details'. The default is \code{list(ic = "aic")}.
+#' \code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+#' The default is \code{list(ic = "aic")}.
 #' @param control_VAR A list of arguments passed to the function
-#' \code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+#' \code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 #' The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.
-#' @param n.ahead An integer specifying the number of steps ahead to predict.
+#' @param n.ahead An integer specifying the number of steps ahead for prediction.
 #' 
-#' @return \item{ts_pred}{A matrix of predicted values}
+#' @return \item{ts_pred}{A matrix of predicted values.}
 #' @seealso \code{\link{Factors}}
+#' @examples
+#' library(HDTSA)
+#' data(FamaFrench, package = "HDTSA")
+#' 
+#' ## Remove the market effects
+#' reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+#' Y_2d = reg$residuals
+#' 
+#' res_factors <- Factors(Y_2d, lag.k = 5)
+#' pred_fac_Y <- predict(res_factors, n.ahead = 1)
+#' 
 #' @importFrom vars VAR
 #' @importFrom forecast auto.arima
 #' @importFrom stats predict
@@ -53,7 +66,7 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
   ts_pred
 }
 
-#' Make predictions from a \code{"tspca"} object.
+#' Make predictions from a \code{"tspca"} object
 #'
 #' This function makes predictions from a \code{"tspca"} object.
 #' 
@@ -63,7 +76,7 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
 #' \eqn{\hat{\bf x}_t^{(1)},\ldots,\hat{\bf x}_t^{(q)}}, the forecasting for \eqn{{\bf y}_t}
 #' can be performed in two steps:
 #' 
-#' \emph{Step 1}. Get the \eqn{h}-step-ahead forecast \eqn{\hat{\bf x}_{n+h}^{(j)}} \eqn{(j=1,\ldots,q)}
+#' \emph{Step 1}. Get the \eqn{h}-step ahead forecast \eqn{\hat{\bf x}_{n+h}^{(j)}} \eqn{(j=1,\ldots,q)}
 #'  by using a VAR model (if the dimension of \eqn{\hat{\bf x}_t^{(j)}} is larger than 1) 
 #'  or an ARIMA model (if the dimension of \eqn{\hat{\bf x}_t^{(j)}} is 1). The orders 
 #'  of VAR and ARIMA models are determined by AIC by default. Otherwise, they 
@@ -74,17 +87,28 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
 #'  \eqn{\hat{\bf y}_{n+h}= \hat{\bf B}^{-1}\hat{\bf x}_{n+h}}.
 #'
 #' @param object An object of class \code{"tspca"} constructed by \code{\link{PCA_TS}}.
-#' @param newdata A new data matrix to predict from (optional).
+#' @param newdata Optional. A new data matrix to predict from.
 #' @param ... Currently not used.
 #' @param control_ARIMA A list of arguments passed to the function
-#' \code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-#' See 'Details'. The default is \code{list(max.d = 0, max.q = 0, ic = "aic")}.
+#' \code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+#' The default is \code{list(max.d = 0, max.q = 0, ic = "aic")}.
 #' @param control_VAR A list of arguments passed to the function
-#' \code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+#' \code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 #' The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.
-#' @param n.ahead An integer specifying the number of steps ahead to predict.
+#' @param n.ahead An integer specifying the number of steps ahead for prediction.
 #' 
 #' @seealso \code{\link{PCA_TS}}
+#' @examples
+#' library(HDTSA)
+#' data(FamaFrench, package = "HDTSA")
+#' 
+#' ## Remove the market effects
+#' reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+#' Y_2d = reg$residuals
+#' 
+#' res_pca <- PCA_TS(Y_2d, lag.k = 5, thresh = TRUE)
+#' pred_pca_Y <- predict(res_pca, n.ahead = 1)
+#' 
 #' 
 #' @return \item{Y_pred}{A matrix of predicted values.}
 #' @export
@@ -115,7 +139,7 @@ predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
   Y_pred
 }
 
-#' Make predictions from a \code{"mtscp"} object.
+#' Make predictions from a \code{"mtscp"} object
 #'
 #' This function makes predictions from a \code{"mtscp"} object.
 #' 
@@ -123,31 +147,53 @@ predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
 #' Forecasting for \eqn{{\bf y}_t} can be implemented in two steps:
 #' 
 #' \emph{Step 1}. Get the \eqn{h}-step ahead forecast of the \eqn{\hat{d} \times 1} 
-#' time series \eqn{\hat{\bf x}_t} [See \code{\link{CP_MTS}}] by using a VAR model 
+#' time series \eqn{\hat{\bf x}_t=(\hat{x}_{t,1},\ldots,\hat{x}_{t,\hat{d}})'}
+#' [See \code{\link{CP_MTS}}], denoted by \eqn{\hat{\bf x}_{n+h}}, using a VAR model 
 #' (if \eqn{\hat{d} > 1}) or an ARIMA model
 #' (if \eqn{\hat{d} = 1}). The orders of VAR and ARIMA models are determined by
 #' AIC by default. Otherwise, they can also be specified by users through the
 #' arguments \code{control_VAR} and \code{control_ARIMA}, respectively.
 #' 
 #' \emph{Step 2}. The forecasted value for \eqn{{\bf y}_t} is obtained by
-#'  \eqn{\hat{\bf y}_{n+h}= \hat{\bf A} {\rm diag}(\hat{\bf x}_{n+h}) \hat{\bf B}'} .
+#'  \eqn{\hat{\bf y}_{n+h}= \hat{\bf A} \hat{\bf X}_{n+h} \hat{\bf B}'} with
+#'  \eqn{ \hat{\bf X}_{n+h} = {\rm diag}(\hat{\bf x}_{n+h})}.
 #'
 #' @param object An object of class \code{"mtscp"} constructed by \code{\link{CP_MTS}}.
-#' @param newdata A new data matrix to predict from (optional).
+#' @param newdata Optional. A new data matrix to predict from.
 #' @param ... Currently not used.
 #' @param control_ARIMA A list of arguments passed to the function
-#' \code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-#' See 'Details'. The default is \code{list(ic = "aic")}.
+#' \code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+#' The default is \code{list(ic = "aic")}.
 #' @param control_VAR A list of arguments passed to the function
-#' \code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+#' \code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 #' The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.
-#' @param n.ahead An integer specifying the number of steps ahead to predict.
+#' @param n.ahead An integer specifying the number of steps ahead for prediction.
 #' 
+#' @examples
+#' library(HDTSA)
+#' data(FamaFrench, package = "HDTSA")
 #' 
-#' @return \code{Y_pred} A list of length \code{n.ahead}, where each element is a 
-#' \eqn{p \times q} matrix representing the predicted values for 
-#' each time steps.
+#' ## Remove the market effects
+#' reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+#' Y_2d = reg$residuals
+#' 
+#' ## Rearrange Y_2d into a 3-dimensional array Y
+#' Y = array(NA, dim = c(NROW(Y_2d), 10, 10))
+#' for (tt in 1:NROW(Y_2d)) {
+#'   for (ii in 1:10) {
+#'     Y[tt, ii, ] <- Y_2d[tt, (1 + 10*(ii - 1)):(10 * ii)]
+#'   }
+#' }
+#' 
+#' res_cp <- CP_MTS(Y, lag.k = 20, method = "CP.Refined")
+#' pred_cp_Y <- predict(res_cp, n.ahead = 1)[[1]]
+#' 
+#' @return \item{Y_pred}{A list of length \code{n.ahead}, where each element is a 
+#' \eqn{p \times q} matrix representing the predicted values at
+#' each time step.}
 #' @seealso \code{\link{CP_MTS}}
+#' 
+#' 
 #' @export
 predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
                           control_ARIMA = list(), control_VAR = list(), ...) {

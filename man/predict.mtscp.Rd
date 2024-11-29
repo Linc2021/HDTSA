@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.mtscp}
 \alias{predict.mtscp}
-\title{Make predictions from a \code{"mtscp"} object.}
+\title{Make predictions from a \code{"mtscp"} object}
 \usage{
 \method{predict}{mtscp}(
   object,
@@ -16,24 +16,24 @@
 \arguments{
 \item{object}{An object of class \code{"mtscp"} constructed by \code{\link{CP_MTS}}.}
 
-\item{newdata}{A new data matrix to predict from (optional).}
+\item{newdata}{Optional. A new data matrix to predict from.}
 
-\item{n.ahead}{An integer specifying the number of steps ahead to predict.}
+\item{n.ahead}{An integer specifying the number of steps ahead for prediction.}
 
 \item{control_ARIMA}{A list of arguments passed to the function
-\code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-See 'Details'. The default is \code{list(ic = "aic")}.}
+\code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+The default is \code{list(ic = "aic")}.}
 
 \item{control_VAR}{A list of arguments passed to the function
-\code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+\code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.}
 
 \item{...}{Currently not used.}
 }
 \value{
-\code{Y_pred} A list of length \code{n.ahead}, where each element is a 
-\eqn{p \times q} matrix representing the predicted values for 
-each time steps.
+\item{Y_pred}{A list of length \code{n.ahead}, where each element is a 
+\eqn{p \times q} matrix representing the predicted values at
+each time step.}
 }
 \description{
 This function makes predictions from a \code{"mtscp"} object.
@@ -42,14 +42,36 @@ This function makes predictions from a \code{"mtscp"} object.
 Forecasting for \eqn{{\bf y}_t} can be implemented in two steps:
 
 \emph{Step 1}. Get the \eqn{h}-step ahead forecast of the \eqn{\hat{d} \times 1} 
-time series \eqn{\hat{\bf x}_t} [See \code{\link{CP_MTS}}] by using a VAR model 
+time series \eqn{\hat{\bf x}_t=(\hat{x}_{t,1},\ldots,\hat{x}_{t,\hat{d}})'}
+[See \code{\link{CP_MTS}}], denoted by \eqn{\hat{\bf x}_{n+h}}, using a VAR model 
 (if \eqn{\hat{d} > 1}) or an ARIMA model
 (if \eqn{\hat{d} = 1}). The orders of VAR and ARIMA models are determined by
 AIC by default. Otherwise, they can also be specified by users through the
 arguments \code{control_VAR} and \code{control_ARIMA}, respectively.
 
 \emph{Step 2}. The forecasted value for \eqn{{\bf y}_t} is obtained by
- \eqn{\hat{\bf y}_{n+h}= \hat{\bf A} {\rm diag}(\hat{\bf x}_{n+h}) \hat{\bf B}'} .
+ \eqn{\hat{\bf y}_{n+h}= \hat{\bf A} \hat{\bf X}_{n+h} \hat{\bf B}'} with
+ \eqn{ \hat{\bf X}_{n+h} = {\rm diag}(\hat{\bf x}_{n+h})}.
+}
+\examples{
+library(HDTSA)
+data(FamaFrench, package = "HDTSA")
+
+## Remove the market effects
+reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+Y_2d = reg$residuals
+
+## Rearrange Y_2d into a 3-dimensional array Y
+Y = array(NA, dim = c(NROW(Y_2d), 10, 10))
+for (tt in 1:NROW(Y_2d)) {
+  for (ii in 1:10) {
+    Y[tt, ii, ] <- Y_2d[tt, (1 + 10*(ii - 1)):(10 * ii)]
+  }
+}
+
+res_cp <- CP_MTS(Y, lag.k = 20, method = "CP.Refined")
+pred_cp_Y <- predict(res_cp, n.ahead = 1)[[1]]
+
 }
 \seealso{
 \code{\link{CP_MTS}}

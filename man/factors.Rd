@@ -26,15 +26,15 @@ is a threshold operator with the threshold level \eqn{\delta \geq 0}. See 'Detai
 The default is 5.}
 
 \item{thresh}{Logical. If \code{thresh = FALSE} (the default), no thresholding will
-be applied to estimate \eqn{\hat{\mathbf{M}}}. If \code{thresh = TRUE}, the
-argument \code{delta} is used to specify the threshold level \eqn{\delta}.}
+be applied to estimate \eqn{\hat{\mathbf{M}}}. If \code{thresh = TRUE},
+\eqn{\delta} will be set through \code{delta}.}
 
 \item{delta}{The value of the threshold level \eqn{\delta}. The default is
 \eqn{ \delta = 2 \sqrt{n^{-1}\log p}}.}
 
-\item{twostep}{Logical. If \code{twostep = FALSE} (the default), The standard
-procedures [See Section 2.2 in Lam and Yao (2012)] for estimating \eqn{r}
-and \eqn{{\bf A}} will be implemented. If \code{twostep = TRUE}, then a two step
+\item{twostep}{Logical. If \code{twostep = FALSE} (the default), the standard
+procedure [See Section 2.2 in Lam and Yao (2012)] for estimating \eqn{r}
+and \eqn{{\bf A}} will be implemented. If \code{twostep = TRUE}, the two-step
 estimation procedure [See Section 4 in Lam and Yao (2012)]
 for estimating \eqn{r} and \eqn{{\bf A}} will be implemented.}
 }
@@ -71,8 +71,7 @@ representing the indicator function. We recommend to choose
   \eqn{\delta=0} when \eqn{p} is fixed and \eqn{\delta>0} when \eqn{p \gg n}.
 }
 \examples{
-# Example 1 (Example from Section 3.3 of lam and Yao 2012)
-
+# Example 1 (Example in Section 3.3 of lam and Yao 2012)
 ## Generate y_t
 p <- 200
 n <- 400
@@ -93,6 +92,6 @@ loading_Mat <- fac$loading.mat
 }
 \references{
 Lam, C., & Yao, Q. (2012). Factor modelling for
-  high-dimensional time series: Inference for the number of factors, \emph{The
+  high-dimensional time series: Inference for the number of factors. \emph{The
   Annals of Statistics}, \strong{40}, 694--726. \doi{doi:10.1214/12-AOS970}.
 }

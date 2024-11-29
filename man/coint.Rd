@@ -30,17 +30,19 @@ autocorrelations, \code{"urtest"} for the method based on the unit root tests,
 and \code{"both"} to apply these two methods. See Section 2.3 of Zhang, Robinson
 and Yao (2019) and 'Details' for more information.}
 
-\item{c0}{The prescribed constant \eqn{c_0} for identifying cointegration rank
+\item{c0}{The prescribed constant \eqn{c_0} involved in the method based on
+the sample correlations, which is used
 when \code{type = "acf"} or \code{type = "both"}. See Section 2.3 of Zhang, Robinson
 and Yao (2019) and 'Details' for more information. The default is 0.3.}
 
-\item{m}{The prescribed constant \eqn{m} for identifying cointegration rank
+\item{m}{The prescribed constant \eqn{m} involved in the method based on
+the sample correlations, which is used
 when \code{type = "acf"} or \code{type = "both"}. See Section 2.3 of Zhang, Robinson
 and Yao (2019) and 'Details' for more information. The default is 20.}
 
 \item{alpha}{The significance level \eqn{\alpha} of the unit root tests,
-which is used when \code{type = "urtest"} or \code{type = "both"}. The default is 0.01.
-See 'Details'.}
+which is used when \code{type = "urtest"} or \code{type = "both"}.
+See 'Details'. The default is 0.01.}
 }
 \value{
 An object of class \code{"coint"}, which contains the following
@@ -53,7 +55,7 @@ An object of class \code{"coint"}, which contains the following
 }
 \description{
 \code{Coint()} deals with cointegration analysis for high-dimensional
-vector time series proposed in Zhang Robinson and Yao (2019): \deqn{{\bf y}_t = {\bf Ax}_t\,,}
+vector time series proposed in Zhang, Robinson and Yao (2019): \deqn{{\bf y}_t = {\bf Ax}_t\,,}
 where \eqn{{\bf A}} is a \eqn{p \times p} unknown and invertible constant matrix,
  \eqn{{\bf x}_t = ({\bf x}'_{t,1}, {\bf x}'_{t,2})'} is a latent
  \eqn{p \times 1} process, \eqn{{\bf x}_{t,2}} is an \eqn{r \times 1} \eqn{I(0)} process,
@@ -64,28 +66,28 @@ where \eqn{{\bf A}} is a \eqn{p \times p} unknown and invertible constant matrix
 \details{
 Write \eqn{\hat{\bf x}_t=\hat{\bf A}'{\bf y}_t\equiv (\hat{x}_t^1,\ldots,\hat{x}_t^p)'}.
 When \code{type = "acf"}, \code{Coint()} estimates \eqn{r} by
- \deqn{\hat{r}=\sum_{i=1}^{p}1\bigg\{\frac{S_i(m)}{m}<c_0 \bigg\}\,,} where
-\eqn{S_i(m)} is the sum of \eqn{m} sample autocorrelation functions of \eqn{\hat{x}_{t,i}},
-which specified in Section 2.3 of Zhang Robinson and Yao (2019).
+ \deqn{\hat{r}=\sum_{i=1}^{p}1\bigg\{\frac{S_i(m)}{m}<c_0 \bigg\}} for some
+ constant \eqn{c_0\in (0,1)} and some large constant \eqn{m}, where
+\eqn{S_i(m)} is the sum of the sample autocorrelation functions of
+\eqn{\hat{x}^{i}_{t}} over lags 1 to \eqn{m},
+which is specified in Section 2.3 of Zhang, Robinson and Yao (2019).
 
-When \code{type = "urtest"}, \code{Coint()} estimate \eqn{r} by unit root
+When \code{type = "urtest"}, \code{Coint()} estimates \eqn{r} by unit root
 tests. For \eqn{i= 1,\ldots, p}, consider the null hypothesis 
 \deqn{H_{0,i}:\hat{x}_t^{p-i+1} \sim I(0)\,.} The estimation procedure for
 \eqn{r} can be implemented as follows:
-\itemize{
-\item Step 1. Start with \eqn{i=1}. Perform the unit root test proposed
-by Chang, Cheng and Yao (2021) for \eqn{H_{0,i}}.
-\item Step 2. If the null hypothesis is not rejected at the significance
+
+\emph{Step 1}. Start with \eqn{i=1}. Perform the unit root test proposed
+in Chang, Cheng and Yao (2021) for \eqn{H_{0,i}}.
+
+\emph{Step 2}. If the null hypothesis is not rejected at the significance
 level \eqn{\alpha}, increment \eqn{i} by 1 and repeat Step 1. Otherwise, stop
 the procedure and denote the value of \eqn{i} at termination as \eqn{i_0}.
 The cointegration rank is then estimated as \eqn{\hat{r}=i_0-1}.
-
-}
 }
 \examples{
 # Example 1 (Example 1 in Zhang, Robinson and Yao (2019))
-
-## Generation of yt
+## Generate yt
 p <- 10
 n <- 1000
 r <- 3

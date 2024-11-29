@@ -9,36 +9,37 @@ SpecMulTest(Q, PVal, alpha = 0.05, seq_len = 0.01)
 \arguments{
 \item{Q}{The number of the hypothesis tests.}
 
-\item{PVal}{A vector of length \code{Q} representing p-values for the \code{Q} hypothesis tests.}
+\item{PVal}{A vector of length \eqn{Q} representing p-values of the \eqn{Q} hypothesis tests.}
 
-\item{alpha}{The false discovery rate of the multiple test. The default is 0.05.}
+\item{alpha}{The prescribed level for the FDR control. The default is 0.05.}
 
 \item{seq_len}{The step size for generating a sequence from 0 to
-\eqn{\sqrt{(2\times\log Q-2\times\log(\log Q )}}. The default is 0.01.}
+\eqn{\sqrt{2\times\log Q-2\times\log(\log Q )}}. The default is 0.01.}
 }
 \value{
 An object of class \code{"hdtstest"}, which contains the following
   component:
-  \item{MultiTest}{Logical vector of length Q. If its \eqn{q}-th element is \code{TRUE}, 
-  it indicates that \eqn{H_{0,q}} should be rejected.}
+  \item{MultiTest}{A logical vector of length \eqn{Q}. If its \eqn{q}-th element is \code{TRUE}, 
+  it indicates that \eqn{H_{0,q}} should be rejected; Otherwise,
+  \eqn{H_{0,q}} should not be rejected.}
 }
 \description{
-\code{SpecMulTest()} implements a new multiple test proposed in
- Chang et al. (2022) for the \eqn{Q} hypothesis testing problems: 
+\code{SpecMulTest()} implements a new multiple testing procedure proposed in
+ Chang et al. (2022) for the following \eqn{Q} hypothesis testing problems: 
 \deqn{H_{0,q}:f_{i,j}(\omega)=0\mathrm{\ for\ any\ }(i,j)\in\mathcal{I}^{(q)}\mathrm{\ and\ }
 \omega\in\mathcal{J}^{(q)}\mathrm{\ \ versus\ \ }
 H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true.} }
-for \eqn{q\in\{1,\dots,Q\}}. 
+for \eqn{q=1,\dots,Q}. 
 Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-\eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
+\eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega}, where \eqn{x_{t,i}} is 
 the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t},
-and the sets \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
-the index pairs and frequencies, respectively, associated with the \eqn{q}-th test.
+and \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
+the set of index pairs and the set of frequencies associated with the
+\eqn{q}-th test, respectively.
 }
 \examples{
 # Example 1
-
-## generating xt
+## Generate xt
 n <- 200
 p <- 10
 flag_c <- 0.8
@@ -49,6 +50,8 @@ phi.mat <- 0.4*diag(p)
 x.sim <- phi.mat \%*\% z.sim[,(burn+1):(burn+n)]
 x <- x.sim - rowMeans(x.sim)
 Q <- 4
+
+## Generate the sets Iq and Jq
 ISET <- list()
 ISET[[1]] <- matrix(c(1,2),ncol=2)
 ISET[[2]] <- matrix(c(1,3),ncol=2)
@@ -56,7 +59,7 @@ ISET[[3]] <- matrix(c(1,4),ncol=2)
 ISET[[4]] <- matrix(c(1,5),ncol=2)
 JSET <- as.list(2*pi*seq(0,3)/4 - pi)
 
-## caculate Q p-value
+## Calculate Q p-values
 PVal <- rep(NA,Q)
 for (q in 1:Q) {
   cross.indices <- ISET[[q]]
@@ -64,7 +67,6 @@ for (q in 1:Q) {
   temp.q <- SpecTest(t(x), J.set, cross.indices, B, flag_c)
   PVal[q] <- temp.q$p.value
 }
-
 res <- SpecMulTest(Q, PVal)
 res
 

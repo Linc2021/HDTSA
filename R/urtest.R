@@ -1,41 +1,42 @@
 #' @name UR_test
 #' @title Testing for unit roots based on sample autocovariances
 #'
-#' @description The test implements the test proposed in Chang, Cheng and Yao (2022)
-#' for the following hypothesis testing problems:
+#' @description This function implements the test proposed in Chang, Cheng and Yao (2022)
+#' for the following hypothesis testing problem:
 #' \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
-#' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2\,,} where \eqn{\{Y_t\}_{t=1}^n} is
+#' I(d)\ \mathrm{for\ some\ integer\ }d \geq 2\,,} where \eqn{Y_t} is
 #' a univariate time series.
-#' @param Y A vector \eqn{Y = (y_1, \dots , y_n )}, where \eqn{n} is the number
+#' @param Y A vector \eqn{{\bf Y} = (Y_1, \dots , Y_n )'}, where \eqn{n} is the number
 #' of the observations.
-#' @param lagk.vec A vector of length \eqn{d} with each element representing a
-#' specified time lag \eqn{K_0} used to calculate the test statistic
-#' [See Section 2.1 of Chang, Cheng and Yao (2022)].
-#' The procedure outputs all test results corresponding to the specified \eqn{d} lags.
+#' @param lagk.vec The time lag \eqn{K_0} used to calculate the test statistic
+#' [See Section 2.1 of Chang, Cheng and Yao (2022)]. It can be a vector specifying
+#' multiple time lags. If provided as a \eqn{d \times 1} vector, the function will
+#' output the test results corresponding to each of the \eqn{d} values in \code{lagk.vec}.
 #' The default is \code{c(0, 1, 2, 3, 4)}.
-#' @param con_vec A vector of length \eqn{m} with each element representing a
-#' specified constant \eqn{c_\kappa} [See (5) of Chang, Cheng and Yao (2022)]. 
-#' The procedure outputs all test results corresponding to \eqn{m} values of \eqn{c_\kappa}.
-#' The default is \code{c(0.55)}.
-#' @param alpha The significance level of the test. Default is 0.05.
+#' @param con_vec The constant \eqn{c_\kappa} specified in (5) of
+#' Chang, Cheng and Yao (2022). The default is 0.05. Alternatively, it can be an
+#' \eqn{m \times 1} vector specified by users, representing \eqn{m} candidate values
+#' of \eqn{c_\kappa}.
+#' @param alpha The significance level of the test. The default is 0.05.
 
 #' @return An object of class \code{"urtest"}, which contains the following
 #'   components:
 #'
-#'   \item{statistic}{A vector of length \eqn{d} with each element representing
-#'   the value of a test statistic corresponding to one of the \eqn{d} time lags.}
-#'   \item{reject}{An \eqn{m \times d} data matrix containing test results for
-#'   various parameter (\eqn{c_\kappa,K_0}) combinations. Each row
-#'    corresponds to a specific value of \eqn{c_\kappa} and 
-#'    each column represents a specific time lag \eqn{K_0},  A value of
-#'    \code{'1'} indicates rejection of the null hypothesis,
-#'    while \code{'0'} indicates non-rejection.}
-#'   \item{lag.vec}{The time lag used in function.}
+#'   \item{statistic}{A \eqn{d \times 1} vector with each element representing
+#'   the test statistic value associated with each of the \eqn{d} time lags specified
+#'   in \code{lagk.vec}.}
+#'   \item{reject}{An \eqn{m \times d} data matrix \eqn{{\bf R}=(R_{i,j})} where
+#'   \eqn{R_{i,j}} represents whether the null hypothesis \eqn{H_0} should be rejected
+#'   for \eqn{c_\kappa} specified by the \eqn{i}-th component of \code{con_vec},
+#'   and \eqn{K_0} specified by the \eqn{j}-th component of \code{lagk.vec}.
+#'   \eqn{R_{i,j}=1} indicates rejection of the null hypothesis,
+#'    while \eqn{R_{i,j}=0} indicates non-rejection.}
+#'   \item{lag.vec}{The time lags used in function.}
 #'   
 #'
-#' @references Chang, J., Cheng, G., & Yao, Q. (2022). Testing for Unit
-#'   Roots Based on Sample Autocovariances. \emph{Biometrika}, \strong{109},
-#'   543--550. \doi{doi:10.1093/biomet/asab034}
+#' @references Chang, J., Cheng, G., & Yao, Q. (2022). Testing for unit
+#'   roots based on sample autocovariances. \emph{Biometrika}, \strong{109},
+#'   543--550. \doi{doi:10.1093/biomet/asab034}.
 #'   
 #' @export
 #' @importFrom sandwich lrvar
@@ -46,7 +47,7 @@
 #' @importFrom Rcpp evalCpp
 #' @examples
 #' # Example 1
-#' ## generate yt
+#' ## Generate yt
 #' N <- 100
 #' Y <-arima.sim(list(ar = c(0.9)), n = 2*N, sd = sqrt(1))
 #' con_vec <- c(0.45, 0.55, 0.65)

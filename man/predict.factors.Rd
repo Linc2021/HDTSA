@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.factors}
 \alias{predict.factors}
-\title{Make predictions from a \code{"factors"} object.}
+\title{Make predictions from a \code{"factors"} object}
 \usage{
 \method{predict}{factors}(
   object,
@@ -16,22 +16,22 @@
 \arguments{
 \item{object}{An object of class \code{"factors"} constructed by \code{\link{Factors}}.}
 
-\item{newdata}{A new data matrix to predict from (optional).}
+\item{newdata}{Optional. A new data matrix to predict from.}
 
-\item{n.ahead}{An integer specifying the number of steps ahead to predict.}
+\item{n.ahead}{An integer specifying the number of steps ahead for prediction.}
 
 \item{control_ARIMA}{A list of arguments passed to the function
-\code{auto.arima()} of \pkg{forecast} [See the manual of \code{auto.arima()}].
-See 'Details'. The default is \code{list(ic = "aic")}.}
+\code{auto.arima()} of \pkg{forecast}. See 'Details' and the manual of \code{auto.arima()}.
+The default is \code{list(ic = "aic")}.}
 
 \item{control_VAR}{A list of arguments passed to the function
-\code{VAR()} of \pkg{vars} [See the manual of \code{VAR()}]. See 'Details'.
+\code{VAR()} of \pkg{vars}. See 'Details' and the manual of \code{VAR()}.
 The default is \code{list(type = "const", lag.max = 6, ic = "AIC")}.}
 
 \item{...}{Currently not used.}
 }
 \value{
-\item{ts_pred}{A matrix of predicted values}
+\item{ts_pred}{A matrix of predicted values.}
 }
 \description{
 This function makes predictions from a \code{"factors"} object.
@@ -39,14 +39,28 @@ This function makes predictions from a \code{"factors"} object.
 \details{
 Forecasting for \eqn{{\bf y}_t} can be implemented in two steps:
 
-\emph{Step 1}. Get the \eqn{h}-step-ahead forecast of the \eqn{\hat{r} \times 1} 
-time series \eqn{\hat{\bf x}_t} [See \code{\link{Factors}}] by using a VAR model 
-(if \eqn{\hat{r} > 1}) with the order determined by AIC or an ARIMA model (if \eqn{\hat{r} = 1}) with the order 
-determined by AIC. The orders of VAR and ARIMA models can also be specified by 
-users through the arguments \code{control_VAR} and \code{control_ARIMA}, respectively.
+\emph{Step 1}. Get the \eqn{h}-step ahead forecast of the \eqn{\hat{r} \times 1} 
+time series \eqn{\hat{\bf x}_t} [See \code{\link{Factors}}], denoted by
+\eqn{\hat{\bf x}_{n+h}}, using a VAR model 
+(if \eqn{\hat{r} > 1}) or an ARIMA model (if \eqn{\hat{r} = 1}). The orders 
+of VAR and ARIMA models are determined by AIC by default. Otherwise, they 
+ can also be specified by users through the arguments \code{control_VAR}
+ and \code{control_ARIMA}, respectively.
 
 \emph{Step 2}. The forecasted value for \eqn{{\bf y}_t} is obtained by
  \eqn{\hat{\bf y}_{n+h}= \hat{\bf A}\hat{\bf x}_{n+h}}.
+}
+\examples{
+library(HDTSA)
+data(FamaFrench, package = "HDTSA")
+
+## Remove the market effects
+reg <- lm(as.matrix(FamaFrench[, -c(1:2)]) ~ as.matrix(FamaFrench$MKT.RF))
+Y_2d = reg$residuals
+
+res_factors <- Factors(Y_2d, lag.k = 5)
+pred_fac_Y <- predict(res_factors, n.ahead = 1)
+
 }
 \seealso{
 \code{\link{Factors}}

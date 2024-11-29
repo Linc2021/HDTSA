@@ -1,4 +1,4 @@
-#' US Industrial Production indices
+#' U.S. Industrial Production indices
 #'
 #' @description  The dataset consists of 7 monthly U.S. Industrial
 #' Production indices, namely \emph{the total index}, \emph{nonindustrial supplies},
@@ -10,6 +10,7 @@
 #' @docType data
 #' @keywords data
 #' @usage data(IPindices)
+#' @source \url{https://fred.stlouisfed.org/release/tables?rid=13&eid=49670}
 #'
 #' @rdname US-Industrial-Production-indices
 #' @format A data frame with 924 rows and 8 variables:
@@ -69,7 +70,7 @@
 #' Abowd, J. M., Stephens, B. E., Vilhuber, L., Andersson, F., McKinney, K. L., Roemer,
 #' M., and Woodcock, S. (2009). The LEHD infrastructure files and the creation of the
 #' quarterly workforce indicators. In \emph{Producer dynamics: New evidence from micro data},
-#' pages 149--230. University of Chicago Press.\doi{10.7208/chicago/9780226172576.003.0006}.
+#' pages 149--230. University of Chicago Press. \doi{10.7208/chicago/9780226172576.003.0006}.
 #' 
 #' Hyatt, H. R. and McElroy, T. S. (2019). Labor reallocation, employment,
 #'  and earnings: Vector autoregression evidence. \emph{Labour}, \strong{33}, 463--487.
