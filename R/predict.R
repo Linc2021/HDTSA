@@ -45,12 +45,13 @@
 #' @importFrom vars VAR
 #' @importFrom forecast auto.arima
 #' @importFrom stats predict
+#' @method predict factors
 #' @export
 predict.factors <- function(object, newdata = NULL, n.ahead = 10,
                             control_ARIMA = list(), control_VAR = list(), ...) {
   params <- list(...)
   con1 <- list(ic = "aic")
-  con1[(namc <- names(control_ARIMA))] <- control_VAR
+  con1[(namc <- names(control_ARIMA))] <- control_ARIMA
   
   con2 <- list(type = "const", lag.max = 6, ic = "AIC")
   con2[(namc <- names(control_VAR))] <- control_VAR
@@ -111,12 +112,13 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
 #' 
 #' 
 #' @return \item{Y_pred}{A matrix of predicted values.}
+#' @method predict tspca
 #' @export
 predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
                           control_ARIMA = list(), control_VAR = list(), ...) {
   params <- list(...)
   con1 <- list(max.d = 0, max.q = 0, ic = "aic")
-  con1[(namc <- names(control_ARIMA))] <- control_VAR
+  con1[(namc <- names(control_ARIMA))] <- control_ARIMA
   
   con2 <- list(type = "const", lag.max = 6, ic = "AIC")
   con2[(namc <- names(control_VAR))] <- control_VAR
@@ -192,14 +194,13 @@ predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
 #' \eqn{p \times q} matrix representing the predicted values at
 #' each time step.}
 #' @seealso \code{\link{CP_MTS}}
-#' 
-#' 
 #' @export
+#' @method predict mtscp
 predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
                           control_ARIMA = list(), control_VAR = list(), ...) {
   params <- list(...)
   con1 <- list(ic = "aic")
-  con1[(namc <- names(control_ARIMA))] <- control_VAR
+  con1[(namc <- names(control_ARIMA))] <- control_ARIMA
   
   con2 <- list(type = "const", lag.max = 6, ic = "AIC")
   con2[(namc <- names(control_VAR))] <- control_VAR

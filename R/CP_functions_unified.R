@@ -372,7 +372,8 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       
       # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
       rank <- list(d = d, d1 = d1, d2 = d2)
-      con <- structure(list(A = A,B = B,f = f,Rank = rank, method = method),
+      con <- structure(list(A = as.matrix(A), B = as.matrix(B), 
+                            f = as.matrix(f), Rank = rank, method = method),
                        class = "mtscp")
       
       return(con)
@@ -423,7 +424,8 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       B <- Q %*% V
       # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
       rank <- list(d = d, d1 = d1, d2 = d2)
-      con <- structure(list(A = A,B = B,f = f,Rank = rank, method = method),
+      con <- structure(list(A = as.matrix(A), B = as.matrix(B),
+                            f = as.matrix(f), Rank = rank, method = method),
                        class = "mtscp")
       
       return(con)

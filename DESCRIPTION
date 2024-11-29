@@ -29,7 +29,7 @@ Description: An implementation for high-dimensional time series analysis methods
 License: GPL-3
 Depends: R (>= 3.5.0)
 Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, vars, forecast
-LinkingTo: RcppArmadillo, RcppEigen, Rcpp
+LinkingTo: RcppEigen, Rcpp
 Suggests: 
     knitr
 NeedsCompilation: yes
