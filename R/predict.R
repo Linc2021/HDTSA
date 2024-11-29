@@ -62,7 +62,7 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
     ts <- object$X
   }
   else {ts <- newdata %*% as.matrix(loading)}
-  ts_pred <- forecast(ts, con1, con2, n.ahead)$f.forecast %*% t(loading)
+  ts_pred <- Forecast(ts, con1, con2, n.ahead)$f.forecast %*% t(loading)
   ts_pred
 }
 
@@ -132,7 +132,7 @@ predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
   ts_pred <- matrix(0, n.ahead, p)
   for (ii in seq_len(ncol(group))) {
     ts_i <- newdata[ , group[, ii], drop = F]
-    ts_i_pred <- forecast(ts_i, con1, con2, n.ahead)$f.forecast
+    ts_i_pred <- Forecast(ts_i, con1, con2, n.ahead)$f.forecast
     ts_pred[1:n.ahead, group[, ii]] <- ts_i_pred
   }
   Y_pred <- ts_pred %*% t(solve(B))
@@ -220,7 +220,7 @@ predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
     # f_pred <- as.matrix(pre_f$pred)
     # colnames(f_pred) <- paste0("f_pre", seq_len(ncol(newdata)))
     # row.names(f_pred) <- paste(1:n.ahead, "step")
-    f_pred <- forecast(newdata, con1, con2, n_step = n.ahead)$f.forecast
+    f_pred <- Forecast(newdata, con1, con2, n_step = n.ahead)$f.forecast
     Y_pred <- F_pred <- list()
     for (ii in seq_len(n.ahead)) {
       F_pred[[ii]] <- f_pred[ii, ]
@@ -281,7 +281,7 @@ predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
 
 
 
-forecast <- function(f, con1, con2, n_step = 10){
+Forecast <- function(f, con1, con2, n_step = 10){
   p <- ncol(f)
   if (p > 1) {
     colnames(f) <- paste0("y", seq_len(p))
