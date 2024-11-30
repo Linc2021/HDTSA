@@ -63,6 +63,10 @@ predict.factors <- function(object, newdata = NULL, n.ahead = 10,
     ts <- object$X
   }
   else {ts <- newdata %*% as.matrix(loading)}
+  
+  if (!is.null(object$reg.coff.mat)){
+    stop("Not yet implemented for HDSreg.")
+  }
   ts_pred <- Forecast(ts, con1, con2, n.ahead)$f.forecast %*% t(loading)
   ts_pred
 }
