@@ -112,9 +112,6 @@ Coint <- function(Y, lag.k=5, type=c("acf", "urtest", "both"),
   storage.mode(mean_y) <- "double"
   for(k in 0:lag.k){
     Sigma_y <- sigmak(Y, mean_y, k, n)
-    # if(thresh){
-    #   Sigma_y <- thresh_C(Sigma_y, lambda, p, n)
-    # }
     W <- W + MatMult(Sigma_y, t(Sigma_y))
   }
   #step2 Eigendecoposition
@@ -148,8 +145,6 @@ Coint <- function(Y, lag.k=5, type=c("acf", "urtest", "both"),
     }
     r_hat1 = sum(b< m*c0)
     if (type == "acf"){
-      # METHOD <- c("Cointegration analysis for vector time series",
-      #             "Using acf method")
       names(r_hat1) <- "The estimated number of cointegration rank"
       names(lag.k) <-"Time lag"
       return(structure(list(A = G, coint_rank = r_hat1, lag.k = lag.k,
@@ -189,8 +184,6 @@ Coint <- function(Y, lag.k=5, type=c("acf", "urtest", "both"),
     }
     r_hat2 = p - l
     if (type == "urtest"){
-      # METHOD <- c("Cointegration analysis for vector time series",
-      #             "Using unit root test")
       names(r_hat2) <- "The estimated number of cointegration rank"
       names(lag.k) <- "Time lag"
       return(structure(list(A = G, coint_rank = r_hat2, lag.k = lag.k,
@@ -202,9 +195,6 @@ Coint <- function(Y, lag.k=5, type=c("acf", "urtest", "both"),
     result <- t(as.matrix(c(r_hat1, r_hat2)))
     rownames(result) <- "r_hat"
     colnames(result) <- c("acf", "urtest")
-    # "Identifying the cointegration rank of given time series"
-    # METHOD <- c("Cointegration analysis for vector time series",
-    #             "Using both two methods")
     names(lag.k) <-"Time lag"
     return(structure(list(A = G, coint_rank = result, lag.k = lag.k,
                           method = "both two methods"),

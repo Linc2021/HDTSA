@@ -216,11 +216,6 @@ predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
     newdata <- if (is.matrix(newdata)) {newdata}
     else if (is.vector(newdata) && length(dim(newdata)) == 1) {matrix(newdata, ncol = 1)}
     else {stop("newdata does not satisfy the matrix or vector condition")}
-    # ar_f <- ar(newdata)
-    # pre_f <- predict(ar_f, n.ahead = n.ahead)
-    # f_pred <- as.matrix(pre_f$pred)
-    # colnames(f_pred) <- paste0("f_pre", seq_len(ncol(newdata)))
-    # row.names(f_pred) <- paste(1:n.ahead, "step")
     f_pred <- Forecast(newdata, con1, con2, n_step = n.ahead)$f.forecast
     Y_pred <- F_pred <- list()
     for (ii in seq_len(n.ahead)) {
@@ -232,24 +227,6 @@ predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
   else {
     colnames(newdata) <- paste0("y", seq_len(ncol(newdata)))
     var_f <- do.call(vars::VAR, c(list(newdata), con2))
-    # var_f <- try(vars::VAR(newdata, type = "const", lag.max = 6, ic = "HQ"),
-    #              silent = TRUE)
-
-    # if (inherits(var_f, "try-error")) {
-    #   f_pred <- vector()
-    # 
-    #   for (jj in seq_len(Rank$d)){
-    #     fit_f <- do.call(forecast::auto.arima, c(list(newdata[, jj]), con1))
-    #     # fit_f <- forecast::auto.arima(newdata[, jj])
-    #     # fit_f <- ar(newdata[, jj])
-    #     pre_f <- predict(fit_f, n.ahead = n.ahead)
-    #     f_pred_i <- as.matrix(pre_f$pred)
-    #     f_pred <- cbind(f_pred, f_pred_i)
-    #   }
-    # 
-    #   colnames(f_pred) <- paste0("f_pre", seq_len(ncol(newdata)))
-    #   row.names(f_pred) <- paste(1:n.ahead, "step")
-    # }
 
     pre_f <- predict(var_f, n.ahead = n.ahead)
     f_pred <- vector()
@@ -258,19 +235,6 @@ predict.mtscp <- function(object, newdata = NULL, n.ahead = 10,
     }
     colnames(f_pred)  <- paste0("f_pre", seq_len(ncol(newdata)))
     row.names(f_pred) <- paste(1:n.ahead, "step")
-    # if (c(is.na(f_pred))[1]) {
-    #   f_pred <- vector()
-    # 
-    #   for (jj in seq_len(Rank$d)){
-    #     fit_f <- do.call(forecast::auto.arima, c(list(newdata[, jj]), con1))
-    #     pre_f <- predict(fit_f, n.ahead = n.ahead)
-    #     f_pred_i <- as.matrix(pre_f$pred)
-    #     f_pred <- cbind(f_pred, f_pred_i)
-    #   }
-    # 
-    #   colnames(f_pred) <- paste0("f_pre", seq_len(ncol(newdata)))
-    #   row.names(f_pred) <- paste(1:n.ahead, "step")
-    #   }
     Y_pred <- F_pred <- list()
     for (ii in seq_len(n.ahead)) {
       F_pred[[ii]] <- f_pred[ii, ]

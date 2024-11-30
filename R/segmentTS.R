@@ -14,8 +14,6 @@ segmentTS <- function(Y, lag.k,
 {
   n=nrow(Y)
   p=ncol(Y)
-  # storage.mode(p)<-"integer"
-  # storage.mode(n)<-"integer"
   
   # Part I -- standardize Y  such that var(y_t)=I_p
   if(opt == 1)
@@ -72,8 +70,6 @@ segmentTS <- function(Y, lag.k,
 
   
   mean_y<-as.matrix(rowMeans(Y))
-  # storage.mode(Y)<-"double"
-  # storage.mode(mean_y)<-"double"
   
   Wy=diag(rep(1,p))
   

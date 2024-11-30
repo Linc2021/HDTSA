@@ -179,15 +179,6 @@ PCA_TS <- function(Y, lag.k = 5, opt = 1, permutation = c("max", "fdr"), thresh 
                        control = control)
   Z <- seglist$Z
   B <- seglist$B
-  # METHOD <- "Principal component analysis for time series"
-  
-  # old code
-  # if(just4pre==TRUE){
-  #   METHOD = c(METHOD, "Only segment procedure")
-  #   Yt=structure(list(B=B, Z=Z, method = METHOD),
-  #                class = "tspca")
-  #   return(Yt)
-  # }
   
   #---------------permutation of MAX----------------------
   if (permutation == "max") {

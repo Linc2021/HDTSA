@@ -98,7 +98,6 @@ MartG_test <- function (Y, lag.k = 2, B = 1000, type = c("Linear", "Quad"),
       Yj <- cbind(Y, Y^2)
       d <- ncol(Yj)
       }
-    storage.mode(d) <- "integer"
   }
   else if (is.name(type)){
     varnames_expr <- all.vars(type)
@@ -161,8 +160,6 @@ MartG_test <- function (Y, lag.k = 2, B = 1000, type = c("Linear", "Quad"),
   
   n <- nrow(Y)
   p <- ncol(Y)
-  storage.mode(p) <- "integer"
-  storage.mode(n) <- "integer"
   
   # ---------- step 1: Transformation function ----------
   
@@ -179,7 +176,6 @@ MartG_test <- function (Y, lag.k = 2, B = 1000, type = c("Linear", "Quad"),
 	names(Tn) <- "Statistic"
 	names(lag.k) <-"Time lag"
 	names(kernel.type) <- "Symmetric kernel"
-	# METHOD <- "Testing for martingale difference hypothesis in high dimension"
 	structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
 	               type = type, kernel = kernel.type),
 	          class = "hdtstest")

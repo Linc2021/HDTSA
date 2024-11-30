@@ -110,7 +110,7 @@ WN_test = function(Y, lag.k = 2, B = 1000, kernel.type = c("QS", "Par", "Bart"),
   names(Tn) <- "Statistic"
   names(lag.k) <-"Time lag"
   names(kernel.type) <- "Symmetric kernel"
-  # METHOD <- "Testing for white noise hypothesis in high dimension"
+
   structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
                  kernel = kernel.type),
             class = "hdtstest")

@@ -193,7 +193,7 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       Geg <- geigen::geigen(K2, K1);
       evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values != 0)]
       
-      Bl <- Geg$vectors[, which(Geg$values %in% evalues)]
+      Bl <- Geg$vectors[, which(Geg$values %in% evalues), drop = FALSE]
       A <- apply(S_yxi_1 %*% Bl, 2, l2s)
       Al <- t(MASS::ginv(A))
       B <- apply(t(S_yxi_1) %*% Al, 2, l2s)
@@ -221,7 +221,7 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       ##(2) estimation of A and B
       Geg <- geigen::geigen(K2, K1);
       evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values!=0)]
-      Al <- Geg$vectors[, which(Geg$values %in% evalues)]
+      Al <- Geg$vectors[, which(Geg$values %in% evalues), drop = FALSE]
       B <- apply(t(S_yxi_1) %*% Al, 2, l2s)
       Bl <- t(MASS::ginv(B))
       A <- apply(S_yxi_1 %*% Bl, 2, l2s)
@@ -267,8 +267,8 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       }
       else{stop("List Rank without d, use Rank=list(d=?)")}
     }
-    P <- ev_M1$vectors[, 1:d]
-    Q <- ev_M2$vectors[, 1:d]
+    P <- ev_M1$vectors[, 1:d, drop = FALSE]
+    Q <- ev_M2$vectors[, 1:d, drop = FALSE]
     
     if(d == 1){
       A <- as.matrix(P)
@@ -686,8 +686,8 @@ est.d1d2.PQ = function(Y,xi,K = 10, thresh = FALSE, delta = NULL){
     d1_list[kk] =  which.max(ev_M1$values[1:dmax]/ev_M1$values[2:(dmax+1)])
     d2_list[kk] =  which.max(ev_M2$values[1:dmax]/ev_M2$values[2:(dmax+1)])
     
-    P_list[[kk]] = ev_M1$vectors[,1:(d1_list[kk])]
-    Q_list[[kk]] = ev_M2$vectors[,1:(d2_list[kk])]
+    P_list[[kk]] = ev_M1$vectors[,1:(d1_list[kk]), drop = FALSE]
+    Q_list[[kk]] = ev_M2$vectors[,1:(d2_list[kk]), drop = FALSE]
     
   }
   
@@ -726,8 +726,8 @@ est.PQ = function(Y,xi,d1,d2,K = 20, thresh = FALSE, delta = NULL){
     ev_M1 = eigen(M1)
     ev_M2 = eigen(M2)
     
-    P_list[[kk]] = ev_M1$vectors[,1:(d1)]
-    Q_list[[kk]] = ev_M2$vectors[,1:(d2)]
+    P_list[[kk]] = ev_M1$vectors[ ,1:(d1), drop = FALSE]
+    Q_list[[kk]] = ev_M2$vectors[ ,1:(d2), drop = FALSE]
     
   }
   
@@ -779,7 +779,7 @@ est.d.Wf = function(Y,P,Q, Ktilde = 10, thresh = FALSE, delta = NULL){
     
     d_list[kk] =  max(which.max(evalues[1:(dmax-1)]/evalues[2:(dmax)]),dstar)
     
-    W_list[[kk]] = ev_M$vectors[,1:(d_list[kk])]
+    W_list[[kk]] = ev_M$vectors[,1:(d_list[kk]), drop = FALSE]
     
     f_list[[kk]] = Z_tilde%*%(W_list[[kk]])
   }
@@ -821,7 +821,7 @@ est.d.Wf.nPQ = function(Z, Ktilde = 10){
     
     d_list[kk] =  max(which.max(evalues[1:(dmax-1)]/evalues[2:(dmax)]),dstar)
     
-    W_list[[kk]] = ev_M$vectors[,1:d_hat]
+    W_list[[kk]] = ev_M$vectors[,1:d_hat, drop = FALSE]
     
     f_list[[kk]] = Z_tilde%*%(W_list[[kk]])
   }
@@ -873,7 +873,7 @@ est.Wf = function(Y,P,Q,d,Ktilde = 10, thresh = FALSE, delta = NULL){
     
     ev_M = eigen(M)
     
-    W_list[[kk]] = ev_M$vectors[,1:d]
+    W_list[[kk]] = ev_M$vectors[,1:d, drop = FALSE]
     f_list[[kk]] = Z_tilde%*%(W_list[[kk]])
   }
   
