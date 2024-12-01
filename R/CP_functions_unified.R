@@ -647,7 +647,14 @@ est.xi  = function(Y, thresh_per = 0.99, d_max = 20){
     cfr =  cumsum(eig_xi.mat$values)/sum(eig_xi.mat$values)
     d_hat = min(which(cfr > thresh_per))
     d_fin = min(d_max,d_hat)
-    w_hat = eig_xi.mat$vectors[,1:d_fin]
+    w_hat = eig_xi.mat$vectors[,1:d_fin, drop=FALSE]
+    if(d_fin == 1){
+      sign_value = adjust_sign(w_hat[, 1])
+      w_hat = w_hat * sign_value
+    }else{
+      column_signs = apply(w_hat, 2, adjust_sign)
+      w_hat = w_hat %*% diag(column_signs)
+    }
     xi.f = xi.mat%*%w_hat
     xi   = rowMeans(xi.f)
     w_hat = rowMeans(w_hat)
@@ -656,7 +663,14 @@ est.xi  = function(Y, thresh_per = 0.99, d_max = 20){
     cfr = cumsum(eig_xi.mat$values)/sum(eig_xi.mat$values)
     d_hat = min(which(cfr > thresh_per))
     d_fin = min(d_max,d_hat)
-    xi.f1 = as.matrix(eig_xi.mat$vectors[,1:d_fin])
+    xi.f1 = as.matrix(eig_xi.mat$vectors[,1:d_fin, drop=FALSE])
+    if(d_fin == 1){
+      sign_value = adjust_sign(xi.f1[, 1])
+      xi.f1 = xi.f1 * sign_value
+    }else{
+      column_signs = apply(xi.f1, 2, adjust_sign)
+      xi.f1 = xi.f1 %*% diag(column_signs)
+    }
     weight = sqrt(eig_xi.mat$values[1:d_fin])
     xi.f1 = xi.f1%*%diag(weight)
     xi = rowMeans(xi.f1)
@@ -1073,4 +1087,13 @@ Sigma_Ycheck <- function(Y, k){
     sigmaYk <- sigmaYk + kron_prod
   }
   return(sigmaYk/(n-k))
+}
+
+adjust_sign <- function(column) {
+  first_nonzero_idx <- which(column != 0)[1]
+  if (!is.na(first_nonzero_idx)) {
+    return(sign(column[first_nonzero_idx]))
+    } else {
+      return(1)
+    }
 }
