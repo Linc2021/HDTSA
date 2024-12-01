@@ -42,9 +42,8 @@ the function \code{\link{PCA_TS}} with the arguments passed by \code{control.PCA
 
 \item{control.PCA}{A list of control arguments passed to the function
 \code{PCA_TS()}, including \code{lag.k}, \code{opt}, \code{thresh},
-\code{delta} and the associated arguments passed to the \code{clime} function
-involved in \code{PCA_TS()} when \code{control.PCA = list(opt = 2)}. See 'Details’
-in \code{\link{PCA_TS}}.}
+\code{delta}, and the associated arguments passed to the \code{clime} function
+(when \code{opt = 2}). See 'Details’ in \code{\link{PCA_TS}}.}
 }
 \value{
 An object of class \code{"hdtstest"}, which contains the following

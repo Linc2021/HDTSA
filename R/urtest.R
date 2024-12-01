@@ -14,7 +14,7 @@
 #' output the test results corresponding to each of the \eqn{s} values in \code{lagk.vec}.
 #' The default is \code{c(0, 1, 2, 3, 4)}.
 #' @param con_vec The constant \eqn{c_\kappa} specified in (5) of
-#' Chang, Cheng and Yao (2022). The default is 0.05. Alternatively, it can be an
+#' Chang, Cheng and Yao (2022). The default is 0.55. Alternatively, it can be an
 #' \eqn{m \times 1} vector specified by users, representing \eqn{m} candidate values
 #' of \eqn{c_\kappa}.
 #' @param alpha The significance level of the test. The default is 0.05.
