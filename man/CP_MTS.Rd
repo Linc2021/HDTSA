@@ -40,9 +40,9 @@ matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method
  or \code{method = "CP.Unified"}:
  \deqn{\hat{\mathbf{M}}_1\ =\
   \sum_{k=1}^{K} \hat{\bf \Sigma}_{k} \hat{\bf \Sigma}_{k}'\ \ {\rm and}
-  \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k},
+  \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k}\,,
   }
-  where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the autocovariance of
+  where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the cross-covariance between
   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}. See 'Details'. The default is 20.}
 
 \item{lag.ktilde}{The time lag \eqn{\tilde K} involved in the unified

@@ -2,20 +2,21 @@
 #' @title Identifying the cointegration rank of nonstationary vector time series
 #'
 #' @description \code{Coint()} deals with cointegration analysis for high-dimensional
-#' vector time series proposed in Zhang, Robinson and Yao (2019): \deqn{{\bf y}_t = {\bf Ax}_t\,,}
+#' vector time series proposed in Zhang, Robinson and Yao (2019). Consider the model:
+#' \deqn{{\bf y}_t = {\bf Ax}_t\,,}
 #' where \eqn{{\bf A}} is a \eqn{p \times p} unknown and invertible constant matrix,
 #'  \eqn{{\bf x}_t = ({\bf x}'_{t,1}, {\bf x}'_{t,2})'} is a latent
 #'  \eqn{p \times 1} process, \eqn{{\bf x}_{t,2}} is an \eqn{r \times 1} \eqn{I(0)} process,
-#'  and \eqn{{\bf x}_{t,1}} is a process with nonstationary components.
-#'  This function aims to estimate the cointegration rank \eqn{r} and the invertible
-#'  constant matrix \eqn{{\bf A}}.
+#'  \eqn{{\bf x}_{t,1}} is a process with nonstationary components, and no linear
+#'  combination of \eqn{{\bf x}_{t,1}} is \eqn{I(0)}. This function aims to estimate the
+#'  cointegration rank \eqn{r} and the invertible constant matrix \eqn{{\bf A}}.
 #' 
 #' @details
 #' Write \eqn{\hat{\bf x}_t=\hat{\bf A}'{\bf y}_t\equiv (\hat{x}_t^1,\ldots,\hat{x}_t^p)'}.
 #' When \code{type = "acf"}, \code{Coint()} estimates \eqn{r} by
 #'  \deqn{\hat{r}=\sum_{i=1}^{p}1\bigg\{\frac{S_i(m)}{m}<c_0 \bigg\}} for some
 #'  constant \eqn{c_0\in (0,1)} and some large constant \eqn{m}, where
-#' \eqn{S_i(m)} is the sum of the sample autocorrelation functions of
+#' \eqn{S_i(m)} is the sum of the sample autocorrelations of
 #' \eqn{\hat{x}^{i}_{t}} over lags 1 to \eqn{m},
 #' which is specified in Section 2.3 of Zhang, Robinson and Yao (2019).
 #' 
@@ -40,7 +41,7 @@
 #'   observations of the \eqn{p \times 1} time series \eqn{\{{\bf y}_t\}_{t=1}^n}.
 #' @param lag.k The time lag \eqn{K} used to calculate the nonnegative definte
 #'   matrix \eqn{\hat{{\bf W}}_y}: \deqn{\hat{\mathbf{W}}_y\ =\
-#'   \sum_{k=0}^{K}\hat{\mathbf{\Sigma}}_y(k)\hat{\mathbf{\Sigma}}_y(k)'}
+#'   \sum_{k=0}^{K}\hat{\mathbf{\Sigma}}_y(k)\hat{\mathbf{\Sigma}}_y(k)'\,,}
 #'    where \eqn{\hat{\bf \Sigma}_y(k)} is the sample autocovariance of
 #'   \eqn{ {\bf y}_t} at lag \eqn{k}. The default is 5.
 #' @param type The method used to identify the cointegration rank. Available

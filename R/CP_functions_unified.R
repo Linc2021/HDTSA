@@ -64,9 +64,9 @@
 #'  or \code{method = "CP.Unified"}:
 #'  \deqn{\hat{\mathbf{M}}_1\ =\
 #'   \sum_{k=1}^{K} \hat{\bf \Sigma}_{k} \hat{\bf \Sigma}_{k}'\ \ {\rm and}
-#'   \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k},
+#'   \ \ \hat{\mathbf{M}}_2\ =\ \sum_{k=1}^{K} \hat{\bf \Sigma}_{k}' \hat{\bf \Sigma}_{k}\,,
 #'   }
-#'   where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the autocovariance of
+#'   where \eqn{\hat{\bf \Sigma}_{k}} is an estimate of the cross-covariance between
 #'   \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}. See 'Details'. The default is 20.
 #' @param lag.ktilde The time lag \eqn{\tilde K} involved in the unified
 #' estimation method [See (16) in Chang et al. (2024)], which is used
@@ -167,8 +167,8 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
   }
   method <- match.arg(method)
   if(method == "CP.Direct"){
-    S_yxi_1 <- Autocov_xi_Y(Y, xi, lag.k = 1, thresh = thresh1, delta = delta1)
-    S_yxi_2 <- Autocov_xi_Y(Y, xi, lag.k = 2, thresh = thresh1, delta = delta1)
+    S_yxi_1 <- Autocov_xi_Y(Y, xi, k = 1, thresh = thresh1, delta = delta1)
+    S_yxi_2 <- Autocov_xi_Y(Y, xi, k = 2, thresh = thresh1, delta = delta1)
     if(p > q){
       ##(1) estimation of d
       K1 <- t(S_yxi_1) %*% S_yxi_1
@@ -249,7 +249,7 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
     dmax <- round(min(p, q) * 0.75)
     
     for (kk in 1:lag.k){
-      S_yxi_k <- Autocov_xi_Y(Y, xi, lag.k = kk, thresh = thresh1, delta = delta1)
+      S_yxi_k <- Autocov_xi_Y(Y, xi, k = kk, thresh = thresh1, delta = delta1)
       M1 <- M1 + S_yxi_k %*% t(S_yxi_k)
       M2 <- M2 + t(S_yxi_k) %*% S_yxi_k
     }
@@ -298,8 +298,8 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
         S_Zxi_2 <- t(P) %*% t(Xi) %*% sigma_ycheck_2 %*% Q
       }
       else{
-        S_Zxi_1 <- Autocov_xi_Y(Z, xi$xi, lag.k = 1)
-        S_Zxi_2 <- Autocov_xi_Y(Z, xi$xi, lag.k = 2)
+        S_Zxi_1 <- Autocov_xi_Y(Z, xi$xi, k = 1)
+        S_Zxi_2 <- Autocov_xi_Y(Z, xi$xi, k = 2)
       }
       
       vl <- eigen(MASS::ginv(t(S_Zxi_1) %*% S_Zxi_1) %*% t(S_Zxi_1) %*% S_Zxi_2)$vectors ##MASS
@@ -609,12 +609,12 @@ DGP.CP = function(n,p,q,d,d1,d2){
 }
 
 
-Autocov_xi_Y = function(Y,xi,lag.k = k, thresh = FALSE, delta = NULL){
+Autocov_xi_Y = function(Y, xi, k, thresh = FALSE, delta = NULL){
   
   n <- dim(Y)[1]
   p <- dim(Y)[2]
   q <- dim(Y)[3]
-  k <- lag.k
+  # k <- lag.k
   
   Y_mean <- 0
   xi_mean <- 0
@@ -675,7 +675,7 @@ est.d1d2.PQ = function(Y,xi,K = 10, thresh = FALSE, delta = NULL){
   P_list = Q_list = list()
   for (kk in 1:K){
     
-    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk, thresh = thresh, delta = delta)
+    S_yxi_k = Autocov_xi_Y(Y,xi, k = kk, thresh = thresh, delta = delta)
     
     M1 = M1 + S_yxi_k%*%t(S_yxi_k)
     M2 = M2 + t(S_yxi_k)%*%S_yxi_k
@@ -718,7 +718,7 @@ est.PQ = function(Y,xi,d1,d2,K = 20, thresh = FALSE, delta = NULL){
   P_list = Q_list = list()
   for (kk in 1:K){
     
-    S_yxi_k = Autocov_xi_Y(Y,xi,lag.k = kk, thresh = thresh, delta = delta)
+    S_yxi_k = Autocov_xi_Y(Y,xi, k = kk, thresh = thresh, delta = delta)
     
     M1 = M1 + S_yxi_k%*%t(S_yxi_k)
     M2 = M2 + t(S_yxi_k)%*%S_yxi_k
