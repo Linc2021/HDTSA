@@ -12,8 +12,8 @@ of the observations.}
 
 \item{lagk.vec}{The time lag \eqn{K_0} used to calculate the test statistic
 [See Section 2.1 of Chang, Cheng and Yao (2022)]. It can be a vector specifying
-multiple time lags. If provided as a \eqn{d \times 1} vector, the function will
-output the test results corresponding to each of the \eqn{d} values in \code{lagk.vec}.
+multiple time lags. If provided as a \eqn{s \times 1} vector, the function will
+output the test results corresponding to each of the \eqn{s} values in \code{lagk.vec}.
 The default is \code{c(0, 1, 2, 3, 4)}.}
 
 \item{con_vec}{The constant \eqn{c_\kappa} specified in (5) of
@@ -27,10 +27,10 @@ of \eqn{c_\kappa}.}
 An object of class \code{"urtest"}, which contains the following
   components:
 
-  \item{statistic}{A \eqn{d \times 1} vector with each element representing
-  the test statistic value associated with each of the \eqn{d} time lags specified
+  \item{statistic}{A \eqn{s \times 1} vector with each element representing
+  the test statistic value associated with each of the \eqn{s} time lags specified
   in \code{lagk.vec}.}
-  \item{reject}{An \eqn{m \times d} data matrix \eqn{{\bf R}=(R_{i,j})} where
+  \item{reject}{An \eqn{m \times s} data matrix \eqn{{\bf R}=(R_{i,j})} where
   \eqn{R_{i,j}} represents whether the null hypothesis \eqn{H_0} should be rejected
   for \eqn{c_\kappa} specified by the \eqn{i}-th component of \code{con_vec},
   and \eqn{K_0} specified by the \eqn{j}-th component of \code{lagk.vec}.
@@ -42,7 +42,7 @@ An object of class \code{"urtest"}, which contains the following
 This function implements the test proposed in Chang, Cheng and Yao (2022)
 for the following hypothesis testing problem:
 \deqn{H_0:Y_t \sim I(0)\ \ \mathrm{versus}\ \ H_1:Y_t \sim
-I(d)\ \mathrm{for\ some\ integer\ }d \geq 2\,,} where \eqn{Y_t} is
+I(d)\ \mathrm{for\ some\ integer\ }d \geq 1\,,} where \eqn{Y_t} is
 a univariate time series.
 }
 \examples{

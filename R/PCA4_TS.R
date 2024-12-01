@@ -19,20 +19,20 @@
 #'   For large \eqn{p}, since the sample covariance matrix may not be consistent,
 #'   we recommend to use the method proposed
 #'   in Cai, Liu and Luo (2011) to estimate the precision matrix 
-#'   \eqn{\hat{{\bf V}}^{-1}} directly (\code{opt = 2}).
+#'   \eqn{\hat{{\bf V}}^{-1}} (\code{opt = 2}).
 #'   
 #'   \code{control} is a list of arguments passed to the function \code{clime()},
 #'   which contains the following components:
 #'   \itemize{
 #'    \item \code{nlambda}: Number of values for program generated lambda. The default is 100.
-#'    \item \code{lambda.max}: Maximum value of program generated lambda. The default 0.8.
+#'    \item \code{lambda.max}: Maximum value of program generated lambda. The default is 0.8.
 #'    \item \code{lambda.min}: Minimum value of program generated lambda. 
 #'    The default is \eqn{10^{-4}} (\eqn{n>p}) or \eqn{10^{-2}} (\eqn{n<p}).
 #'    \item \code{standardize}: Logical. If \code{standardize = TRUE}, the
 #'    variables will be standardized to have mean zero and unit standard
 #'    deviation. The default is \code{FALSE}.
 #'    \item \code{linsolver}: An option used to choose which method should be employed.
-#'    Available options include \code{"primaldual"} (default) and \code{"simplex"}.
+#'    Available options include \code{"primaldual"} (the default) and \code{"simplex"}.
 #'    Rule of thumb: \code{"primaldual"} for large \eqn{p}, \code{"simplex"} for small \eqn{p}.
 #'   }
 #'
@@ -96,20 +96,21 @@
 #'   
 #'
 #'
-#' @references Chang, J., Guo, B., & Yao, Q. (2018). Principal component
-#'   analysis for second-order stationary vector time series. \emph{The Annals of
-#'   Statistics}, \strong{46}, 2094--2124. \doi{doi:10.1214/17-AOS1613}.
-#'
+#' @references 
 #'   Cai, T., Liu, W., & Luo, X. (2011). A constrained L1 minimization
 #'   approach for sparse precision matrix estimation. \emph{Journal of the American
 #'   Statistical Association}, \strong{106}, 594--607. \doi{doi:10.1198/jasa.2011.tm10155}.
+#'   
+#'   Chang, J., Guo, B., & Yao, Q. (2018). Principal component
+#'   analysis for second-order stationary vector time series. \emph{The Annals of
+#'   Statistics}, \strong{46}, 2094--2124. \doi{doi:10.1214/17-AOS1613}.
 #' @importFrom stats acf ar pnorm var
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @export
 #' @examples
-#' # Example 1 (Example 1 in the supplementary material of Chang Guo and Yao (2018)).
+#' # Example 1 (Example 1 in the supplementary material of Chang, Guo and Yao (2018)).
 #' # p=6, x_t consists of 3 independent subseries with 3, 2 and 1 components.
 #' 
 #' ## Generate x_t
@@ -134,7 +135,7 @@
 #' Z <- res$X
 #' 
 #'
-#' # Example 2 (Example 2 in the supplementary material of Chang Guo and Yao (2018)).
+#' # Example 2 (Example 2 in the supplementary material of Chang, Guo and Yao (2018)).
 #' # p=20, x_t consists of 5 independent subseries with 6, 5, 4, 3 and 2 components.
 #' 
 #' ## Generate x_t

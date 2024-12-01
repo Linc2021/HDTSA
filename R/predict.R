@@ -160,8 +160,8 @@ predict.tspca <- function(object, newdata = NULL, n.ahead = 10,
 #' AIC by default. Otherwise, they can also be specified by users through the
 #' arguments \code{control_VAR} and \code{control_ARIMA}, respectively.
 #' 
-#' \emph{Step 2}. The forecasted value for \eqn{{\bf y}_t} is obtained by
-#'  \eqn{\hat{\bf y}_{n+h}= \hat{\bf A} \hat{\bf X}_{n+h} \hat{\bf B}'} with
+#' \emph{Step 2}. The forecasted value for \eqn{{\bf Y}_t} is obtained by
+#'  \eqn{\hat{\bf Y}_{n+h}= \hat{\bf A} \hat{\bf X}_{n+h} \hat{\bf B}'} with
 #'  \eqn{ \hat{\bf X}_{n+h} = {\rm diag}(\hat{\bf x}_{n+h})}.
 #'
 #' @param object An object of class \code{"mtscp"} constructed by \code{\link{CP_MTS}}.

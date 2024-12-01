@@ -13,8 +13,8 @@
 #' @param B The number of bootstrap replications for generating multivariate
 #' normally distributed random vectors when calculating the critical value.
 #' The default is 1000.
-#' @param pre Logical. If \code{TRUE} (the default), The time series PCA
-#' specified in Chang Guo and Yao (2018) should be performed on
+#' @param pre Logical. If \code{TRUE} (the default), the time series PCA
+#' proposed in Chang, Guo and Yao (2018) should be performed on
 #' \eqn{\{{\bf y}_t\}_{t=1}^n} before implementing the white noise test [See Remark 1
 #' of Chang, Yao and Zhou (2017)]. The time series PCA is implemented by using
 #' the function \code{\link{PCA_TS}} with the arguments passed by \code{control.PCA}.

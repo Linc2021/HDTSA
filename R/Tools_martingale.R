@@ -41,10 +41,10 @@
 #' @param alpha The significance level of the test. The default is 0.05.
 #' @param kernel.type The option for choosing the symmetric kernel 
 #'                    used in the estimation of long-run covariance matrix. 
-#'                    Available choices include: \code{"QS"} (the default)  for the
+#'                    Available options include: \code{"QS"} (the default)  for the
 #'                    Quadratic spectral kernel, \code{"Par"} for the Parzen kernel,
-#'                    and \code{"Bart"}  for the Bartlett kernel [See Andrews (1991) for more 
-#'                    information].
+#'                    and \code{"Bart"}  for the Bartlett kernel.
+#'                    See Chang, Jiang and Shao (2023) for more information.
 
 #' @return An object of class \code{"hdtstest"}, which contains the following
 #'   components:

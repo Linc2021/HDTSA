@@ -24,7 +24,7 @@ distributed random vectors when calculating the critical value. The default is 2
 \eqn{f_{i,j}(\omega)} [See (2) in Chang et al. (2022)]. The default is 0.8.}
 }
 \value{
-An object of class \code{"hdtstest"} which contains the following
+An object of class \code{"hdtstest"}, which contains the following
   components:
 
   \item{Stat}{The test statistic of the test.}
@@ -68,7 +68,7 @@ CriVal <- res$cri95
 \references{
 Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
 Statistical inference for high-dimensional spectral density matrix.
-\emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
+\emph{arXiv preprint}. \doi{doi:10.48550/arXiv.2212.13686}.
 }
 \seealso{
 \code{\link{SpecMulTest}}

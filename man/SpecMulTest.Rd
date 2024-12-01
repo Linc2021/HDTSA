@@ -20,7 +20,7 @@ SpecMulTest(Q, PVal, alpha = 0.05, seq_len = 0.01)
 An object of class \code{"hdtstest"}, which contains the following
   component:
   \item{MultiTest}{A logical vector of length \eqn{Q}. If its \eqn{q}-th element is \code{TRUE}, 
-  it indicates that \eqn{H_{0,q}} should be rejected; Otherwise,
+  it indicates that \eqn{H_{0,q}} should be rejected. Otherwise,
   \eqn{H_{0,q}} should not be rejected.}
 }
 \description{
@@ -28,10 +28,10 @@ An object of class \code{"hdtstest"}, which contains the following
  Chang et al. (2022) for the following \eqn{Q} hypothesis testing problems: 
 \deqn{H_{0,q}:f_{i,j}(\omega)=0\mathrm{\ for\ any\ }(i,j)\in\mathcal{I}^{(q)}\mathrm{\ and\ }
 \omega\in\mathcal{J}^{(q)}\mathrm{\ \ versus\ \ }
-H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true.} }
+H_{1,q}:H_{0,q}\mathrm{\ is\ not\ true} }
 for \eqn{q=1,\dots,Q}. 
 Here, \eqn{f_{i,j}(\omega)} represents the cross-spectral density between 
-\eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega}, where \eqn{x_{t,i}} is 
+\eqn{ x_{t,i}} and \eqn{ x_{t,j}} at frequency \eqn{\omega} with \eqn{x_{t,i}} being 
 the \eqn{i}-th component of the \eqn{p \times 1} times series \eqn{{\bf x}_t},
 and \eqn{\mathcal{I}^{(q)}} and \eqn{\mathcal{J}^{(q)}} refer to
 the set of index pairs and the set of frequencies associated with the
@@ -74,7 +74,7 @@ res
 \references{
 Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
 Statistical inference for high-dimensional spectral density matrix.
-\emph{arXiv preprint}, \doi{doi:10.48550/arXiv.2212.13686}.
+\emph{arXiv preprint}. \doi{doi:10.48550/arXiv.2212.13686}.
 }
 \seealso{
 \code{\link{SpecTest}}

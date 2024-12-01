@@ -30,7 +30,7 @@
 #' @param D A \eqn{p\times m} regression coefficient matrix \eqn{\tilde{\bf
 #'   D}}. If \code{D = NULL} (the default), our procedure will estimate
 #'   \eqn{{\bf D}} first and let \eqn{\tilde{\bf D}} be the estimate of
-#'   \eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then
+#'   \eqn{{\bf D}}. If \code{D} is given by the users, then
 #'   \eqn{\tilde{\bf D}={\bf D}}.
 #' @param lag.k The time lag \eqn{K} used to calculate the nonnegative definte
 #'   matrix \eqn{ \hat{\mathbf{M}}_{\eta}}: \deqn{\hat{\mathbf{M}}_{\eta}\ =\
@@ -50,7 +50,7 @@
 #'  
 
 #' @seealso \code{\link{Factors}}.
-#' @return An object of class "factors", which contains the following
+#' @return An object of class \code{"factors"}, which contains the following
 #'   components:
 #'
 #'   \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
@@ -69,7 +69,7 @@
 #' \emph{Journal of Econometrics}, \strong{189}, 297--312.
 #' \doi{doi:10.1016/j.jeconom.2015.03.024}.
 #' @examples
-#' # Example 1 (Example 1 in Chang Guo and Yao (2015)).
+#' # Example 1 (Example 1 in Chang, Guo and Yao (2015)).
 #' ## Generate xt
 #' n <- 400
 #' p <- 200
@@ -97,7 +97,9 @@
 #' Y <- t(Y)
 #' Z <- t(Z)
 #' 
+#' ## D is known
 #' res1 <- HDSReg(Y, Z, D, lag.k = 2)
+#' ## D is unknown
 #' res2 <- HDSReg(Y, Z, lag.k = 2)
 #' @useDynLib HDTSA
 #' @importFrom Rcpp sourceCpp

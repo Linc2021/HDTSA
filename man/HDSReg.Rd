@@ -25,7 +25,7 @@ consisting of the observed regressors.}
 \item{D}{A \eqn{p\times m} regression coefficient matrix \eqn{\tilde{\bf
 D}}. If \code{D = NULL} (the default), our procedure will estimate
 \eqn{{\bf D}} first and let \eqn{\tilde{\bf D}} be the estimate of
-\eqn{{\bf D}}. If \code{D} is given by \proglang{R} users, then
+\eqn{{\bf D}}. If \code{D} is given by the users, then
 \eqn{\tilde{\bf D}={\bf D}}.}
 
 \item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definte
@@ -48,7 +48,7 @@ See 'Details'.}
 \item{twostep}{Logical. The same as the argument \code{twostep} in \code{\link{Factors}}.}
 }
 \value{
-An object of class "factors", which contains the following
+An object of class \code{"factors"}, which contains the following
   components:
 
   \item{factor_num}{The estimated number of factors \eqn{\hat{r}}.}
@@ -84,7 +84,7 @@ representing the indicator function. We recommend to choose
   \eqn{\delta=0} when \eqn{p} is fixed and \eqn{\delta>0} when \eqn{p \gg n}.
 }
 \examples{
-# Example 1 (Example 1 in Chang Guo and Yao (2015)).
+# Example 1 (Example 1 in Chang, Guo and Yao (2015)).
 ## Generate xt
 n <- 400
 p <- 200
@@ -112,7 +112,9 @@ Y <- D \%*\% Z + A \%*\% X + eps
 Y <- t(Y)
 Z <- t(Z)
 
+## D is known
 res1 <- HDSReg(Y, Z, D, lag.k = 2)
+## D is unknown
 res2 <- HDSReg(Y, Z, lag.k = 2)
 }
 \references{
