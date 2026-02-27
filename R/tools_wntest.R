@@ -11,7 +11,9 @@
 #' @param lag.k The time lag \eqn{K} used to calculate the test
 #'   statistic [See (4) of Chang, Yao and Zhou (2017)]. The default is 2.
 #' @param B The number of bootstrap replications for generating multivariate
-#' normally distributed random vectors when calculating the critical value.
+#' normally distributed random vectors when calculating the critical value. if
+#' \code{method == "L_2"}, the B represents the number of bootstrap replications
+#' for calculating statistics.
 #' The default is 1000.
 #' @param pre Logical. If \code{TRUE} (the default), the time series PCA
 #' proposed in Chang, Guo and Yao (2018) should be performed on
@@ -19,6 +21,11 @@
 #' of Chang, Yao and Zhou (2017)]. The time series PCA is implemented by using
 #' the function \code{\link{PCA_TS}} with the arguments passed by \code{control.PCA}.
 #' @param alpha The significance level of the test. The default is 0.05.
+#' @param method The option for method used in the white test. Available options
+#' include: \code{"L_inf"} (the default) for the method proposed by Chang, Yao and
+#' Zhou (2017), and \code{"L_2"} for the method proposed by Chang et al.(2026+).
+#' @param resampling Logical. If \code{TRUE}, the resampling method proposed in
+#' Chang, Li and Lin () for calculating the critical value is performed.
 #' @param kernel.type The option for choosing the symmetric kernel used
 #'   in the estimation of long-run covariance matrix. Available options include:
 #'   \code{"QS"} (the default) for the Quadratic spectral kernel, \code{"Par"}
@@ -50,6 +57,7 @@
 #'   Chang, J., Yao, Q., & Zhou, W. (2017). Testing for
 #'   high-dimensional white noise using maximum cross-correlations. \emph{Biometrika},
 #'   \strong{104}, 111--127. \doi{doi:10.1093/biomet/asw066}.
+#'   
 #'
 #' @examples
 #' #Example 1
@@ -66,51 +74,96 @@
 #' @importFrom Rcpp evalCpp
 #' @export
 #' 
-# todo method = c("CYZ","CLL")
+# todo method = c("L_inf","L_2")
 WN_test = function(Y, lag.k = 2, B = 1000, kernel.type = c("QS", "Par", "Bart"),
+                   method = c("L_inf","L_2"), resampling = FALSE,
                    pre = FALSE, alpha = 0.05, control.PCA = list()){
-  
-  kernel.type <- match.arg(kernel.type)
-  ken_type <- switch(kernel.type,
-                     "QS" = 1,
-                     "Par" = 2,
-                     "Bart" = 3)
-  
-  if (pre == TRUE){
-    con <- list(lag.k = 5, thresh = FALSE, delta = 2 * sqrt(log(ncol(Y)) / nrow(Y)),
-                opt = 1)
-    con[(namc <- names(control.PCA))] <- control.PCA
-    # print(con)
-    X_pre <- segmentTS(Y, lag.k = con$lag.k,
-                      thresh = con$thresh,
-                      delta = con$delta,
-                      opt = con$opt,
-                      control = control.PCA)
-    
-    Y <- X_pre$Z
-    By <- X_pre$B
-  }
   n <- nrow(Y)
   p <- ncol(Y)
+  if(method == 'L_inf'){
+    kernel.type <- match.arg(kernel.type)
+    ken_type <- switch(kernel.type,
+                       "QS" = 1,
+                       "Par" = 2,
+                       "Bart" = 3)
+    
+    if (pre == TRUE){
+      con <- list(lag.k = 5, thresh = FALSE, delta = 2 * sqrt(log(ncol(Y)) / nrow(Y)),
+                  opt = 1)
+      con[(namc <- names(control.PCA))] <- control.PCA
+      # print(con)
+      X_pre <- segmentTS(Y, lag.k = con$lag.k,
+                        thresh = con$thresh,
+                        delta = con$delta,
+                        opt = con$opt,
+                        control = control.PCA)
+      
+      Y <- X_pre$Z
+      By <- X_pre$B
+    }
+    
+    Tn_list <- WN_teststatC(Y,n,p,lag.k)
+    Tn <- Tn_list$Tn
+    sigma_zero <- Tn_list$sigma_zero
+    X_mean <- Tn_list$X_mean
+    
+    ft <- WN_ftC(n, lag.k, p, Y, X_mean)
+    bn <- bandwith(ft, lag.k, p, p, ken_type)
+    
+    boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
+    Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, Y, sigma_zero, boot_nomal) # critical value
+    p.value <- mean(Gnstar > Tn)
+    # Results = list(reject = (p.value<0.05), p.value = p.value)
+    
+    names(Tn) <- "Statistic"
+    names(lag.k) <-"Time lag"
+    names(kernel.type) <- "Symmetric kernel"
   
-  Tn_list <- WN_teststatC(Y,n,p,lag.k)
-  Tn <- Tn_list$Tn
-  sigma_zero <- Tn_list$sigma_zero
-  X_mean <- Tn_list$X_mean
-  
-  ft <- WN_ftC(n, lag.k, p, Y, X_mean)
-  bn <- bandwith(ft, lag.k, p, p, ken_type)
-  
-  boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
-  Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, Y, sigma_zero, boot_nomal) # critical value
-  p.value <- mean(Gnstar > Tn)
-  # Results = list(reject = (p.value<0.05), p.value = p.value)
-  
-  names(Tn) <- "Statistic"
-  names(lag.k) <-"Time lag"
-  names(kernel.type) <- "Symmetric kernel"
+    structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
+                   kernel = kernel.type),
+              class = "hdtstest")
+  }
+  else if(method == 'L_2'){
+    n <- nrow(Y)
+    p <- ncol(Y)
+    Hn <- rep(0, lag.k)
+    const <- sqrt(2) / (n - 1)
+    tmp <- Y %*% t(Y)
+    diag(tmp) <- 0
+    sigma_n1 <- const * sum(tmp^2)
+    for(lag in c(1:lag.k)){
+      Gn_1 <- sum(tmp * tmp[c(c((n-lag+1):n),c(1:(n-lag))),c(c((n-lag+1):n),c(1:(n-lag)))])
+      if(lag > 1){
+        Hn[lag] <- Hn[lag-1] + Gn_1/sigma_n1
+      }
+      else{
+        Hn[lag] <- Gn_1/sigma_n1
+      }
+    }
+    #--------------------calculate cv for Hn----------------------------------
+    cv_vec <- qnorm(1-alpha,0,sqrt(c(1:lag.k)))
+    
+    if(resampling==TRUE){
+      Hn_B <- resampling(Y,n,p,B,lag.k)
+      cv_vec_resampling <- Hn_B[,floor(B*(1-alpha))]
+      
+      names(Hn) <- sprintf("Statistic (time lag = %d)", 1:lag.k)
+      names(lag.k) <-"Time lag"
+      p.value = rowMeans(sweep(Hn_B, 1, Hn, FUN = ">"))
+      
+      return(structure(list(statistic = Hn, p.value = p.value, lag.k=lag.k),
+                class = "hdtstest"))
+      # return(list(res = Hn>cv_vec, res_resampling = Hn>cv_vec_resampling,Hn = Hn))
+    }
+    
+    # return(list(res = Hn>cv_vec,Hn=Hn))
 
-  structure(list(statistic = Tn, p.value = p.value, lag.k=lag.k,
-                 kernel = kernel.type),
-            class = "hdtstest")
+# -------------------------------------------------------------------------
+    names(Hn) <- sprintf("Statistic (time lag = %d)", 1:lag.k)
+    names(lag.k) <-"Time lag"
+    p.value = 1 - pnorm(Hn, mean = 0, sd = sqrt(c(1:lag.k)))
+    
+    structure(list(statistic = Hn, p.value = p.value, lag.k=lag.k),
+              class = "hdtstest")
+  }
 }
