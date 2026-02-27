@@ -23,9 +23,9 @@
 #' @param alpha The significance level of the test. The default is 0.05.
 #' @param method The option for method used in the white test. Available options
 #' include: \code{"L_inf"} (the default) for the method proposed by Chang, Yao and
-#' Zhou (2017), and \code{"L_2"} for the method proposed by Chang et al.(2026+).
+#' Zhou (2017), and \code{"L_2"} for the method proposed by Chang et al. (2026+).
 #' @param resampling Logical. If \code{TRUE}, the resampling method proposed in
-#' Chang, Li and Lin () for calculating the critical value is performed.
+#' Chang et al. (2026+) for calculating the critical value is performed.
 #' @param kernel.type The option for choosing the symmetric kernel used
 #'   in the estimation of long-run covariance matrix. Available options include:
 #'   \code{"QS"} (the default) for the Quadratic spectral kernel, \code{"Par"}
