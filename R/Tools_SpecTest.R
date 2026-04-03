@@ -33,9 +33,10 @@
 #'   \item{pval}{The p-value of the test.}
 #'   \item{cri95}{The critical value of the test
 #'   at the significance level 0.05.}
-#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2025). 
 #' Statistical inference for high-dimensional spectral density matrix.
-#' \emph{arXiv preprint}. \doi{doi:10.48550/arXiv.2212.13686}.
+#' \emph{Journal of the American Statistical Association}, \strong{120},
+#' 1960--1974. \doi{doi:10.1080/01621459.2025.2468013}.
 #' 
 #' @examples
 #' # Example 1
@@ -131,9 +132,10 @@ SpecTest <- function(X, J.set, cross.indices, B = 1000, flag_c = 0.8)
 #'   it indicates that \eqn{H_{0,q}} should be rejected. Otherwise,
 #'   \eqn{H_{0,q}} should not be rejected.}
 #'   
-#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+#' @references Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2025). 
 #' Statistical inference for high-dimensional spectral density matrix.
-#' \emph{arXiv preprint}. \doi{doi:10.48550/arXiv.2212.13686}.
+#' \emph{Journal of the American Statistical Association}, \strong{120},
+#' 1960--1974. \doi{doi:10.1080/01621459.2025.2468013}.
 #' @examples
 #' # Example 1
 #' ## Generate xt

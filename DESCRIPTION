@@ -1,13 +1,13 @@
 Package: HDTSA
 Type: Package
 Title: High Dimensional Time Series Analysis Tools
-Version: 1.0.5-1
+Version: 1.0.6
 Authors@R: c(person("Jinyuan", "Chang", role = "aut",
     email = "changjinyuan@swufe.edu.cn"),
     person("Jing", "He", role = c("aut"), email = "he_jing@swufe.edu.cn"),
     person("Chen", "Lin", role = c("aut", "cre"), email = "linchen@smail.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2025-01-25
+Date: 2026-03-30
 Author: Jinyuan Chang [aut],
    Jing He [aut],
    Chen Lin [aut, cre], 
@@ -20,12 +20,12 @@ Description: An implementation for high-dimensional time series analysis methods
       component analysis for vector time series proposed by Chang, Guo and Yao (2018) <doi:10.1214/17-AOS1613>,
       cointegration analysis proposed by Zhang, Robinson and Yao (2019)
       <doi:10.1080/01621459.2018.1458620>, unit root test proposed by Chang, Cheng and Yao (2022)
-      <doi:10.1093/biomet/asab034>, white noise test proposed by Chang, Yao and Zhou (2017)
-      <doi:10.1093/biomet/asw066>, CP-decomposition for matrix time 
+      <doi:10.1093/biomet/asab034>, white noise tests proposed by Chang, Yao and Zhou (2017)
+      <doi:10.1093/biomet/asw066> and Chang et al. (2026+), CP-decomposition for matrix time 
       series proposed by Chang et al. (2023) <doi:10.1093/jrsssb/qkac011> and
-      Chang et al. (2024) <doi:10.48550/arXiv.2410.05634>, and statistical inference for
-      spectral density matrix proposed by Chang et al. (2022) 
-      <doi:10.48550/arXiv.2212.13686>.
+      Chang et al. (2026+) <doi:10.48550/arXiv.2410.05634>, and statistical inference for
+      spectral density matrix proposed by Chang et al. (2025) 
+      <doi:10.1080/01621459.2025.2468013>.
 License: GPL-3
 Depends: R (>= 3.5.0)
 Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, vars, forecast

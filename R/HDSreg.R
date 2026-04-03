@@ -112,15 +112,13 @@ HDSReg <- function(Y, Z, D = NULL, lag.k = 5, thresh = FALSE,
   Y_p <- ncol(Y)
   Z_n <- nrow(Z)
   Z_p <- ncol(Z)
-  # storage.mode(Y_n) <- "integer"
-  # storage.mode(Y_p) <- "integer"
-  # storage.mode(Z_n) <- "integer"
-  # storage.mode(Z_p) <- "integer"
   
   #first step: estimate D (Least square) #without endogeneity and nolinearity
   if(missing(D)) {
-    D <- solve(MatMult(t(Z), Z))
-    D <- MatMult(D, MatMult(t(Z), Y))
+    
+    R <- chol(crossprod(Z))
+    tmp <- forwardsolve(t(R), crossprod(Z, Y))
+    D <- backsolve(R, tmp)
     D <- t(D)
   }
   

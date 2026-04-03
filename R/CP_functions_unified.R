@@ -109,9 +109,9 @@
 #'
 #'
 #' @references
-#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
-#'  estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
-#'  \doi{doi:10.48550/arXiv.2410.05634}.
+#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2026+). Identification and
+#'  estimation for matrix time series CP-factor models. \emph{The Annals of
+#'   Statistics}, in press. \doi{doi:10.48550/arXiv.2410.05634}.
 #'  
 #'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
 #'   \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 

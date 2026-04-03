@@ -66,9 +66,10 @@ Pvalue <- res$p.value
 CriVal <- res$cri95
 }
 \references{
-Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2022). 
+Chang, J., Jiang, Q., McElroy, T. S., & Shao, X. (2025). 
 Statistical inference for high-dimensional spectral density matrix.
-\emph{arXiv preprint}. \doi{doi:10.48550/arXiv.2212.13686}.
+\emph{Journal of the American Statistical Association}, \strong{120},
+1960--1974. \doi{doi:10.1080/01621459.2025.2468013}.
 }
 \seealso{
 \code{\link{SpecMulTest}}
