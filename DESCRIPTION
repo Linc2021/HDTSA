@@ -1,7 +1,7 @@
 Package: HDTSA
 Type: Package
 Title: High Dimensional Time Series Analysis Tools
-Version: 1.0.6
+Version: 1.0.7-dev
 Authors@R: c(person("Jinyuan", "Chang", role = "aut",
     email = "changjinyuan@swufe.edu.cn"),
     person("Jing", "He", role = c("aut"), email = "he_jing@swufe.edu.cn"),
@@ -28,7 +28,7 @@ Description: An implementation for high-dimensional time series analysis methods
       <doi:10.1080/01621459.2025.2468013>.
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, vars, forecast
+Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, vars, forecast, rTensor
 LinkingTo: RcppArmadillo, RcppEigen, Rcpp
 Suggests: 
     knitr
