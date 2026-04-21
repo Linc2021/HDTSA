@@ -515,9 +515,9 @@ Vec.tensor = function(Y){
 #'   \item{B}{The \eqn{q \times d} right loading matrix \eqn{\bf B}.}
 #'   \item{X}{An \eqn{n \times d \times d} array.}
 #' @references
-#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2024). Identification and
-#'  estimation for matrix time series CP-factor models. \emph{arXiv preprint}.
-#'  \doi{doi:10.48550/arXiv.2410.05634}.
+#'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2026+). Identification and
+#'  estimation for matrix time series CP-factor models. \emph{The Annals of
+#'   Statistics}, in press. \doi{doi:10.48550/arXiv.2410.05634}.
 #'  
 #' @details We generate
 #' \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' + {\boldsymbol{\epsilon}}_t }
