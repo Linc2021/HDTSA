@@ -2,56 +2,92 @@
 % Please edit documentation in R/CP_functions_unified.R
 \name{CP_Inference}
 \alias{CP_Inference}
-\title{Inference for the estimates obtained by Double Projection Iterations (DPI) method in the tensor CP-factor model}
+\title{Inference for the Double Projection Iterations (DPI) estimator in the tensor time series CP-factor model}
 \usage{
 CP_Inference(h, i, j, Y, res.CP.DPI)
 }
 \arguments{
-\item{h}{A numeric vector of length \eqn{d_j}. This specifies the linear
-functional \eqn{\mathbf{h}^\top (\hat{\mathbf{a}}_{i,j} - \hat{\mathbf{\vartheta}}_{i.j})} of interest.}
+\item{h}{A numeric vector of length \eqn{d_j}. It specifies the linear
+transformation
+\eqn{\mathbf{h}^{\top}(\hat{\mathbf{a}}_{i,j}
+- \hat{\boldsymbol{\vartheta}}_{i,j})}.}
 
 \item{i}{A positive integer. The factor index.}
 
 \item{j}{A positive integer. The tensor mode index.}
 
-\item{Y}{An array containing the observed tensor time series. Its dimension is
-typically \eqn{n \times d_1 \times \cdots \times d_m}.}
+\item{Y}{An array containing the observed tensor time series with dimension
+\eqn{n \times d_1 \times \cdots \times d_m}.}
 
-\item{res.CP.DPI}{An output object from \code{CP_MTS} with \code{method = "CP.DPI"}.}
+\item{res.CP.DPI}{An output object returned by \code{CP_TTS}. It should contain
+\code{A.hat}, \code{Sigma.yij.xii.1}, and \code{f.hat}.}
 }
 \value{
 A list with the following components:
 \describe{
-  \item{\code{aij.h.de}}{ \eqn{\mathbf{h}^\top (\hat{\mathbf{a}}_{i,j} - \hat{\mathbf{\vartheta}}_{i.j})}.}
+  \item{\code{aij.h.de}}{The debiased linear transformation
+  \eqn{\mathbf{h}^{\top}(\hat{\mathbf{a}}_{i,j}
+  - \hat{\boldsymbol{\vartheta}}_{i,j})}.}
   \item{\code{se.h.ij}}{The estimated standard error of \code{aij.h.de}.}
-  \item{\code{aij.iter}}{The original DPI estimator of the loading vector \eqn{\mathbf{a}_{i,j}}.}
-  \item{\code{vartheta.ij}}{The estimated bias-correction term \eqn{\hat{\mathbf{\vartheta}}_{i.j}} used in debiasing.}
+  \item{\code{aij.iter}}{The original iterative estimator
+  \eqn{\hat{\mathbf{a}}_{i,j}}.}
+  \item{\code{vartheta.ij}}{The estimated bias-correction term
+  \eqn{\hat{\boldsymbol{\vartheta}}_{i,j}}.}
 }
 }
 \description{
-This function performs inference for a linear functional of the debiased
-DPI estimator of the factor loading vector in the tensor CP-factor model.
-Given a direction vector \code{h}, a factor index \code{i}, a mode index \code{j},
-the observed tensor series \code{Y}, and the output object \code{res.CP.DPI} of the DPI method,
-the function returns the debiased estimate of \eqn{\mathbf{h}^\top (\hat{\mathbf{a}}_{i,j} - \hat{\mathbf{\vartheta}}_{i.j})},
-its estimated standard error, the corresponding DPI estimator \eqn{\hat{\mathbf{a}}_{i,j}}, and the
-estimated bias-correction term \eqn{\hat{\mathbf{\vartheta}}_{i.j})}.
+This function performs inference for  the debiased
+iterative estimator of a factor loading vector in the tensor CP-factor model based on the DPI estimator (Chang et al., 2026+).
+Given a direction vector \code{h}, a factor index \code{i}, a mode index
+\code{j}, the observed tensor time series \code{Y}, and the output object
+returned by \code{CP_TTS}, the function returns the debiased estimate,
+its estimated standard error, the original iterative loading estimator, and
+the estimated bias-correction term.
 }
 \details{
+Let \eqn{\hat{\mathbf{a}}_{i,j}} be the iterative estimator of the loading
+vector for factor \eqn{i} and mode \eqn{j}. The function computes the debiased
+estimator
+\deqn{
+\hat{\mathbf{a}}_{i,j}
+-
+\hat{\boldsymbol{\vartheta}}_{i,j},
+}
+and returns the linear transformation
+\deqn{
+\mathbf{h}^{\top}
+\left(
+\hat{\mathbf{a}}_{i,j}
+-
+\hat{\boldsymbol{\vartheta}}_{i,j}
+\right).
+}
 The reported standard error is
 \deqn{
-\sqrt{\widehat{\mathrm{Var}} \big\{\mathbf{h}^\top (\hat{\mathbf{a}}_{i,j} - \hat{\mathbf{\vartheta}}_{i.j})\big\}/n} \,,
+\sqrt{
+\widehat{\mathrm{Var}}
+\left[
+\mathbf{h}^{\top}
+\left(
+\hat{\mathbf{a}}_{i,j}
+-
+\hat{\boldsymbol{\vartheta}}_{i,j}
+\right)
+\right]/n
+},
 }
 where \eqn{n} is the sample size.
 }
 \examples{
 \dontrun{
+fit <- CP_TTS(Y)
+
 out <- CP_Inference(
   h = h,
   i = 1,
   j = 2,
   Y = Y,
-  res.CP.DPI = res.CP.DPI
+  res.CP.DPI = fit
 )
 
 out$aij.h.de
@@ -60,4 +96,9 @@ out$aij.iter
 out$vartheta.ij
 }
 
+}
+\references{
+Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
+Series and Double Projection Iterations. \emph{Journal of the Royal Statistical Society
+Series B: Statistical Methodology}, major revision.
 }
