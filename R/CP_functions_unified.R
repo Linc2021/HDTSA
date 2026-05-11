@@ -11,8 +11,8 @@
 #' This function aims to estimate \eqn{d, d_1, d_2} and the loading
 #' matrices \eqn{{\bf A}} and \eqn{{\bf B}} using the methods proposed in Chang
 #' et al. (2023) and Chang et al. (2024).
-#' 
-#' @details 
+#'
+#' @details
 #' All three CP-decomposition methods involve the estimation of the autocovariance of
 #' \eqn{ {\bf Y}_t} and \eqn{\xi_t} at lag \eqn{k}, which is defined as follows:
 #' \deqn{\hat{\bf \Sigma}_{k} = T_{\delta_1}\{\hat{\boldsymbol{\Sigma}}_{\mathbf{Y},
@@ -24,7 +24,7 @@
 #' \eqn{{\bf W}=(w_{i,j})}, with the threshold level \eqn{\delta_1 \geq 0} and \eqn{1(\cdot)}
 #' representing the indicator function. Chang et al. (2023) and Chang et al. (2024) suggest to choose
 #' \eqn{\delta_1 = 0} when \eqn{p, q} are fixed and \eqn{\delta_1>0} when \eqn{pq \gg n}.
-#' 
+#'
 #' The refined estimation method involves
 #' \deqn{\check{\bf \Sigma}_{k} =
 #' T_{\delta_2}\{\hat{\mathbf{\Sigma}}_{\check{\mathbf{Y}}}(k)\}\ \ {\rm with}
@@ -36,7 +36,7 @@
 #' with \eqn{{\rm vec}({\bf H})} being the \eqn{(m_1m_2)\times 1} vector obtained by stacking
 #' the columns of the \eqn{m_1 \times m_2} matrix \eqn{{\bf H}}. See Section 3.2.2 of Chang
 #' et al. (2023) for details.
-#' 
+#'
 #' The unified estimation method involves
 #' \deqn{\vec{\bf \Sigma}_{k}=
 #' T_{\delta_3}\{\hat{\boldsymbol{\Sigma}}_{\vec{\mathbf{Y}}}(k)\}
@@ -59,7 +59,7 @@
 #'  the rank of \eqn{{\bf A}}, and \code{d2} representing the rank of \eqn{{\bf B}}.
 #' If set to \code{NULL} (default), \eqn{d}, \eqn{d_1}, and \eqn{d_2} will be estimated.
 #'  Otherwise, they can be given by the users.
-#' @param lag.k The time lag \eqn{K} used to calculate the nonnegative definite 
+#' @param lag.k The time lag \eqn{K} used to calculate the nonnegative definite
 #' matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
 #'  or \code{method = "CP.Unified"}:
 #'  \deqn{\hat{\mathbf{M}}_1\ =\
@@ -79,7 +79,7 @@
 #'  The validity of methods \code{"CP.Direct"} and \code{"CP.Refined"} depends on the assumption
 #'  \eqn{d_1=d_2=d}. When \eqn{d_1,d_2 \leq d}, the method \code{"CP.Unified"} can be applied.
 #'  See Chang et al. (2024) for details.
-#'  
+#'
 #' @param thresh1  Logical. If \code{FALSE} (the default), no thresholding will
 #'   be applied in \eqn{\hat{\bf \Sigma}_{k}}, which indicates that the threshold level
 #'  \eqn{\delta_1=0}. If \code{TRUE}, \eqn{\delta_1} will be set through \code{delta1}.
@@ -98,7 +98,7 @@
 #'  \eqn{ \delta_2 = 2 \sqrt{n^{-1}\log (pq)}}.
 #' @param delta3  The value of the threshold level \eqn{\delta_3}. The default is
 #'  \eqn{ \delta_3 = 2 \sqrt{n^{-1}\log(pq)}}.
-#'   
+#'
 #' @return An object of class \code{"mtscp"}, which contains the following
 #'   components:
 #'   \item{A}{The estimated \eqn{p \times \hat{d}} left loading matrix \eqn{\hat{\bf A}}.}
@@ -110,14 +110,14 @@
 #'
 #' @references
 #'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
-#'   \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 
+#'   \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148.
 #'   \doi{doi:10.1093/jrsssb/qkac011}.
-#'   
+#'
 #'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2026+). Identification and
 #'  estimation for matrix time series CP-factor models. \emph{The Annals of
 #'   Statistics}, in press. \doi{doi:10.48550/arXiv.2410.05634}.
-#'  
-#'   
+#'
+#'
 #'
 #' @examples
 #' # Example 1.
@@ -128,17 +128,17 @@
 #' ## DGP.CP() generates simulated data for the example in Chang et al. (2024).
 #' data <- DGP.CP(n, p, q, d, d1, d2)
 #' Y <- data$Y
-#' 
+#'
 #' ## d is unknown
 #' res1 <- CP_MTS(Y, method = "CP.Direct")
 #' res2 <- CP_MTS(Y, method = "CP.Refined")
 #' res3 <- CP_MTS(Y, method = "CP.Unified")
-#' 
+#'
 #' ## d is known
 #' res4 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Direct")
 #' res5 <- CP_MTS(Y, Rank = list(d = 3), method = "CP.Refined")
-#' 
-#' 
+#'
+#'
 #' # Example 2.
 #' p <- 10
 #' q <- 10
@@ -147,12 +147,12 @@
 #' d <-3
 #' data <- DGP.CP(n, p, q, d, d1, d2)
 #' Y1 <- data$Y
-#' 
+#'
 #' ## d, d1 and d2 are unknown
 #' res6 <- CP_MTS(Y1, method = "CP.Unified")
 #' ## d, d1 and d2 are known
 #' res7 <- CP_MTS(Y1, Rank = list(d = 3, d1 = 2, d2 = 2), method = "CP.Unified")
-#' 
+#'
 #' @export
 #' @useDynLib HDTSA
 #' @importFrom stats arima.sim rnorm runif
@@ -373,7 +373,7 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       
       # METHOD <- c("Estimation of matrix CP-factor model",paste("Method:",method))
       rank <- list(d = d, d1 = d1, d2 = d2)
-      con <- structure(list(A = as.matrix(A), B = as.matrix(B), 
+      con <- structure(list(A = as.matrix(A), B = as.matrix(B),
                             f = as.matrix(f), Rank = rank, method = method),
                        class = "mtscp")
       
@@ -495,15 +495,15 @@ Vec.tensor = function(Y){
 
 
 #' @title Generating simulated data for the example in Chang et al. (2024)
-#' @description \code{DGP.CP()} function generates simulated data following the 
-#' data generating process described in Section 7.1 of Chang et al. (2024). 
-#'  
+#' @description \code{DGP.CP()} function generates simulated data following the
+#' data generating process described in Section 7.1 of Chang et al. (2024).
 #'
-#' @param n  Integer. The number of observations of the \eqn{p \times q} matrix 
+#'
+#' @param n  Integer. The number of observations of the \eqn{p \times q} matrix
 #' time series \eqn{{\bf Y}_t}.
 #' @param p  Integer. The number of rows of \eqn{{\bf Y}_t}.
 #' @param q  Integer. The number of columns of \eqn{{\bf Y}_t}.
-#' @param d  Integer. The number of columns of the factor loading matrices \eqn{\bf A} 
+#' @param d  Integer. The number of columns of the factor loading matrices \eqn{\bf A}
 #' and \eqn{\bf B}.
 #' @param d1  Integer. The rank of the \eqn{p \times d} matrix \eqn{\bf A}.
 #' @param d2  Integer. The rank of the \eqn{q \times d} matrix \eqn{\bf B}.
@@ -519,16 +519,16 @@ Vec.tensor = function(Y){
 #'   Chang, J., Du, Y., Huang, G., & Yao, Q. (2026+). Identification and
 #'  estimation for matrix time series CP-factor models. \emph{The Annals of
 #'   Statistics}, in press. \doi{doi:10.48550/arXiv.2410.05634}.
-#'  
+#'
 #' @details We generate
 #' \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' + {\boldsymbol{\epsilon}}_t }
-#' for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)} 
+#' for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)}
 #' with \eqn{{\bf x}_t = (x_{t,1},\ldots,x_{t,d})'} being a \eqn{d \times 1} time series,
 #' \eqn{ {\boldsymbol{\epsilon}}_t } is a \eqn{p \times q} matrix white noise,
-#' and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and 
+#' and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and
 #' \eqn{q \times d} factor loading matrices. \eqn{\bf A}, \eqn{{\bf X}_t}, and \eqn{\bf B}
-#' are generated based on the data generating process described in Section 7.1 of 
-#' Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and 
+#' are generated based on the data generating process described in Section 7.1 of
+#' Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and
 #' \eqn{{\rm rank}({\bf B})=d_2}, \eqn{1 \le d_1, d_2 \le d}.
 #'
 #' @examples
@@ -538,7 +538,7 @@ Vec.tensor = function(Y){
 #' d = d1 = d2 <- 3
 #' data <- DGP.CP(n,p,q,d1,d2,d)
 #' Y <- data$Y
-#' 
+#'
 #' ## The first observation: Y_1
 #' Y[1, , ]
 #' @export
@@ -1102,70 +1102,79 @@ adjust_sign <- function(column) {
 #' @title Estimating the tensor time series CP-factor model
 #'
 #' @description
-#' \code{CP_TTS()} deals with the estimation of the CP-factor model for tensor time series. Let \eqn{\mathcal{Y}_t} be a tensor in
-#' \eqn{\mathbb{R}^{d_1 \times \cdots \times d_m}}. The tensor CP-factor model is given by
+#' \code{CP_TTS()} deals with the estimation of the CP-factor model for tensor
+#' time series. Let \eqn{\mathcal{Y}_t} be a tensor in
+#' \eqn{\mathbb{R}^{d_1 \times \cdots \times d_m}}. The tensor CP-factor model is
+#' given by
 #' \deqn{
-#' \mathcal{Y}_t = \sum_{i=1}^r w_i f_{t,i}\,\mathbf{a}_{i,1} \circ \mathbf{a}_{i,2} \circ \cdots \circ \mathbf{a}_{i,m} + \mathcal{E}_t, \quad t \ge 1,
+#' \mathcal{Y}_t =
+#' \sum_{i=1}^r w_i f_{t,i}\,\mathbf{a}_{i,1} \circ \mathbf{a}_{i,2}
+#' \circ \cdots \circ \mathbf{a}_{i,m} + \mathcal{E}_t, \quad t \ge 1,
 #' }
 #' where \eqn{1 \le r \le \min_{j \in [m]} d_j} is a fixed but unknown constant,
-#' \eqn{\mathcal{E}_t \in \mathbb{R}^{d_1 \times \cdots \times d_m}} is the idiosyncratic error tensor,
-#' \eqn{\mathbf{f}_t = (f_{t,1}, \ldots, f_{t,r})'} is the \eqn{r}-dimensional factor vector,
-#' and \eqn{\mathbf{a}_{i,j}} is a \eqn{d_j}-dimensional loading vector
-#' corresponding to the \eqn{i}-th factor and the \eqn{j}-th mode. Without loss of generality, we assume \eqn{|\mathbf{a}_{i,j}|_2 = 1}
-#' for \eqn{i \in [r]} and \eqn{j \in [m]}.
-#' This function aims to estimate \eqn{r} and the loading
-#' vectors \eqn{\{\mathbf{a}_{i,j}\}_{i \in [r], j \in [m]}} using the method  proposed in Chang et al. (2026+).
-#'
+#' \eqn{\mathcal{E}_t \in \mathbb{R}^{d_1 \times \cdots \times d_m}} is the
+#' idiosyncratic error tensor,
+#' \eqn{\mathbf{f}_t = (f_{t,1}, \ldots, f_{t,r})'} is the
+#' \eqn{r}-dimensional factor vector, and \eqn{\mathbf{a}_{i,j}} is a
+#' \eqn{d_j}-dimensional loading vector corresponding to the \eqn{i}-th factor
+#' and the \eqn{j}-th mode. Without loss of generality, we assume
+#' \eqn{ | \mathbf{a}_{i,j} |_2 = 1} for \eqn{i \in [r]} and \eqn{j \in [m]}.
+#' This function aims to estimate \eqn{r} and the loading vectors
+#' \eqn{\{\mathbf{a}_{i,j}\}_{i \in [r], j \in [m]}} using the method proposed
+#' in Chang et al. (2026+).
 #'
 #' @details
-#' The initial method
-#' involve the estimation of the autocovariance between \eqn{\mathbf{Y}_{t,j}} and
-#' \eqn{\xi_t} at lag \eqn{k}, which is defined as follows:
+#' The initial method involves the estimation of the autocovariance between
+#' \eqn{\mathbf{Y}_{t,j}} and \eqn{\xi_t} at lag \eqn{k}, which is defined as
+#' follows:
 #' \deqn{
 #' \hat{\mathbf{\Sigma}}_{k,j}
 #' = T_{\delta_1}\{\hat{\boldsymbol{\Sigma}}_{\mathbf{Y}_j,\xi}(k)\}
 #' \quad \mbox{with} \quad
 #' \hat{\boldsymbol{\Sigma}}_{\mathbf{Y}_j,\xi}(k)
-#' = \frac{1}{n-k}\sum_{t=k+1}^n(\mathbf{Y}_{t,j}-\bar{\mathbf{Y}}_j)(\xi_{t-k}-\bar{\xi}),
+#' = \frac{1}{n-k}\sum_{t=k+1}^n
+#' (\mathbf{Y}_{t,j}-\bar{\mathbf{Y}}_j)(\xi_{t-k}-\bar{\xi}),
 #' }
 #' where \eqn{\bar{\mathbf{Y}}_j = n^{-1}\sum_{t=1}^n \mathbf{Y}_{t,j}},
-#' \eqn{\bar{\xi} = n^{-1}\sum_{t=1}^n \xi_t}, and \eqn{T_{\delta_1}(\cdot)}
-#' is a threshold operator defined as
+#' \eqn{\bar{\xi} = n^{-1}\sum_{t=1}^n \xi_t}, and
+#' \eqn{T_{\delta_1}(\cdot)} is a threshold operator defined as
 #' \eqn{T_{\delta_1}(\mathbf{W}) = \{w_{i,j}1(|w_{i,j}| \ge \delta_1)\}}
 #' for any matrix \eqn{\mathbf{W}=(w_{i,j})}, with threshold level
 #' \eqn{\delta_1 \ge 0} and \eqn{1(\cdot)} denoting the indicator function.
-#' Chang et al. (2026+)  suggests choosing
-#' \eqn{\delta_1} by a grid search method. See Section 3.3 of Chang et al. (2026+) for details.
+#' Chang et al. (2026+) suggest choosing \eqn{\delta_1} by a grid search method.
+#' See Section 3.3 of Chang et al. (2026+) for details.
 #'
+#' @param Y An array representing a tensor-valued time series with dimension
+#'   \eqn{n\times d_1 \times \cdots \times d_m}, where \eqn{n} is the sample size
+#'   and \eqn{m \ge 2}.
 #'
+#' @param xi An auxiliary scalar series \eqn{(\xi_1,\ldots,\xi_n)'}, which is a
+#'   linear combination of \eqn{\mathrm{vec}(\mathcal{Y}_t)}. If \code{xi = NULL}
+#'   (the default), \eqn{\xi_t} is estimated by the PCA method described in
+#'   Chang et al. (2023), or by a randomized projection method by setting
+#'   \code{random.projection = TRUE} in \code{control.DPI}.
 #'
-#' @param Y An array representing a tensor-valued time series  with dimension
-#'   \eqn{n\times d_1 \times  \cdots \times d_m}, where \eqn{n} is the sample size and \eqn{m \ge 2}.
-#'
-#' @param xi An auxiliary scalar series \eqn{(\xi_1,\ldots,\xi_n)'}, which is
-#'   a linear combination of \eqn{\mathrm{vec}(\mathcal{Y}_t)}. If \code{xi = NULL}
-#'   (the default), \eqn{\xi_t} can be
-#'   estimated by the PCA method described in Chang et al. (2023) or by a random projection method by setting
-#'   \code{Random.Projection = TRUE} in \code{control.DPI}.
-#'
-#' @param r The prescribed number of factors.  If set to \code{NULL} (the default), \eqn{r}
-#'   is estimated from the data by the ER method or the Log-ER method by setting
-#'   \code{Ratio.type} in \code{control.DPI} to \code{"classical"} or \code{"log"},
-#'   respectively.
+#' @param r The prescribed number of factors. If set to \code{NULL} (the default),
+#'   \eqn{r} is estimated from the data by the ER method or the Log-ER method by
+#'   setting \code{ratio.type} in \code{control.DPI} to \code{"classical"} or
+#'   \code{"log"}, respectively.
 #'
 #' @param A.init Optional initial loading matrices. It should be a list of length
-#'   \eqn{m}, where the \eqn{j}-th sublist is a
-#'   \eqn{d_j \times r} matrix. If \code{NULL}, an initial estimator is obtained
-#'   from an initialization step.
+#'   \eqn{m}, where the \eqn{j}-th sublist is a \eqn{d_j \times r} matrix. If
+#'   \code{NULL}, an initial estimator is obtained from an initialization step.
 #'
-#' @param control.DPI A named list of control parameters used in the double projection iteration (DPI) algorithm. The supported components are:
+#' @param control.DPI A named list of control parameters used in the double
+#'   projection iteration (DPI) algorithm. The supported components are:
 #'   \describe{
-#'     \item{\code{lag.k.DPI}}{Positive integer. Number of lags \eqn{K} used in
-#'       \eqn{\tilde{\mathbf{M}}_j = \sum_{k = 1}^K \tilde{\mathbf{\Sigma}}_{k,j} \tilde{\mathbf{\Sigma}}_{k,j}'},
-#'       where \eqn{\tilde{\mathbf{\Sigma}}_{k,j}} is an estimate of the cross-covariance between
-#'       \eqn{\mathbf{Y}_{t,j}}, the mode-\eqn{j} matricization of \eqn{\mathcal{Y}_t} with dimension
-#'       \eqn{d_j \times \prod_{j' \neq j} d_{j'}}, and \eqn{\xi_t} at lag \eqn{k}. Default is \eqn{10}.}
-#'     \item{\code{Threshold}}{Logical. Whether thresholding is applied in the
+#'     \item{\code{lag.k.dpi}}{Positive integer. Number of lags \eqn{K} used in
+#'       \eqn{\tilde{\mathbf{M}}_j = \sum_{k = 1}^K
+#'       \tilde{\mathbf{\Sigma}}_{k,j} \tilde{\mathbf{\Sigma}}_{k,j}'},
+#'       where \eqn{\tilde{\mathbf{\Sigma}}_{k,j}} is an estimate of the
+#'       cross-covariance between \eqn{\mathbf{Y}_{t,j}}, the mode-\eqn{j}
+#'       matricization of \eqn{\mathcal{Y}_t} with dimension
+#'       \eqn{d_j \times \prod_{j' \neq j} d_{j'}}, and \eqn{\xi_t} at lag
+#'       \eqn{k}. Default is \eqn{10}.}
+#'     \item{\code{threshold}}{Logical. Whether thresholding is applied in the
 #'       initialization and iteration steps. Default is \code{TRUE}.}
 #'     \item{\code{delta}}{Optional thresholding level used in the initialization
 #'       step. Default is \code{NULL}. If \code{NULL}, it is selected via a grid
@@ -1176,50 +1185,59 @@ adjust_sign <- function(column) {
 #'       \eqn{\hat{\sigma}_0 (n^{-1}\log d_j)^{1/2}}, where
 #'       \eqn{\hat{\sigma}_0^2 = (n \prod_{j=1}^m d_j)^{-1}
 #'       \sum_{t=1}^n\|\mathcal{Y}_t\|^2_{\mathrm{F}}}.}
-#'     \item{\code{Ratio.type}}{Character string specifying the ratio criterion
-#'       used in estimating \eqn{r}. Typical choices are \code{"log"} (Log-ER method)
-#'       and \code{"classical"} (ER method). Default is \code{"log"}.}
-#'     \item{\code{Random.Projection}}{Logical. If \code{TRUE}, a randomized
-#'       projection step (see details in Section 3.3 of Chang et al. (2026+)) is used to select \code{xi}. Default is \code{FALSE}.}
-#'     \item{\code{iter_max}}{Maximum number of iterative updates. Default is
+#'     \item{\code{ratio.type}}{Character string specifying the ratio criterion
+#'       used in estimating \eqn{r}. Typical choices are \code{"log"} for the
+#'       Log-ER method and \code{"classical"} for the ER method. Default is
+#'       \code{"log"}.}
+#'     \item{\code{random.projection}}{Logical. If \code{TRUE}, a randomized
+#'       projection step is used to select \code{xi}. See Section 3.3 of
+#'       Chang et al. (2026+) for details. Default is \code{FALSE}.}
+#'     \item{\code{iter.max}}{Maximum number of iterative updates. Default is
 #'       \eqn{20}.}
-#'     \item{\code{eps}}{Stopping tolerance for the iterative algorithm.
-#'       Default is \eqn{10^{-4}}.}
+#'     \item{\code{eps}}{Stopping tolerance for the iterative algorithm. Default
+#'       is \eqn{10^{-4}}.}
 #'     \item{\code{grid.num}}{Integer. Number of grid points used when selecting
 #'       the thresholding level in the initialization step. Default is \eqn{50}.}
-#'     \item{\code{delta_max}}{Maximum value of the thresholding grid in the
-#'       initialization step. Default is \eqn{0.1 \hat{\sigma}_0 (n^{-1} \sum_{j = 1}^m \log d_j)^{1/2}}.}
+#'     \item{\code{delta.max}}{Maximum value of the thresholding grid in the
+#'       initialization step. Default is
+#'       \eqn{0.1 \hat{\sigma}_0 (n^{-1} \sum_{j = 1}^m \log d_j)^{1/2}}.}
 #'     \item{\code{print.eps}}{Logical. Whether to print the iterative
 #'       convergence measure. Default is \code{FALSE}.}
-#'     \item{\code{iter_lag}}{Positive integer. Number of candidate lags used in
+#'     \item{\code{iter.lag}}{Positive integer. Number of candidate lags used in
 #'       each iterative update. Default is \eqn{1}.}
 #'     \item{\code{all.put}}{Logical. If \code{TRUE}, the iterative routine
-#'       returns full intermediate outputs; otherwise only a compact result is
+#'       returns full intermediate outputs; otherwise, only a compact result is
 #'       returned. Default is \code{FALSE}.}
 #'     \item{\code{A}}{Optional true loading matrices, used only for diagnostic
 #'       purposes in simulations. Default is \code{NULL}.}
-#'     \item{\code{Component}}{Optional true common component tensor, used only
-#'       for diagnostic purposes in simulations.
-#'       Default is \code{NULL}.}
+#'     \item{\code{component}}{Optional true common component tensor, used only
+#'       for diagnostic purposes in simulations. Default is \code{NULL}.}
 #'   }
+#'
 #'
 #' @return
 #' The function returns a list containing the following components:
 #' \describe{
 #'   \item{\code{A.hat}}{The final iterative loading matrices.}
 #'   \item{\code{A.init}}{The initial loading matrices used to start the iteration.}
-#'   \item{\code{Sigma.yij.xii.1}}{The thresholded moment vectors used in the iterative updates and inference.}
+#'   \item{\code{Sigma.yij.xii.1}}{The thresholded moment vectors used in the
+#'     iterative updates and inference.}
 #'   \item{\code{r}}{The number of factors used in the iterative procedure.}
 #'   \item{\code{iter.step}}{The number of iterations performed.}
-#'   \item{\code{fnorm.resid}}{The relative Frobenius norm of the residuals recorded during the iterations.}
-#'   \item{\code{f.hat}}{The estimated factor series based on the final iterative loading matrices.}
-#'   \item{\code{f.hat.inl}}{The estimated factor series based on the initial loading matrices.}
-#'   \item{\code{delta.sel}}{The selected threshold level from the initial one-pass estimation. If \code{A.init} is supplied by the user, this value is \code{NULL}.}
-#'   \item{\code{control.DPI}}{The control list actually used in the function after merging user-supplied values with the defaults.}
+#'   \item{\code{fnorm.resid}}{The relative Frobenius norm of the residuals
+#'     recorded during the iterations.}
+#'   \item{\code{f.hat}}{The estimated factor series based on the final iterative
+#'     loading matrices.}
+#'   \item{\code{f.hat.inl}}{The estimated factor series based on the initial
+#'     loading matrices.}
+#'   \item{\code{delta.sel}}{The selected threshold level from the initial
+#'     one-pass estimation. If \code{A.init} is supplied by the user, this value
+#'     is \code{NULL}.}
+#'   \item{\code{control.DPI}}{The control list actually used in the function
+#'     after merging user-supplied values with the defaults.}
 #' }
 #'
 #' @examples
-#'
 #' n <- 200
 #' D <- c(10, 10)
 #' r <- 2
@@ -1245,76 +1263,111 @@ adjust_sign <- function(column) {
 #'
 #' fit.known <- CP_TTS(Y, r = 2)
 #'
-#'
-#'
 #' @references
+#' Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via
+#' a tensor CP-decomposition. \emph{Journal of the Royal Statistical Society
+#' Series B: Statistical Methodology}, \strong{85}, 127--148.
+#' \doi{10.1093/jrsssb/qkac011}.
 #'
-#'   Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
-#'   \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 
-#'   \doi{doi:10.1093/jrsssb/qkac011}.
-#'
-#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
-#' Series and Double Projection Iterations. \emph{Journal of the Royal Statistical Society
-#' Series B: Statistical Methodology}, major revision.
+#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High
+#' Dimensional Tensor Time Series and Double Projection Iterations.
+#' \emph{Journal of the Royal Statistical Society Series B: Statistical
+#' Methodology}, major revision.
 #'
 #' @export
 #' @useDynLib HDTSA
 #' @importFrom stats arima.sim rnorm runif rt
-
-
 CP_TTS <- function(Y,
                    xi = NULL,
                    r = NULL,
                    A.init = NULL,
-                   control.DPI = list()
-)
+                   control.DPI = list())
 {
   n <- dim(Y)[1]
   D <- dim(Y)[-1]
   m <- length(D)
   
+  normalize.control.names <- function(control) {
+    if (is.null(control)) {
+      return(list())
+    }
+    
+    if (!is.list(control)) {
+      stop("`control.DPI` must be a list.")
+    }
+    
+    if (length(control) == 0L) {
+      return(control)
+    }
+    
+    control.names <- names(control)
+    
+    if (is.null(control.names) || any(!nzchar(control.names))) {
+      stop("All entries in `control.DPI` must be named.")
+    }
+    
+    new.names <- gsub("_", ".", control.names)
+    
+    # Keep A uppercase; normalize all other control names to lower case.
+    new.names <- ifelse(new.names == "A", "A", tolower(new.names))
+    
+    alias.map <- c(
+      "lag.k" = "lag.k.dpi",
+      "random.project" = "random.projection",
+      "a" = "A"
+    )
+    
+    for (old.name in names(alias.map)) {
+      new.names[new.names == old.name] <- alias.map[[old.name]]
+    }
+    
+    names(control) <- new.names
+    
+    # If duplicated names are supplied after normalization, the last one is used.
+    if (anyDuplicated(names(control))) {
+      control <- control[!duplicated(names(control), fromLast = TRUE)]
+    }
+    
+    control
+  }
+  
+  control.DPI <- normalize.control.names(control.DPI)
+  
   control.DPI.default <- list(
-    lag.k.DPI = 10,
-    Threshold = TRUE,
+    lag.k.dpi = 10,
+    threshold = TRUE,
     delta = NULL,
-    delta2 = rep(1, length(dim(Y)) - 1),
-    Ratio.type = "log",
-    Random.Projection = FALSE,
-    iter_max = 20,
+    delta2 = rep(1, m),
+    ratio.type = "log",
+    random.projection = FALSE,
+    iter.max = 20,
     eps = 1e-4,
     grid.num = 50,
-    delta_max = 0.1,
+    delta.max = 0.1,
     print.eps = FALSE,
-    iter_lag = 1,
+    iter.lag = 1,
     all.put = FALSE,
     A = NULL,
-    Component = NULL
+    component = NULL
   )
   
   control.DPI <- utils::modifyList(control.DPI.default, control.DPI)
   
-  if (!is.null(control.DPI$lag.k) && is.null(control.DPI$lag.k.DPI)) {
-    control.DPI$lag.k.DPI <- control.DPI$lag.k
-  }
-  if (!is.null(control.DPI$Random.Project) && is.null(control.DPI$Random.Projection)) {
-    control.DPI$Random.Projection <- control.DPI$Random.Project
-  }
-  
-  lag.k <- control.DPI$lag.k.DPI
-  Threshold <- control.DPI$Threshold
+  lag.k <- control.DPI$lag.k.dpi
+  threshold <- control.DPI$threshold
   delta <- control.DPI$delta
   delta2 <- control.DPI$delta2
-  Ratio.type <- control.DPI$Ratio.type
-  Random.Projection <- control.DPI$Random.Projection
-  iter_max <- control.DPI$iter_max
+  ratio.type <- control.DPI$ratio.type
+  random.projection <- control.DPI$random.projection
+  iter.max <- control.DPI$iter.max
   eps <- control.DPI$eps
   grid.num <- control.DPI$grid.num
-  delta_max <- control.DPI$delta_max
+  delta.max <- control.DPI$delta.max
   print.eps <- control.DPI$print.eps
-  iter_lag <- control.DPI$iter_lag
+  iter.lag <- control.DPI$iter.lag
   all.put <- control.DPI$all.put
   A <- control.DPI$A
-  Component <- control.DPI$Component
+  component <- control.DPI$component
   
   if (length(delta2) != m) {
     stop("length(delta2) must equal length(dim(Y)) - 1.")
@@ -1323,31 +1376,32 @@ CP_TTS <- function(Y,
   if (is.null(xi)) {
     xi.chang <- tensor.est.xi(Y)
     
-    if (isTRUE(Random.Projection)) {
+    if (isTRUE(random.projection)) {
       res.only.used.rank <- HDTTS.CP.est(
         Y = Y,
         xi = xi.chang,
         K = lag.k,
-        Ratio.type = Ratio.type,
+        Ratio.type = ratio.type,
         grid_delta1 = grid.num,
-        delta_max = delta_max
+        delta_max = delta.max
       )
       
-      r_hat_first <- res.only.used.rank$r.hat
-      r_breve <- 2 * r_hat_first
+      r.hat.first <- res.only.used.rank$r.hat
+      r.breve <- 2 * r.hat.first
       
       if (!is.null(r)) {
-        r_breve <- 2 * r
+        r.breve <- 2 * r
       }
       
       xi.res <- RP.xi.sel(
         Y = Y,
-        r_breve = r_breve,
+        r_breve = r.breve,
         eps = 0.1,
         lag.k = lag.k,
         Randomized.time = 50,
         A = A
       )
+      
       xi <- xi.res$xi.sel
     } else {
       xi <- xi.chang
@@ -1360,11 +1414,11 @@ CP_TTS <- function(Y,
       xi = xi,
       Rank = r,
       K = lag.k,
-      Threshold = Threshold,
+      Threshold = threshold,
       delta = delta,
-      Ratio.type = Ratio.type,
+      Ratio.type = ratio.type,
       grid_delta1 = grid.num,
-      delta_max = delta_max
+      delta_max = delta.max
     )
     
     A.hat <- res.init$A.hat
@@ -1375,7 +1429,7 @@ CP_TTS <- function(Y,
     sigma0 <- sqrt(sum(Y^2) / (n * prod(D)))
   }
   
-  if (isFALSE(Threshold)) {
+  if (isFALSE(threshold)) {
     delta2 <- rep(0, m)
   }
   
@@ -1386,13 +1440,13 @@ CP_TTS <- function(Y,
     n = n,
     delta2 = delta2,
     sigma0 = sigma0,
-    iter_max = iter_max,
+    iter_max = iter.max,
     eps = eps,
     print.eps = print.eps,
-    iter_lag = iter_lag,
+    iter_lag = iter.lag,
     all.put = all.put,
     A = A,
-    Component = Component
+    Component = component
   )
   
   name.map <- c(
@@ -1417,41 +1471,35 @@ CP_TTS <- function(Y,
   )
 }
 
-#' Inference for the Double Projection Iterations (DPI) estimator in the tensor time series CP-factor model
+#' Inference for the Double Projection Iterations (DPI) factor loading estimator in the tensor time series CP-factor model
 #'
-#' This function performs inference for  the debiased
-#' iterative estimator of a factor loading vector in the tensor CP-factor model based on the DPI estimator (Chang et al., 2026+).
+#' This function performs inference for the DPI
+#' estimator of a factor loading vector in the tensor CP-factor model (Chang et al., 2026+).
 #' Given a direction vector \code{h}, a factor index \code{i}, a mode index
 #' \code{j}, the observed tensor time series \code{Y}, and the output object
-#' returned by \code{CP_TTS}, the function returns the debiased estimate,
+#' returned by \code{CP_TTS}, the function returns the linear transformation of the debiased estimate,
 #' its estimated standard error, the original iterative loading estimator, and
 #' the estimated bias-correction term.
 #'
 #' @param h A numeric vector of length \eqn{d_j}. It specifies the linear
 #'   transformation
 #'   \eqn{\mathbf{h}^{\top}(\hat{\mathbf{a}}_{i,j}
-#'   - \hat{\boldsymbol{\vartheta}}_{i,j})}.
+#'   - \hat{\boldsymbol{\vartheta}}_{i,j})}, where \eqn{\hat{\boldsymbol{\vartheta}}_{i,j}} is the bias-correction term.
 #' @param i A positive integer. The factor index.
 #' @param j A positive integer. The tensor mode index.
 #' @param Y An array containing the observed tensor time series with dimension
 #'   \eqn{n \times d_1 \times \cdots \times d_m}.
-#' @param res.CP.DPI An output object returned by \code{CP_TTS}. It should contain
-#'   \code{A.hat}, \code{Sigma.yij.xii.1}, and \code{f.hat}.
-#'   
+#' @param res.CP.DPI An output object returned by \code{CP_TTS}.
+#'
 #' @references
 #' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
 #' Series and Double Projection Iterations. \emph{Journal of the Royal Statistical Society
 #' Series B: Statistical Methodology}, major revision.
 #'
 #' @details
-#' Let \eqn{\hat{\mathbf{a}}_{i,j}} be the iterative estimator of the loading
+#' Let \eqn{\hat{\mathbf{a}}_{i,j}} be the DPI estimator of the loading
 #' vector for factor \eqn{i} and mode \eqn{j}. The function computes the debiased
-#' estimator
-#' \deqn{
-#' \hat{\mathbf{a}}_{i,j}
-#' -
-#' \hat{\boldsymbol{\vartheta}}_{i,j},
-#' }
+#' estimator \eqn{\hat{\mathbf{a}}_{i,j}-\hat{\boldsymbol{\vartheta}}_{i,j}}
 #' and returns the linear transformation
 #' \deqn{
 #' \mathbf{h}^{\top}
@@ -1473,9 +1521,10 @@ CP_TTS <- function(Y,
 #' \hat{\boldsymbol{\vartheta}}_{i,j}
 #' \right)
 #' \right]/n
-#' },
+#' } ,
 #' }
-#' where \eqn{n} is the sample size.
+#' where \eqn{n} is the sample size. See Chang et al. (2026+) for more details on the construction of
+#' \eqn{\hat{\vartheta}_{i,j}} and the estimated variance.
 #'
 #' @return
 #' A list with the following components:
