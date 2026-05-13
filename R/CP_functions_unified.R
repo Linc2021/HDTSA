@@ -2138,7 +2138,7 @@ HDTTS.CP.est =  function(Y,
         
         Aj1K_hat = Re(eigen(K1K_j_tilde)$vectors[,1:r])
       }else{
-        Aj_hat = Aj1K_hat = Aj12_hat =  apply(Complex2Real(eigen(K12_j_tilde)$vectors[,1:r]) ,2, l2s)
+        Aj_hat = Aj1K_hat = Aj12_hat =  apply(Complex2Real4DPI(eigen(K12_j_tilde)$vectors[,1:r]) ,2, l2s)
       }
       
       
@@ -2729,4 +2729,41 @@ base_extract <- function(Y, dim = 1, index, drop = TRUE) {
   args[[dim]] <- index
   args$drop <- drop
   do.call("[", c(list(Y), args))
+}
+
+
+Complex2Real4DPI = function(A){
+  REA = round(Re(A),8)
+  IMA = round(Im(A),8)
+  
+  real.index  =  which( colSums(IMA)   == 0)
+  
+  if(length(real.index) == 0){
+    complex_real  =  REA
+    complex_image =  IMA
+    
+    complex_take  = which(duplicated(complex_real[1,]) == T)
+    
+    real = as.matrix(complex_real[,complex_take])
+    
+    img  = as.matrix(complex_image[,complex_take])
+    
+    new_A = cbind(real,img)
+  }else{
+    real.vector   = REA[,real.index]
+    
+    complex_real  =  REA[,-real.index]
+    complex_image =  IMA[,-real.index]
+    
+    complex_take  = which(duplicated(complex_real[1,]) == T)
+    
+    real = as.matrix(complex_real[,complex_take])
+    
+    img  = as.matrix(complex_image[,complex_take])
+    
+    
+    new_A = cbind(real.vector,real,img)
+  }
+  
+  return(new_A)
 }
