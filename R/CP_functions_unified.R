@@ -1490,6 +1490,15 @@ CP_TTS <- function(Y,
 #' @param Y An array containing the observed tensor time series with dimension
 #'   \eqn{n \times d_1 \times \cdots \times d_m}.
 #' @param res.CP.DPI An output object returned by \code{CP_TTS}.
+#' @param var.est A character string specifying the variance estimator.
+#'   Available options are \code{"plug-in"} and \code{"long-run"}. The default is
+#'   \code{"plug-in"}.
+#' @param kernel A kernel function used for the long-run variance estimator.
+#'   If \code{NULL}, the quadratic spectral kernel is used. This argument is only
+#'   used when \code{var.est = "long-run"}.
+#' @param b_n A positive number specifying the bandwidth used for the long-run
+#'   variance estimator. If \code{NULL}, a data-driven bandwidth rule is used.
+#'   This argument is only used when \code{var.est = "long-run"}.
 #'
 #' @references
 #' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
@@ -1523,8 +1532,11 @@ CP_TTS <- function(Y,
 #' \right]/n
 #' } ,
 #' }
-#' where \eqn{n} is the sample size. See Chang et al. (2026+) for more details on the construction of
-#' \eqn{\hat{\vartheta}_{i,j}} and the estimated variance.
+#' where \eqn{n} is the sample size. The variance can be estimated either by the
+#' plug-in estimator derived under the independence condition between the factors
+#' and idiosyncratic errors, or by a kernel-type long-run variance estimator.
+#' See Chang et al. (2026+) for more details on the construction of
+#' \eqn{\hat{\boldsymbol{\vartheta}}_{i,j}} and the estimated variance.
 #'
 #' @return
 #' A list with the following components:
@@ -1555,11 +1567,27 @@ CP_TTS <- function(Y,
 #' out$se.h.ij
 #' out$aij.iter
 #' out$vartheta.ij
+#'
+#' ## Use the long-run variance estimator
+#' out.lr <- CP_Inference(
+#'   h = h,
+#'   i = 1,
+#'   j = 2,
+#'   Y = Y,
+#'   res.CP.DPI = fit,
+#'   var.est = "long-run"
+#' )
 #' }
 #'
 #' @export
 
-CP_Inference <- function(h, i, j, Y, res.CP.DPI) {
+
+CP_Inference <- function(h, i, j, Y, res.CP.DPI,
+                         var.est = c("plug-in", "long-run"),
+                         kernel = NULL,
+                         b_n = NULL) {
+  
+  var.est <- match.arg(var.est)
   
   A <- res.CP.DPI$A.hat
   Sigma.yij.xii.1 <- res.CP.DPI$Sigma.yij.xii.1
@@ -1579,16 +1607,31 @@ CP_Inference <- function(h, i, j, Y, res.CP.DPI) {
   aij.de <- aij.debias$aij.de
   vartheta.ij <- aij.debias$vartheta_ij
   
-  se.ij <- sqrt(
-    cov.aij.debias.iter.est(
+  if (var.est == "plug-in") {
+    cov.ij <- cov.aij.debias.iter.est(
       h = h,
       i = i,
       j = j,
       A = A,
       f = f,
       Y = Y
-    ) / n
-  )
+    )
+  }
+  
+  if (var.est == "long-run") {
+    cov.ij <- cov.aij.debias.iter.longrun.est(
+      h = h,
+      i = i,
+      j = j,
+      A = A,
+      f = f,
+      Y = Y,
+      kernel = kernel,
+      b_n = b_n
+    )
+  }
+  
+  se.ij <- sqrt(cov.ij / n)
   
   aij.h.de <- as.numeric(t(h) %*% aij.de)
   
@@ -2299,9 +2342,13 @@ cov.aij.debias.iter.est = function(h,i,j,A,f,Y){
   
   B.MP.j = Bj%*%MASS::ginv(t(Bj)%*%Bj)
   
-  ff = scale(f)
+  ff = scale(as.matrix(f))
   
-  xi.vmax.j = lm(ff[-n,i] ~ ff[-1,-i]-1)$residuals
+  if (NCOL(ff) == 1) {
+    xi.vmax.j = ff[-n, i]
+  } else {
+    xi.vmax.j = lm(ff[-n, i] ~ ff[-1, -i] - 1)$residuals
+  }
   
   sigma.fi.xi.wi = Autocov_xi_Y_nothres(f,c(xi.vmax.j,0),1)[i]
   
@@ -2327,6 +2374,119 @@ cov.aij.debias.iter.est = function(h,i,j,A,f,Y){
   return(as.numeric(COV.TOL))
 }
 
+
+
+cov.aij.debias.iter.longrun.est = function(h, i, j, A, f, Y,
+                                           kernel = NULL,
+                                           b_n = NULL) {
+  aij = A[[j]][, i]
+  
+  m  = length(A)
+  n  = NROW(f)
+  dj = length(aij)
+  
+  Aj = A[[j]]
+  
+  if (m >= 3) {
+    Bj = rTensor::khatri_rao_list(A[c(m:1)[-(m-j+1)]])
+  } else {
+    Bj = A[c(1:m)[-j]][[1]]
+  }
+  
+  B.MP.j = Bj %*% MASS::ginv(t(Bj) %*% Bj)
+  
+  ff = scale(as.matrix(f))
+  
+  if (NCOL(ff) == 1) {
+    xi.vmax.j = ff[-n, i]
+  } else {
+    xi.vmax.j = lm(ff[-n, i] ~ ff[-1, -i] - 1)$residuals
+  }
+  
+  sigma.fi.xi.wi = Autocov_xi_Y_nothres(f, c(xi.vmax.j, 0), 1)[i]
+  
+  beta = (B.MP.j[, i]) %x% t(t(h) %*% (diag(dj) - aij %*% t(aij)))
+  beta = as.numeric(beta)
+  
+  Yj = Mat.tensor(Y, 1)
+  
+  qj = as.numeric(Yj %*% beta)
+  
+  hat.varsigma = as.numeric(xi.vmax.j) * qj[2:n]
+  hat.varsigma = hat.varsigma - mean(hat.varsigma)
+  
+  N = length(hat.varsigma)
+  
+  ## default kernel: quadratic spectral kernel
+  if (is.null(kernel)) {
+    kernel.fun = function(x) {
+      out = numeric(length(x))
+      id0 = abs(x) < .Machine$double.eps
+      out[id0] = 1
+      
+      xx = x[!id0]
+      out[!id0] =
+        25 / (12 * pi^2 * xx^2) *
+        (sin(6 * pi * xx / 5) / (6 * pi * xx / 5) - cos(6 * pi * xx / 5))
+      
+      return(out)
+    }
+  } else {
+    kernel.fun = kernel
+  }
+  
+  ## default bandwidth: Andrews data-driven bandwidth
+  if (is.null(b_n)) {
+    if (N <= 2) {
+      b_n = 1
+    } else {
+      x0 = hat.varsigma - mean(hat.varsigma)
+      denom = sum(x0[-N]^2)
+      
+      if (denom > 0) {
+        rho.hat = sum(x0[-1] * x0[-N]) / denom
+      } else {
+        rho.hat = 0
+      }
+      
+      if (!is.finite(rho.hat)) {
+        rho.hat = 0
+      }
+      
+      rho.hat = max(min(rho.hat, 0.999), -0.999)
+      
+      v.hat = 4 * rho.hat^2 * (1 - rho.hat)^(-4)
+      b_n = 1.3211 * (v.hat * N)^(1/5)
+      
+      if (!is.finite(b_n) || b_n <= 0) {
+        b_n = 1
+      }
+    }
+  }
+  
+  s.grid = seq(-(N - 1), N - 1)
+  H.s = numeric(length(s.grid))
+  
+  for (kk in seq_along(s.grid)) {
+    s = s.grid[kk]
+    
+    if (s >= 0) {
+      idx1 = (s + 1):N
+      idx2 = 1:(N - s)
+    } else {
+      idx1 = 1:(N + s)
+      idx2 = (1 - s):N
+    }
+    
+    H.s[kk] = mean(hat.varsigma[idx1] * hat.varsigma[idx2])
+  }
+  
+  tau2.longrun = sum(kernel.fun(s.grid / b_n) * H.s)
+  
+  COV.TOL = tau2.longrun / sigma.fi.xi.wi^2
+  
+  return(as.numeric(COV.TOL))
+}
 
 CP.iter.DPI.xi <- function(A.hat,
                            K,
