@@ -23,7 +23,8 @@ Description: An implementation for high-dimensional time series analysis methods
       <doi:10.1093/biomet/asab034>, white noise tests proposed by Chang, Yao and Zhou (2017)
       <doi:10.1093/biomet/asw066> and Chang et al. (2026+), CP-decomposition for matrix time 
       series proposed by Chang et al. (2023) <doi:10.1093/jrsssb/qkac011> and
-      Chang et al. (2026+) <doi:10.48550/arXiv.2410.05634>, and statistical inference for
+      Chang et al. (2026+) <doi:10.48550/arXiv.2410.05634>, CP-decomposition for tensor time
+      series proposed by Chang et al. (2026+) <doi:10.48550/arXiv.2606.08560>, and statistical inference for
       spectral density matrix proposed by Chang et al. (2025) 
       <doi:10.1080/01621459.2025.2468013>.
 License: GPL-3

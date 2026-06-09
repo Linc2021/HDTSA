@@ -1142,7 +1142,7 @@ adjust_sign <- function(column) {
 #' for any matrix \eqn{\mathbf{W}=(w_{i,j})}, with threshold level
 #' \eqn{\delta_1 \ge 0} and \eqn{1(\cdot)} denoting the indicator function.
 #' Chang et al. (2026+) suggest choosing \eqn{\delta_1} by a grid search method.
-#' See Section 3.3 of Chang et al. (2026+) for details.
+#' See Section 3.4 of Chang et al. (2026+) for details.
 #'
 #' @param Y An array representing a tensor-valued time series with dimension
 #'   \eqn{n\times d_1 \times \cdots \times d_m}, where \eqn{n} is the sample size
@@ -1190,7 +1190,7 @@ adjust_sign <- function(column) {
 #'       Log-ER method and \code{"classical"} for the ER method. Default is
 #'       \code{"log"}.}
 #'     \item{\code{random.projection}}{Logical. If \code{TRUE}, a randomized
-#'       projection step is used to select \code{xi}. See Section 3.3 of
+#'       projection step is used to select \code{xi}. See Section 3.4 of
 #'       Chang et al. (2026+) for details. Default is \code{FALSE}.}
 #'     \item{\code{iter.max}}{Maximum number of iterative updates. Default is
 #'       \eqn{20}.}
@@ -1269,10 +1269,9 @@ adjust_sign <- function(column) {
 #' Series B: Statistical Methodology}, \strong{85}, 127--148.
 #' \doi{10.1093/jrsssb/qkac011}.
 #'
-#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High
-#' Dimensional Tensor Time Series and Double Projection Iterations.
-#' \emph{Journal of the Royal Statistical Society Series B: Statistical
-#' Methodology}, major revision.
+#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-factorization for high
+#' dimensional tensor time series and double projection iterations. \emph{Preprint}.
+#' \doi{doi:10.48550/arXiv.2606.08560}.
 #'
 #' @export
 #' @useDynLib HDTSA
@@ -1501,9 +1500,9 @@ CP_TTS <- function(Y,
 #'   This argument is only used when \code{var.est = "long-run"}.
 #'
 #' @references
-#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
-#' Series and Double Projection Iterations. \emph{Journal of the Royal Statistical Society
-#' Series B: Statistical Methodology}, major revision.
+#' Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-factorization for high
+#' dimensional tensor time series and double projection iterations. \emph{Preprint}.
+#' \doi{doi:10.48550/arXiv.2606.08560}.
 #'
 #' @details
 #' Let \eqn{\hat{\mathbf{a}}_{i,j}} be the DPI estimator of the loading
