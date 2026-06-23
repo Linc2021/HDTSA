@@ -7,14 +7,14 @@
 DGP.CP(n, p, q, d, d1, d2)
 }
 \arguments{
-\item{n}{Integer. The number of observations of the \eqn{p \times q} matrix 
+\item{n}{Integer. The number of observations of the \eqn{p \times q} matrix
 time series \eqn{{\bf Y}_t}.}
 
 \item{p}{Integer. The number of rows of \eqn{{\bf Y}_t}.}
 
 \item{q}{Integer. The number of columns of \eqn{{\bf Y}_t}.}
 
-\item{d}{Integer. The number of columns of the factor loading matrices \eqn{\bf A} 
+\item{d}{Integer. The number of columns of the factor loading matrices \eqn{\bf A}
 and \eqn{\bf B}.}
 
 \item{d1}{Integer. The rank of the \eqn{p \times d} matrix \eqn{\bf A}.}
@@ -30,19 +30,19 @@ A list containing the following
   \item{X}{An \eqn{n \times d \times d} array.}
 }
 \description{
-\code{DGP.CP()} function generates simulated data following the 
+\code{DGP.CP()} function generates simulated data following the
 data generating process described in Section 7.1 of Chang et al. (2024).
 }
 \details{
 We generate
 \deqn{{\bf{Y}}_t = {\bf A \bf X}_t{\bf B}' + {\boldsymbol{\epsilon}}_t }
-for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)} 
+for any \eqn{t=1, \ldots, n}, where \eqn{{\bf X}_t = {\rm diag}({\bf x}_t)}
 with \eqn{{\bf x}_t = (x_{t,1},\ldots,x_{t,d})'} being a \eqn{d \times 1} time series,
 \eqn{ {\boldsymbol{\epsilon}}_t } is a \eqn{p \times q} matrix white noise,
-and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and 
+and \eqn{{\bf A}} and \eqn{{\bf B}} are, respectively, \eqn{p\times d} and
 \eqn{q \times d} factor loading matrices. \eqn{\bf A}, \eqn{{\bf X}_t}, and \eqn{\bf B}
-are generated based on the data generating process described in Section 7.1 of 
-Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and 
+are generated based on the data generating process described in Section 7.1 of
+Chang et al. (2024) and satisfy \eqn{{\rm rank}({\bf A})=d_1} and
 \eqn{{\rm rank}({\bf B})=d_2}, \eqn{1 \le d_1, d_2 \le d}.
 }
 \examples{

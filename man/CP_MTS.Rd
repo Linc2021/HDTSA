@@ -35,7 +35,7 @@ the number of columns of \eqn{{\bf A}} and \eqn{{\bf B}}, \code{d1} representing
 If set to \code{NULL} (default), \eqn{d}, \eqn{d_1}, and \eqn{d_2} will be estimated.
  Otherwise, they can be given by the users.}
 
-\item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definite 
+\item{lag.k}{The time lag \eqn{K} used to calculate the nonnegative definite
 matrices \eqn{\hat{\mathbf{M}}_1} and \eqn{\hat{\mathbf{M}}_2} when \code{method = "CP.Refined"}
  or \code{method = "CP.Unified"}:
  \deqn{\hat{\mathbf{M}}_1\ =\
@@ -176,9 +176,9 @@ res7 <- CP_MTS(Y1, Rank = list(d = 3, d1 = 2, d2 = 2), method = "CP.Unified")
 }
 \references{
 Chang, J., He, J., Yang, L., & Yao, Q. (2023). Modelling matrix time series via a tensor CP-decomposition.
-  \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148. 
+  \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \strong{85}, 127--148.
   \doi{doi:10.1093/jrsssb/qkac011}.
-  
+
   Chang, J., Du, Y., Huang, G., & Yao, Q. (2026+). Identification and
  estimation for matrix time series CP-factor models. \emph{The Annals of
   Statistics}, in press. \doi{doi:10.48550/arXiv.2410.05634}.

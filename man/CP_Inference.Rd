@@ -2,15 +2,24 @@
 % Please edit documentation in R/CP_functions_unified.R
 \name{CP_Inference}
 \alias{CP_Inference}
-\title{Inference for the Double Projection Iterations (DPI) estimator in the tensor time series CP-factor model}
+\title{Inference for the Double Projection Iterations (DPI) factor loading estimator in the tensor time series CP-factor model}
 \usage{
-CP_Inference(h, i, j, Y, res.CP.DPI)
+CP_Inference(
+  h,
+  i,
+  j,
+  Y,
+  res.CP.DPI,
+  var.est = c("plug-in", "long-run"),
+  kernel = NULL,
+  b_n = NULL
+)
 }
 \arguments{
 \item{h}{A numeric vector of length \eqn{d_j}. It specifies the linear
 transformation
 \eqn{\mathbf{h}^{\top}(\hat{\mathbf{a}}_{i,j}
-- \hat{\boldsymbol{\vartheta}}_{i,j})}.}
+- \hat{\boldsymbol{\vartheta}}_{i,j})}, where \eqn{\hat{\boldsymbol{\vartheta}}_{i,j}} is the bias-correction term.}
 
 \item{i}{A positive integer. The factor index.}
 
@@ -19,8 +28,19 @@ transformation
 \item{Y}{An array containing the observed tensor time series with dimension
 \eqn{n \times d_1 \times \cdots \times d_m}.}
 
-\item{res.CP.DPI}{An output object returned by \code{CP_TTS}. It should contain
-\code{A.hat}, \code{Sigma.yij.xii.1}, and \code{f.hat}.}
+\item{res.CP.DPI}{An output object returned by \code{CP_TTS}.}
+
+\item{var.est}{A character string specifying the variance estimator.
+Available options are \code{"plug-in"} and \code{"long-run"}. The default is
+\code{"plug-in"}.}
+
+\item{kernel}{A kernel function used for the long-run variance estimator.
+If \code{NULL}, the quadratic spectral kernel is used. This argument is only
+used when \code{var.est = "long-run"}.}
+
+\item{b_n}{A positive number specifying the bandwidth used for the long-run
+variance estimator. If \code{NULL}, a data-driven bandwidth rule is used.
+This argument is only used when \code{var.est = "long-run"}.}
 }
 \value{
 A list with the following components:
@@ -36,23 +56,18 @@ A list with the following components:
 }
 }
 \description{
-This function performs inference for  the debiased
-iterative estimator of a factor loading vector in the tensor CP-factor model based on the DPI estimator (Chang et al., 2026+).
+This function performs inference for the DPI
+estimator of a factor loading vector in the tensor CP-factor model (Chang et al., 2026+).
 Given a direction vector \code{h}, a factor index \code{i}, a mode index
 \code{j}, the observed tensor time series \code{Y}, and the output object
-returned by \code{CP_TTS}, the function returns the debiased estimate,
+returned by \code{CP_TTS}, the function returns the linear transformation of the debiased estimate,
 its estimated standard error, the original iterative loading estimator, and
 the estimated bias-correction term.
 }
 \details{
-Let \eqn{\hat{\mathbf{a}}_{i,j}} be the iterative estimator of the loading
+Let \eqn{\hat{\mathbf{a}}_{i,j}} be the DPI estimator of the loading
 vector for factor \eqn{i} and mode \eqn{j}. The function computes the debiased
-estimator
-\deqn{
-\hat{\mathbf{a}}_{i,j}
--
-\hat{\boldsymbol{\vartheta}}_{i,j},
-}
+estimator \eqn{\hat{\mathbf{a}}_{i,j}-\hat{\boldsymbol{\vartheta}}_{i,j}}
 and returns the linear transformation
 \deqn{
 \mathbf{h}^{\top}
@@ -74,9 +89,13 @@ The reported standard error is
 \hat{\boldsymbol{\vartheta}}_{i,j}
 \right)
 \right]/n
-},
+} ,
 }
-where \eqn{n} is the sample size.
+where \eqn{n} is the sample size. The variance can be estimated either by the
+plug-in estimator derived under the independence condition between the factors
+and idiosyncratic errors, or by a kernel-type long-run variance estimator.
+See Chang et al. (2026+) for more details on the construction of
+\eqn{\hat{\boldsymbol{\vartheta}}_{i,j}} and the estimated variance.
 }
 \examples{
 \dontrun{
@@ -94,11 +113,21 @@ out$aij.h.de
 out$se.h.ij
 out$aij.iter
 out$vartheta.ij
+
+## Use the long-run variance estimator
+out.lr <- CP_Inference(
+  h = h,
+  i = 1,
+  j = 2,
+  Y = Y,
+  res.CP.DPI = fit,
+  var.est = "long-run"
+)
 }
 
 }
 \references{
-Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-Factorization for High Dimensional Tensor Time
-Series and Double Projection Iterations. \emph{Journal of the Royal Statistical Society
-Series B: Statistical Methodology}, major revision.
+Chang, J., Huang, G., Yao, Q., & Yu, L. (2026+). CP-factorization for high
+dimensional tensor time series and double projection iterations. \emph{Preprint}.
+\doi{doi:10.48550/arXiv.2606.08560}.
 }
