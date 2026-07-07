@@ -85,7 +85,6 @@
 #' @importFrom Rcpp evalCpp
 #' @export
 #' 
-# todo method = c("L_inf","L_2")
 WN_test = function(Y, lag.k = 2, B = 1000, method = c("L_inf","L_2"),
                    kernel.type = c("QS", "Par", "Bart"),
                    pre = FALSE, alpha = 0.05, control.PCA = list()){
