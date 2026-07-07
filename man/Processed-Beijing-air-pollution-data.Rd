@@ -5,11 +5,11 @@
 \alias{BeijingAir}
 \title{Beijing multi-site air pollution tensor data}
 \format{
-A 4-way array with dimension \eqn{1461 \times 12 \times 6 \times 24}:
+A 4-dimension array:
 \describe{
-  \item{1st dimension}{The day index, with 1461 daily observations from March 1, 2013 to February 28, 2017.}
+  \item{1st dimension}{The day index, with 1461 daily observations.}
   \item{2nd dimension}{The 12 air-quality monitoring stations in Beijing.}
-  \item{3rd dimension}{The 6 pollutants: \eqn{\textup{PM}_{2.5}}, \eqn{\textup{PM}_{10}}, \eqn{\textup{SO}_2}, \eqn{\textup{NO}_2}, \eqn{\textup{CO}}, and \eqn{\textup{O}_3}.}
+  \item{3rd dimension}{The 6 pollutants: PM2.5, PM10, SO2, NO2, CO, and O3.}
   \item{4th dimension}{The 24 hours within each day.}
 }
 }
@@ -23,9 +23,8 @@ data(BeijingAir)
 \description{
 The dataset is a tensor time series constructed from
 the Beijing multi-site air-quality data. The raw data contain six hourly
-air-pollution measurements, namely \eqn{\textup{PM}_{2.5}},
-\eqn{\textup{PM}_{10}}, \eqn{\textup{SO}_2}, \eqn{\textup{NO}_2},
-\eqn{\textup{CO}}, and \eqn{\textup{O}_3}, collected from 12 nationally
+air-pollution measurements, namely PM2.5, PM10, SO2, NO2, CO, and O3,
+collected from 12 nationally
 controlled air-quality monitoring stations in Beijing from March 1, 2013
 to February 28, 2017.
 
@@ -39,7 +38,7 @@ the effects of different measurement scales across pollutants and stations.
 
 After these preprocessing steps, the data form a tensor time series
 \eqn{\mathcal{Y}_t=(y_{t,\ell_1,\ell_2,\ell_3})_{12\times 6\times 24}}
-for \eqn{t\in[1461]}, where \eqn{y_{t,\ell_1,\ell_2,\ell_3}} records the
+for \eqn{t\in \[1461\]}, where \eqn{y_{t,\ell_1,\ell_2,\ell_3}} records the
 standardized concentration change of pollutant \eqn{\ell_2} at station
 \eqn{\ell_1} during the \eqn{\ell_3}-th hour of day \eqn{t}.
 }

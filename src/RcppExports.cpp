@@ -12,6 +12,117 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// TnC_mat
+double TnC_mat(int n, int L, Eigen::MatrixXd Vep);
+RcppExport SEXP _HDTSA_TnC_mat(SEXP nSEXP, SEXP LSEXP, SEXP VepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    rcpp_result_gen = Rcpp::wrap(TnC_mat(n, L, Vep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// WN_ftC_mat
+Eigen::MatrixXd WN_ftC_mat(int n, int L, int p, int M, Eigen::MatrixXd Vep);
+RcppExport SEXP _HDTSA_WN_ftC_mat(SEXP nSEXP, SEXP LSEXP, SEXP pSEXP, SEXP MSEXP, SEXP VepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    rcpp_result_gen = Rcpp::wrap(WN_ftC_mat(n, L, p, M, Vep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// WN_bandwith_mat
+double WN_bandwith_mat(Eigen::MatrixXd ft, int n, int L, int p, int M, int ken_type);
+RcppExport SEXP _HDTSA_WN_bandwith_mat(SEXP ftSEXP, SEXP nSEXP, SEXP LSEXP, SEXP pSEXP, SEXP MSEXP, SEXP ken_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ft(ftSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< int >::type ken_type(ken_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(WN_bandwith_mat(ft, n, L, p, M, ken_type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// newbootC_kernel_mat
+Eigen::MatrixXd newbootC_kernel_mat(const int n, const int L, const int p, const int M, const int B, double bn, int method, Eigen::MatrixXd Vep, Eigen::MatrixXd Xi_temp);
+RcppExport SEXP _HDTSA_newbootC_kernel_mat(SEXP nSEXP, SEXP LSEXP, SEXP pSEXP, SEXP MSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP VepSEXP, SEXP Xi_tempSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< double >::type bn(bnSEXP);
+    Rcpp::traits::input_parameter< int >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Xi_temp(Xi_tempSEXP);
+    rcpp_result_gen = Rcpp::wrap(newbootC_kernel_mat(n, L, p, M, B, bn, method, Vep, Xi_temp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// TnC_vec
+double TnC_vec(int n, int L, Eigen::MatrixXd Vep);
+RcppExport SEXP _HDTSA_TnC_vec(SEXP nSEXP, SEXP LSEXP, SEXP VepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    rcpp_result_gen = Rcpp::wrap(TnC_vec(n, L, Vep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// WN_bandwith_vec
+double WN_bandwith_vec(Eigen::MatrixXd Vep, int n, int L, int p, int M, int ken_type);
+RcppExport SEXP _HDTSA_WN_bandwith_vec(SEXP VepSEXP, SEXP nSEXP, SEXP LSEXP, SEXP pSEXP, SEXP MSEXP, SEXP ken_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< int >::type ken_type(ken_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(WN_bandwith_vec(Vep, n, L, p, M, ken_type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// newbootC_kernel_vec
+Eigen::MatrixXd newbootC_kernel_vec(const int n, const int L, const int p, const int M, const int B, double bn, int method, Eigen::MatrixXd Vep, Eigen::MatrixXd Xi_temp);
+RcppExport SEXP _HDTSA_newbootC_kernel_vec(SEXP nSEXP, SEXP LSEXP, SEXP pSEXP, SEXP MSEXP, SEXP BSEXP, SEXP bnSEXP, SEXP methodSEXP, SEXP VepSEXP, SEXP Xi_tempSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< double >::type bn(bnSEXP);
+    Rcpp::traits::input_parameter< int >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Vep(VepSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Xi_temp(Xi_tempSEXP);
+    rcpp_result_gen = Rcpp::wrap(newbootC_kernel_vec(n, L, p, M, B, bn, method, Vep, Xi_temp));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MartG_TestStatC
 double MartG_TestStatC(int n, int k, Eigen::MatrixXd X, Eigen::MatrixXd Xj);
 RcppExport SEXP _HDTSA_MartG_TestStatC(SEXP nSEXP, SEXP kSEXP, SEXP XSEXP, SEXP XjSEXP) {
@@ -449,6 +560,13 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_HDTSA_TnC_mat", (DL_FUNC) &_HDTSA_TnC_mat, 3},
+    {"_HDTSA_WN_ftC_mat", (DL_FUNC) &_HDTSA_WN_ftC_mat, 5},
+    {"_HDTSA_WN_bandwith_mat", (DL_FUNC) &_HDTSA_WN_bandwith_mat, 6},
+    {"_HDTSA_newbootC_kernel_mat", (DL_FUNC) &_HDTSA_newbootC_kernel_mat, 9},
+    {"_HDTSA_TnC_vec", (DL_FUNC) &_HDTSA_TnC_vec, 3},
+    {"_HDTSA_WN_bandwith_vec", (DL_FUNC) &_HDTSA_WN_bandwith_vec, 6},
+    {"_HDTSA_newbootC_kernel_vec", (DL_FUNC) &_HDTSA_newbootC_kernel_vec, 9},
     {"_HDTSA_MartG_TestStatC", (DL_FUNC) &_HDTSA_MartG_TestStatC, 4},
     {"_HDTSA_MartG_ftC", (DL_FUNC) &_HDTSA_MartG_ftC, 6},
     {"_HDTSA_MartG_bootc", (DL_FUNC) &_HDTSA_MartG_bootc, 9},
