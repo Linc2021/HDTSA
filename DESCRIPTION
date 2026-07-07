@@ -7,7 +7,7 @@ Authors@R: c(person("Jinyuan", "Chang", role = "aut",
     person("Jing", "He", role = c("aut"), email = "he_jing@swufe.edu.cn"),
     person("Chen", "Lin", role = c("aut", "cre"), email = "linchen@smail.swufe.edu.cn"),
     person("Qiwei ", "Yao", role = "aut", email = "q.yao@lse.ac.uk"))
-Date: 2026-03-30
+Date: 2026-06-23
 Author: Jinyuan Chang [aut],
    Jing He [aut],
    Chen Lin [aut, cre], 
@@ -29,7 +29,7 @@ Description: An implementation for high-dimensional time series analysis methods
       <doi:10.1080/01621459.2025.2468013>.
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: stats, Rcpp, clime, sandwich, methods, MASS, geigen, jointDiag, vars, forecast, rTensor
+Imports: stats, Rcpp, clime, sandwich, methods, MASS, QZ, jointDiag, vars, forecast, rTensor
 LinkingTo: RcppArmadillo, RcppEigen, Rcpp
 Suggests: 
     knitr

@@ -191,7 +191,9 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       K2 <- t(S_yxi_1) %*% S_yxi_2;
       
       ##(2) estimation of A and B
-      Geg <- geigen::geigen(K2, K1);
+      # Geg <- geigen::geigen(K2, K1);  #geigen will be archived
+      qzres <- QZ::qz.geigen(K2, K1)
+      Geg <- list(values = qzres$ALPHA / qzres$BETA, vectors = qzres$V)
       evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values != 0)]
       
       Bl <- Geg$vectors[, which(Geg$values %in% evalues), drop = FALSE]
@@ -220,7 +222,9 @@ CP_MTS = function(Y, xi = NULL, Rank = NULL, lag.k = 20, lag.ktilde = 10,
       }
       K2 <- S_yxi_1 %*% t(S_yxi_2);
       ##(2) estimation of A and B
-      Geg <- geigen::geigen(K2, K1);
+      # Geg <- geigen::geigen(K2, K1); #geigen will be archived
+      qzres <- QZ::qz.geigen(K2, K1)
+      Geg <- list(values = qzres$ALPHA / qzres$BETA, vectors = qzres$V)
       evalues <- Geg$values[which(Mod(Geg$values) <= 10^5 & Geg$values!=0)]
       Al <- Geg$vectors[, which(Geg$values %in% evalues), drop = FALSE]
       B <- apply(t(S_yxi_1) %*% Al, 2, l2s)
