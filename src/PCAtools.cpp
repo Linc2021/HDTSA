@@ -21,7 +21,7 @@ Eigen::MatrixXd thresh_C(Eigen::MatrixXd mat, double delta){
   //double threshold = lambda * sqrt(log(p) / n);
   for (int i = 0; i < mat.rows(); i++) {
     for (int j = 0; j < mat.cols(); j++) {
-      if (mat(i, j) < delta) {
+      if (std::abs(mat(i, j)) < delta) {
         mat(i, j) = 0;
       }
     }

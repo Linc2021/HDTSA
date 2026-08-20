@@ -19,17 +19,22 @@ segmentTS <- function(Y, lag.k,
   if(opt == 1)
   {
     M <- var(Y)
-    t <- eigen(M, symmetric = T)
-    ev <- t$values
-    G <- as.matrix(t$vectors)
-    D <- G * 0
-    for (i in 1:p) {
-      if (ev[i] > 1e-4)
-        D[i, i] <- sqrt(1 / ev[i])
-      else {
-        D[i, i] <- 1 / sqrt(log(p) / n)
-      }
-    }
+    # t <- eigen(M, symmetric = T)
+    # ev <- t$values
+    # G <- as.matrix(t$vectors)
+    # D <- G * 0
+    # for (i in 1:p) {
+    #   if (ev[i] > 1e-4)
+    #     D[i, i] <- sqrt(1 / ev[i])
+    #   else {
+    #     D[i, i] <- 1 / sqrt(log(p) / n)
+    #   }
+    # }
+    eig <- eigen(M, symmetric = TRUE)
+    ev <- eig$values
+    G <- as.matrix(eig$vectors)
+    scale_eigen <- ifelse(ev > 1e-4, sqrt(1 / ev),
+                          1 / sqrt(log(p) / n))
   }
   else if(opt == 2){
     #print('now use clime to calculate')
@@ -48,20 +53,28 @@ segmentTS <- function(Y, lag.k,
     e <- unlist(M$Omega)
     names(e) <- NULL
     M <- matrix(e,nrow = p)
-    t <- eigen(M,symmetric = T)
-    G <- as.matrix(t$vectors)
-    ev <- t$values
-    D <- G * 0
-    # square root of eigenvalues
-    for(i in 1:p)
-    {
-      if(ev[i] <  1e-4 | ev[i] > 1e+4)D[i, i] <- sqrt(log(p) / n)
-      else D[i, i]=sqrt(ev[i])
-    }
+    # t <- eigen(M,symmetric = T)
+    # G <- as.matrix(t$vectors)
+    # ev <- t$values
+    # D <- G * 0
+    # # square root of eigenvalues
+    # for(i in 1:p)
+    # {
+    #   if(ev[i] <  1e-4 | ev[i] > 1e+4)D[i, i] <- sqrt(log(p) / n)
+    #   else D[i, i]=sqrt(ev[i])
+    # }
+    eig <- eigen(M, symmetric = TRUE)
+    G <- as.matrix(eig$vectors)
+    ev <- eig$values
+    # square root of precision-matrix eigenvalues
+    scale_eigen <- ifelse(ev < 1e-4 | ev > 1e+4,
+                          sqrt(log(p) / n), sqrt(ev))
   }
+  else stop("opt must be either 1 or 2.")
 
   # M1=var(y_t)^{-1/2}
-  M1 <- MatMult(MatMult(G, D), t(G))
+  M1 <- MatMult(sweep(G, 2L, scale_eigen, `*`), t(G))
+  # M1 <- MatMult(MatMult(G, D), t(G))
   Y1 <- MatMult(M1, t(Y))
   # Y is standardized now: var(y_t)=I_p
   Y <- Y1
@@ -69,27 +82,33 @@ segmentTS <- function(Y, lag.k,
   # Part II -- Apply the transformation to recover x_t
 
   
-  mean_y<-as.matrix(rowMeans(Y))
+  mean_y <- as.matrix(rowMeans(Y))
   
-  Wy=diag(rep(1,p))
+  Wy <- diag(1, p)
   
   for (k in 1:lag.k) {
-    Sigma_y<-sigmak(Y,mean_y,k,n)
-    if(!thresh)
-      Wy=Wy+MatMult(Sigma_y,t(Sigma_y))
-    else {
-      Sigma_ynew <- thresh_C(Sigma_y, delta)
-      Wy=Wy+MatMult(Sigma_ynew,t(Sigma_ynew))
-    }
+    Sigma_y <- sigmak(Y,mean_y,k,n)
+    if (thresh)
+      Sigma_y[abs(Sigma_y) < delta] <- 0
+    Wy <- Wy + MatMult(Sigma_y, t(Sigma_y))
+    
+    
+    # Sigma_y<-sigmak(Y,mean_y,k,n)
+    # if(!thresh)
+    #   Wy=Wy+MatMult(Sigma_y,t(Sigma_y))
+    # else {
+    #   Sigma_ynew <- thresh_C(Sigma_y, delta)
+    #   Wy=Wy+MatMult(Sigma_ynew,t(Sigma_ynew))
+    # }
   }
   
-  t=eigen(Wy, symmetric=T)
-  G=as.matrix(t$vectors)
-  Y1=MatMult(t(G),Y)
+  eig <- eigen(Wy, symmetric = TRUE)
+  G <- as.matrix(eig$vectors)
+  Y1 <- MatMult(t(G), Y)
   # segmented series
-  Z=t(Y1)
+  Z <- t(Y1)
   # transformation matrix x_t = B y_t, does not include permutation in Step 2
-  B=MatMult(t(G),M1)
-  Yt=list(B=B, Z=Z)
+  B <- MatMult(t(G), M1)
+  Yt <- list(B = B, Z = Z)
   return(Yt)
 }

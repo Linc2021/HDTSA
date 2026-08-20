@@ -113,18 +113,24 @@ WN_test = function(Y, lag.k = 2, B = 1000, method = c("L_inf","L_2"),
       By <- X_pre$B
     }
     
-    Tn_list <- WN_teststatC(Y,n,p,lag.k)
-    Tn <- Tn_list$Tn
-    sigma_zero <- Tn_list$sigma_zero
-    X_mean <- Tn_list$X_mean
-    
-    ft <- WN_ftC(n, lag.k, p, Y, X_mean)
-    bn <- bandwith(ft, lag.k, p, p, ken_type)
-    
     boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
-    Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, Y, sigma_zero, boot_nomal) # critical value
+    fit <- WN_LinfC(Y, lag.k, B, ken_type, boot_nomal)
+    Tn <- fit$Tn
+    Gnstar <- fit$Gnstar
     p.value <- mean(Gnstar > Tn)
-    # Results = list(reject = (p.value<0.05), p.value = p.value)
+    
+    # Tn_list <- WN_teststatC(Y,n,p,lag.k)
+    # Tn <- Tn_list$Tn
+    # sigma_zero <- Tn_list$sigma_zero
+    # X_mean <- Tn_list$X_mean
+    # 
+    # ft <- WN_ftC(n, lag.k, p, Y, X_mean)
+    # bn <- bandwith(ft, lag.k, p, p, ken_type)
+    # 
+    # boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
+    # Gnstar <- WN_bootc(n, lag.k, p, B, bn, ken_type, ft, Y, sigma_zero, boot_nomal) # critical value
+    # p.value <- mean(Gnstar > Tn)
+    # # Results = list(reject = (p.value<0.05), p.value = p.value)
     
     names(Tn) <- "Statistic"
     names(lag.k) <-"Time lag"

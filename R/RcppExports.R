@@ -33,12 +33,8 @@ MartG_TestStatC <- function(n, k, X, Xj) {
     .Call('_HDTSA_MartG_TestStatC', PACKAGE = 'HDTSA', n, k, X, Xj)
 }
 
-MartG_ftC <- function(n, k, p, d, X, Xj) {
-    .Call('_HDTSA_MartG_ftC', PACKAGE = 'HDTSA', n, k, p, d, X, Xj)
-}
-
-MartG_bootc <- function(n, k, p, d, B, bn, method, ft, Xi_temp) {
-    .Call('_HDTSA_MartG_bootc', PACKAGE = 'HDTSA', n, k, p, d, B, bn, method, ft, Xi_temp)
+MartG_bootc <- function(n, k, p, d, B, method, X, Xj, Xi_temp, block_size = 0L) {
+    .Call('_HDTSA_MartG_bootc', PACKAGE = 'HDTSA', n, k, p, d, B, method, X, Xj, Xi_temp, block_size)
 }
 
 sigmak <- function(Y, Y_mean, k, n) {
@@ -57,20 +53,12 @@ WN_teststatC <- function(X, n, p, k) {
     .Call('_HDTSA_WN_teststatC', PACKAGE = 'HDTSA', X, n, p, k)
 }
 
-WN_ftC <- function(n, k, p, X, X_mean) {
-    .Call('_HDTSA_WN_ftC', PACKAGE = 'HDTSA', n, k, p, X, X_mean)
-}
-
-WN_bootc <- function(n, k, p, B, bn, method, ft, X, sigma_zero, Xi_temp) {
-    .Call('_HDTSA_WN_bootc', PACKAGE = 'HDTSA', n, k, p, B, bn, method, ft, X, sigma_zero, Xi_temp)
+WN_LinfC <- function(X, K, B, method, Xi_temp, block_size = 0L) {
+    .Call('_HDTSA_WN_LinfC', PACKAGE = 'HDTSA', X, K, B, method, Xi_temp, block_size)
 }
 
 resampling <- function(X, n, p, B, tau) {
     .Call('_HDTSA_resampling', PACKAGE = 'HDTSA', X, n, p, B, tau)
-}
-
-bandwith <- function(ft, k, p, d, ken_type) {
-    .Call('_HDTSA_bandwith', PACKAGE = 'HDTSA', ft, k, p, d, ken_type)
 }
 
 TaperQsC <- function(x) {

@@ -166,13 +166,16 @@ MartG_test <- function (Y, lag.k = 2, B = 1000, type = c("Linear", "Quad"),
   
   # ---------- step 2: compute test statistic ----------
   Tn <- MartG_TestStatC(n, lag.k, Y, Yj)
+  boot_nomal <- matrix(rnorm(B * (n - lag.k)), B, n - lag.k)
+  Gnstar <- MartG_bootc(n, lag.k, p, d, B, ken_type, Y, Yj, boot_nomal)
+  p.value <- mean(Gnstar>Tn)
   
-  ft <- MartG_ftC(n, lag.k, p, d, Y, Yj)
-  bn <- bandwith(ft,lag.k,p,d,ken_type)
-  
-  boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
-  Gnstar <- MartG_bootc(n, lag.k, p, d, B, bn, ken_type, ft, boot_nomal)  # critical value
-	p.value <- mean(Gnstar>Tn)
+#   ft <- MartG_ftC(n, lag.k, p, d, Y, Yj)
+#   bn <- bandwith(ft,lag.k,p,d,ken_type)
+#   
+#   boot_nomal <- matrix(rnorm(B*(n-lag.k)), B, n-lag.k)
+#   Gnstar <- MartG_bootc(n, lag.k, p, d, B, bn, ken_type, ft, boot_nomal)  # critical value
+# 	p.value <- mean(Gnstar>Tn)
 	names(Tn) <- "Statistic"
 	names(lag.k) <-"Time lag"
 	names(kernel.type) <- "Symmetric kernel"
